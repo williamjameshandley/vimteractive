@@ -5,8 +5,10 @@ class Server(object):
     def __init__(self):
         process = "maple"
         self.child = pexpect.spawn(process)
+        self.intro = ''
         for line in self.read():
-            pass
+            self.intro += line + '\n'
+
         self.send('interface(errorcursor=false);')
         for line in self.read():
             pass
@@ -22,8 +24,9 @@ class Server(object):
                 return
 
 mserver = Server()
+print(mserver.intro)
 
-mserver.send('(a+b/c;')
+mserver.send(None)
 for line in mserver.read():
     print(line)
 
