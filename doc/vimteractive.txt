@@ -19,10 +19,10 @@ Vimteractive was inspired by the workflow of the vim-ipython plugin:
 
     https://github.com/ivanov/vim-ipython
 
-This plugin is designed to extend a subset of the functionality of this plugin
+This plugin is designed to extend a subset of the functionality of vimteractive
 to other interpreters (including ipython). 
 
-At the moment, the plugin support the following interpreters:
+At the moment, vimteractive supports the following interpreters:
 
 - python
 - ipython
