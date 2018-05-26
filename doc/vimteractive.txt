@@ -20,12 +20,14 @@ Vimteractive was inspired by the workflow of the vim-ipython plugin:
     https://github.com/ivanov/vim-ipython
 
 This plugin is designed to extend a subset of the functionality of this plugin
-to other interpreters. At the moment, these interpreters are:
+to other interpreters (including ipython). 
 
-* python
-* ipython
-* maple
-* bash
+At the moment, we support:
+
+- python
+- ipython
+- maple
+- bash
 
 ==============================================================================
 2. Usage                                                  *vimteractive-usage*

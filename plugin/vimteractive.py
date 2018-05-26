@@ -51,8 +51,8 @@ class Server(object):
         self.to_preview()
 
     def runlines(self):
-        lines = vim.current.range
-        for line in lines:
+        r = vim.current.range
+        for line in vim.current.buffer[r.start:r.end+1]:
             self.send(line)
             self.to_preview()
 
@@ -97,7 +97,7 @@ class Python(Server):
 class IPython(Server):
     """ ipython """
     command = 'ipython --simple-prompt --matplotlib'
-    prompt = 'In \[[0-9]+\]:'
+    prompt = '(\.\.\.:|In \[[0-9]+\]:)'
     filetype = 'python'
 
 
