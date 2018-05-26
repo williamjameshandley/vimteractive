@@ -1,4 +1,5 @@
 import pexpect
+import vim
 
 class Server(object):
     """ Base class for generic server
@@ -15,10 +16,27 @@ class Server(object):
         Interpreter's prompt
     """
     def __init__(self):
-        self.process = pexpect.spawn(self.command, encoding='utf-8')
-        self.intro = ''
+        vim.command('pedit interactive')
+        self.process = pexpect.spawn(self.command)
+        self.to_preview();
+
+    def to_preview(self):
+        vim.command('wincmd P')    #switch to preview window
         for line in self.read():
-            self.intro += line + '\n'
+            vim.current.buffer.append(line)
+        vim.command('normal! G')   # go to the end of the file
+        vim.command('normal! p') # go back to where you were
+
+    def runline(self):
+        line = vim.current.line
+        self.send(line)
+        self.to_preview()
+
+    def runlines(self):
+        lines = vim.current.range
+        for line in lines:
+            self.send(line)
+            self.to_preview()
 
     def send(self, line):
         """ Send line to prompt. """
@@ -28,9 +46,9 @@ class Server(object):
         """ Loop over lines until next prompt """
         while True:
             index = self.process.expect([self.prompt,'\r\n'])
-            yield self.process.before
+            yield self.process.before.decode('utf-8')
             if index is 0:
-                yield self.process.after
+                yield self.process.after.decode('utf-8')
                 return
 
 
@@ -63,4 +81,3 @@ class Bash(Server):
     """ bash """
     command = 'bash --noprofile --norc'
     prompt = 'bash-[0-9.]+\$'
-
