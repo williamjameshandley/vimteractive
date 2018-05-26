@@ -48,63 +48,19 @@ class Maple(Server):
 
 
 class Python(Server):
+    """ python """
     command = 'python'
     prompt = '>>>'
 
 
 class IPython(Server):
+    """ ipython """
     command = 'ipython --simple-prompt --matplotlib'
     prompt = 'In \[[0-9]+\]:'
 
 
 class Bash(Server):
+    """ bash """
     command = 'bash --noprofile --norc'
     prompt = 'bash-[0-9.]+\$'
 
-server = Maple()
-print(server.intro)
-
-server.send('a+b);')
-for line in server.read():
-    print(line)
-
-server.send('(a+b)/c;')
-for line in server.read():
-    print(line)
-
-server.send('with(Physics);')
-for line in server.read():
-    print(line)
-
-
-
-server = IPython()
-print(server.intro)
-
-server.send('a=1')
-for line in server.read():
-    print(line)
-
-server.send('b=2')
-for line in server.read():
-    print(line)
-
-server.send('a+b')
-for line in server.read():
-    print(line)
-
-
-server = Bash()
-print(server.intro)
-
-server.send('pwd')
-for line in server.read():
-    print(line)
-
-server.send('cd ..')
-for line in server.read():
-    print(line)
-
-server.send('pwd')
-for line in server.read():
-    print(line)
