@@ -1,7 +1,19 @@
 import pexpect
-import sys
 
 class Server(object):
+    """ Base class for generic server
+
+    This class leverages pexpect to send and recieve lines from an interactive
+    prompt. 
+
+    When deriving from this class, you need to defined the member variables:
+
+    self.command : str
+        Command to start the interpreter
+
+    self.prompt : str
+        Interpreter's prompt
+    """
     def __init__(self):
         self.process = pexpect.spawn(self.command, encoding='utf-8')
         self.intro = ''
@@ -9,26 +21,22 @@ class Server(object):
             self.intro += line + '\n'
 
     def send(self, line):
+        """ Send line to prompt. """
         self.process.sendline(line)
 
     def read(self):
+        """ Loop over lines until next prompt """
         while True:
-            self.process.expect(self.prompt_or_newline)
+            index = self.process.expect([self.prompt,'\r\n'])
             yield self.process.before
-            if self.process.after == self.prompt:
+            if index is 0:
+                yield self.process.after
                 return
-
-    @property
-    def newline(self):
-        return '\r\n'
-
-    @property
-    def prompt_or_newline(self):
-        return '(%s|%s)' % (self.newline,self.prompt)
 
 
 class Maple(Server):
-    command = "maple"
+    """ Maple """
+    command = 'maple'
     prompt = '\r>'
 
     def __init__(self):
@@ -38,39 +46,65 @@ class Maple(Server):
         for line in self.read():
             pass
 
+
 class Python(Server):
-    command = "python"
+    command = 'python'
     prompt = '>>>'
 
 
-mserver = Maple()
-print(mserver.intro)
+class IPython(Server):
+    command = 'ipython --simple-prompt --matplotlib'
+    prompt = 'In \[[0-9]+\]:'
 
-mserver.send('a+b);')
-for line in mserver.read():
+
+class Bash(Server):
+    command = 'bash --noprofile --norc'
+    prompt = 'bash-[0-9.]+\$'
+
+server = Maple()
+print(server.intro)
+
+server.send('a+b);')
+for line in server.read():
     print(line)
 
-mserver.send('(a+b)/c;')
-for line in mserver.read():
+server.send('(a+b)/c;')
+for line in server.read():
     print(line)
 
-mserver.send('with(Physics);')
-for line in mserver.read():
+server.send('with(Physics);')
+for line in server.read():
     print(line)
 
 
 
-pserver = Python()
-print(pserver.intro)
+server = IPython()
+print(server.intro)
 
-pserver.send('a=1')
-for line in pserver.read():
+server.send('a=1')
+for line in server.read():
     print(line)
 
-pserver.send('b=2')
-for line in pserver.read():
+server.send('b=2')
+for line in server.read():
     print(line)
 
-pserver.send('a+b')
-for line in pserver.read():
+server.send('a+b')
+for line in server.read():
+    print(line)
+
+
+server = Bash()
+print(server.intro)
+
+server.send('pwd')
+for line in server.read():
+    print(line)
+
+server.send('cd ..')
+for line in server.read():
+    print(line)
+
+server.send('pwd')
+for line in server.read():
     print(line)
