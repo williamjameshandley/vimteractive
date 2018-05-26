@@ -13,7 +13,7 @@ inoremap <C-s> :python server.runline()<CR>
 xnoremap <C-S> :python server.runlines()<CR>
 
 " Setup plugin mappings for the most common ways to interact with ipython.
-command!  Iipython :py server=IPython()
-command!  Ipython :py server=Python()
-command!  Ibash :py server=Bash()
-command!  Imaple :py server=Maple()
+command!  Iipython :python server=IPython()
+command!  Ipython  :python server=Python()
+command!  Ibash    :python server=Bash()
+command!  Imaple   :python server=Maple()

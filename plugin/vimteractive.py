@@ -25,9 +25,8 @@ class Server(object):
         Interpreter's prompt
     """
     def __init__(self):
-        vim.command('set splitright')
         vim.command('vert pedit interactive')
-        vim.command('normal! =') 
+        vim.command('set winwidth=80')
 
         with preview_window():
             if self.filetype is not None:
