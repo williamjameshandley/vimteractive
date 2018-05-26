@@ -29,9 +29,9 @@ EOF
 noremap  <Plug>(IRunLine)  :python server.runline()<CR>
 noremap  <Plug>(IRunLines) :python server.runlines()<CR>
 
-map  <buffer> <silent> <C-s> <Plug>(IRunLine)
-imap <buffer> <silent> <C-s> <C-o><Plug>(IRunLine)
-xmap <buffer> <silent> <C-S> <Plug>(IRunLines)
+noremap  <buffer> <silent> <C-s> <Plug>(IRunLine)
+inoremap <buffer> <silent> <C-s> <C-o><Plug>(IRunLine)
+xnoremap <buffer> <silent> <C-S> <Plug>(IRunLines)
 
 " Setup plugin mappings for the most common ways to interact with ipython.
 command!  Iipython :py server=IPython()
