@@ -30,7 +30,12 @@ class Server(object):
         vim.command('normal! =') 
 
         with preview_window():
-            self.setup_preview()
+            if self.filetype is not None:
+                vim.command("set filetype=%s" % self.filetype)
+            vim.command("set bufhidden=hide buftype=nofile")
+            vim.command("setlocal nobuflisted") # don't come up in buffer lists
+            vim.command("setlocal nonumber") # no line numbers, we have in/out nums
+            vim.command("setlocal noswapfile") # no swap file (so no complaints cross-instance)
 
         self.process = pexpect.spawn(self.command)
         self.to_preview();
@@ -73,6 +78,7 @@ class Maple(Server):
     """ Maple """
     command = 'maple'
     prompt = '\r>'
+    filetype = None
 
     def __init__(self):
         super(Maple, self).__init__()
@@ -86,24 +92,18 @@ class Python(Server):
     """ python """
     command = 'python'
     prompt = '>>>'
-
-    def setup_preview(self):
-        vim.command('set filetype=python')
+    filetype = 'python'
 
 
 class IPython(Server):
     """ ipython """
     command = 'ipython --simple-prompt --matplotlib'
     prompt = 'In \[[0-9]+\]:'
-
-    def setup_preview(self):
-        vim.command('set filetype=python')
+    filetype = 'python'
 
 
 class Bash(Server):
     """ bash """
     command = 'bash --noprofile --norc'
     prompt = 'bash-[0-9.]+\$'
-
-    def setup_preview(self):
-        vim.command('set filetype=bash')
+    filetype = 'python'
