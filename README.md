@@ -1,14 +1,11 @@
 # Vimteractive
 Send commands from text files to interactive programs via vim. 
 
-Vimteractive was inspired by the workflow of the vim-ipython plugin:
+Vimteractive was inspired by the workflow of the [vim-ipython](https://github.com/ivanov/vim-ipython) plugin.
 
-    https://github.com/ivanov/vim-ipython
+This plugin is designed to extend a subset of the functionality of vimteractive to other interpreters (including ipython). 
 
-This plugin is designed to extend a subset of the functionality of this plugin
-to other interpreters (including ipython). 
-
-At the moment, the plugin support the following interpreters:
+At the moment, vimteractive supports the following interpreters:
 
 - python
 - ipython
@@ -25,7 +22,7 @@ Start an intepreter with I<interpreter name>
     :Iipython
 
 Send line(s) of python from a text file to an interpreter in the preview window
-with <C-s>
+with `<C-s>`
 
 ## Extending functionality
 
