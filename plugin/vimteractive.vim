@@ -1,28 +1,10 @@
-" Vim integration with interactive prompts
-"
-" Using this plugin, you can send lines or whole files for an interactive
-" prompt to execute. 
-"
-" -----------------
-" Quickstart Guide:
-" -----------------
-"   :source interactive.vim
-"   :Iipython
-"
-" written by Will Handley (williamjameshandley@gmail.com)
-"
-if !has('python')
-    " exit if python is not available.
-    finish
-endif
-
 " Import the module
 python << EOF
 import vim
 import sys
-vim_interactive_path = vim.eval("expand('<sfile>:h')")
-sys.path.append(vim_interactive_path)
-from interactive import *
+vimteractive_path = vim.eval("expand('<sfile>:h')")
+sys.path.append(vimteractive_path)
+from vimteractive import *
 EOF
 
 " Setup plugin mappings for the most common ways to interact with ipython.

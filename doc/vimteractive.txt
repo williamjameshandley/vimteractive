@@ -1,0 +1,63 @@
+*vimteractive.txt*   Sending commands from vim to interactive programs
+
+                    Vimteractive - main help file
+
+
+==============================================================================
+CONTENTS                                                  *syntastic-contents*
+
+    1.Intro........................................|vimteractive-intro|
+    2.Usage........................................|vimteractive-usage|
+    3.Extending functionality......................|vimteractive-extending|
+    4.About........................................|vimteractive-about|
+    5.License......................................|vimteractive-license|
+
+==============================================================================
+1. Intro                                                  *vimteractive-intro*
+
+Vimteractive was inspired by the workflow of the vim-ipython plugin:
+
+    https://github.com/ivanov/vim-ipython
+
+This plugin is designed to extend a subset of the functionality of this plugin
+to other interpreters. At the moment, these interpreters are:
+
+* python
+* ipython
+* maple
+* bash
+
+==============================================================================
+2. Usage                                                  *vimteractive-usage*
+
+Start an intepreter with I<interpreter name>
+
+    :Iipython
+
+Send line(s) of python from a text file to an interpreter in the preview window
+with <C-s>
+
+
+==============================================================================
+3. Extending functionality                            *vimteractive-extending*
+
+Start an intepreter with I<interpreter name>
+
+
+
+
+
+==============================================================================
+4. About                                          *vimteractive-functionality*
+
+The core maintainer of vimteractive is:
+    Will Handley (GitHub: williamjameshandley)
+
+Find the latest version of vimteractive at:
+
+    http://github.com/williamjameshandley/vimteractive
+
+==============================================================================
+5. License                                              *vimteractive-license*
+
+Vimteractive is licensed under GPL 3.0
