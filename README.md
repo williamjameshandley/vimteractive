@@ -17,7 +17,7 @@ It's recommended to install via Vundle from this github repo
 
 ## Usage
 
-Start an intepreter with I<interpreter name>
+Start an intepreter with `:I<interpreter name>` for example:
 
     :Iipython
 
