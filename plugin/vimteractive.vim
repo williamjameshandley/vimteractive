@@ -8,12 +8,9 @@ from vimteractive import *
 EOF
 
 " Setup plugin mappings for the most common ways to interact with ipython.
-noremap  <Plug>(IRunLine)  :python server.runline()<CR>
-noremap  <Plug>(IRunLines) :python server.runlines()<CR>
-
-noremap  <buffer> <silent> <C-s> <Plug>(IRunLine)
-inoremap <buffer> <silent> <C-s> <C-o><Plug>(IRunLine)
-xnoremap <buffer> <silent> <C-S> <Plug>(IRunLines)
+noremap  <C-s> :python server.runline()<CR> 
+inoremap <C-s> :python server.runline()<CR>  
+xnoremap <C-S> :python server.runlines()<CR>
 
 " Setup plugin mappings for the most common ways to interact with ipython.
 command!  Iipython :py server=IPython()

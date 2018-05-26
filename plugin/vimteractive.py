@@ -1,5 +1,14 @@
 import pexpect
 import vim
+import contextlib
+
+@contextlib.contextmanager
+def preview_window():
+    """ Tool to switch to the preview window and execute commands"""
+    vim.command('wincmd P')    #switch to preview window
+    yield
+    vim.command('normal! p') #Switch to previous window
+
 
 class Server(object):
     """ Base class for generic server
@@ -16,16 +25,21 @@ class Server(object):
         Interpreter's prompt
     """
     def __init__(self):
-        vim.command('pedit interactive')
+        vim.command('set splitright')
+        vim.command('vert pedit interactive')
+        vim.command('normal! =') 
+
+        with preview_window():
+            self.setup_preview()
+
         self.process = pexpect.spawn(self.command)
         self.to_preview();
 
     def to_preview(self):
-        vim.command('wincmd P')    #switch to preview window
-        for line in self.read():
-            vim.current.buffer.append(line)
-        vim.command('normal! G')   # go to the end of the file
-        vim.command('normal! p') # go back to where you were
+        with preview_window():
+            for line in self.read():
+                vim.current.buffer.append(line)
+            vim.command('normal! G')   # go to the end of the file
 
     def runline(self):
         line = vim.current.line
@@ -41,6 +55,9 @@ class Server(object):
     def send(self, line):
         """ Send line to prompt. """
         self.process.sendline(line)
+
+    def setup_preview(self):
+        pass
 
     def read(self):
         """ Loop over lines until next prompt """
@@ -70,14 +87,23 @@ class Python(Server):
     command = 'python'
     prompt = '>>>'
 
+    def setup_preview(self):
+        vim.command('set filetype=python')
+
 
 class IPython(Server):
     """ ipython """
     command = 'ipython --simple-prompt --matplotlib'
     prompt = 'In \[[0-9]+\]:'
 
+    def setup_preview(self):
+        vim.command('set filetype=python')
+
 
 class Bash(Server):
     """ bash """
     command = 'bash --noprofile --norc'
     prompt = 'bash-[0-9.]+\$'
+
+    def setup_preview(self):
+        vim.command('set filetype=bash')
