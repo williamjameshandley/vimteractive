@@ -22,7 +22,7 @@ Vimteractive was inspired by the workflow of the vim-ipython plugin:
 This plugin is designed to extend a subset of the functionality of this plugin
 to other interpreters (including ipython). 
 
-At the moment, we support:
+At the moment, the plugin support the following interpreters:
 
 - python
 - ipython
@@ -43,10 +43,9 @@ with <C-s>
 ==============================================================================
 3. Extending functionality                            *vimteractive-extending*
 
-Start an intepreter with I<interpreter name>
-
-
-
+In many cases, you simply need to add another python class at the bottom of the
+file plugin/vimteractive.py, and an extra I<interpreter name> command to
+plugin/vimteractive.vim
 
 
 ==============================================================================
