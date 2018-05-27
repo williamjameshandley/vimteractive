@@ -19,21 +19,39 @@ At the moment, vimteractive supports the following interpreters:
 
 - For old-school users, there is also a package on the [vim repo](https://www.vim.org/scripts/script.php?script_id=5687)
 
-## Usage
 
-Start an intepreter with `:I<interpreter name>` for example:
+## Motivation
 
-    :Iipython
+[IPython and Jupyter](https://ipython.org/) are excellent tools for exploratory analyses in python. They leverage the interactivity of the python kernel to allow you to keep results of calculations in memory whilst developing further code to process them.
 
-Send line(s) of python from a text file to an interpreter in the preview window with `<C-s>`
+However, I can't stand typing into anything other than vim. Anywhere else, my screen fills with hjklEB, or worse, I close the window with a careless `<C-w>`. I want a technique that allows me to operate on plain text files, but still be able to work interactively with the interpreter with minimal effort.
+
+[Many Projects](#similar-projects) achieve this with a varying level of functionality. Vimteractive aims to create the simplest tool for sending things from text to interpreter, and making it easy to add additional interpreters. In particular, my main aim in starting this was to get a similar interface to the command line interface for [maple](https://www.maplesoft.com/).
+
+
+## Example Usage
+Create a python file `vimteractive_test.py` with the following content:
+```python
+import matplotlib.pyplot as plt
+import numpy
+    
+fig, ax = plt.subplots()
+x = numpy.linspace(-2,2,1000)
+y = x**3-x
+ax.plot(x, y)
+ax.set_xlabel('$x$')
+ax.set_ylabel('$y$')
+```
+Now start an ipython interpreter in vim with `:Iipython`. You should see a preview window open on the left with your ipython prompt. Position your cursor over the first line, and press control-s `<C-s>`. You should see this line now appear in the first prompt of the preview window. Do the same with the second and fourth lines. At the fourth line, you should see a figure appear once it's constructed with `plt.subplots()`. Continue by sending lines to the interpreter. You can send multiple lines by doing a visual selection and pressing `<C-s>`.
+
+In general, interpreters are started with `:I<interpreter name>` for example `:Imaple` or `Ibash`.
+and you can send line(s) of code from a text file to an interpreter in the preview window with `<C-s>`
 
 ## Extending functionality
+This project is very much in an alpha phase, so if you have any issues that arise on your system, feel free to [contact me](mailto:williamjameshandley@gmail.com).
 
-In many cases, you simply need to add another python class at the bottom of the
-file plugin/vimteractive.py, and an extra I<interpreter name> command to
-plugin/vimteractive.vim
-
-Feel free to create a [fork and pull request](https://gist.github.com/Chaser324/ce0505fbed06b947d962) with your proposed changes
+If you want to add additional interpreters, in many cases, you simply need to add another python class at the bottom of the
+file `plugin/vimteractive.py`, and an extra `I<interpreter name>` command to `plugin/vimteractive.vim`. Feel free to create a [fork and pull request](https://gist.github.com/Chaser324/ce0505fbed06b947d962) with your proposed changes
 
 ## Similar projects
 - [vim-ipython](https://github.com/ivanov/vim-ipython)
@@ -42,4 +60,3 @@ Feel free to create a [fork and pull request](https://gist.github.com/Chaser324/
 - [vim-slime](https://github.com/jpalardy/vim-slime)
 - [tslime_ipython](https://github.com/eldridgejm/tslime_ipython)
 - [vipy](https://github.com/johndgiese/vipy)
-
