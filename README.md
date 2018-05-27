@@ -13,7 +13,11 @@ At the moment, vimteractive supports the following interpreters:
 - bash
 
 ## Installation
-It's recommended to install via Vundle from this github repo
+- Installation should be relatively painless via the usual routse such as [Vundle](https://github.com/VundleVim/Vundle.vim) or [Pathogen](https://github.com/tpope/vim-pathogen)
+
+-  If you're masochistic enough to use [Arch](https://wiki.archlinux.org/index.php/Arch_Linux)/[Manjaro](https://manjaro.org/), it is also installable via the [aur](https://aur.archlinux.org/packages/vim-vimteractive)
+
+- For old-school users, there is also a package on the [vim repo](https://www.vim.org/scripts/script.php?script_id=5687)
 
 ## Usage
 
@@ -29,4 +33,7 @@ with `<C-s>`
 In many cases, you simply need to add another python class at the bottom of the
 file plugin/vimteractive.py, and an extra I<interpreter name> command to
 plugin/vimteractive.vim
+
+Feel free to create a [fork and pull request](https://gist.github.com/Chaser324/ce0505fbed06b947d962
+) with your proposed changes
 
