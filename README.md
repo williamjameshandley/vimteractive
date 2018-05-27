@@ -26,7 +26,7 @@ At the moment, vimteractive supports the following interpreters:
 
 However, I can't stand typing into anything other than vim. Anywhere else, my screen fills with hjklEB, or worse, I close the window with a careless `<C-w>`. I want a technique that allows me to operate on plain text files, but still be able to work interactively with the interpreter with minimal effort.
 
-[Many Projects](#similar-projects) achieve this with a varying level of functionality. Vimteractive aims to create the simplest tool for sending things from text to interpreter, and making it easy to add additional interpreters. In particular, my main aim in starting this was to get a similar interface to the command line interface for [maple](https://www.maplesoft.com/).
+[Many Projects](#similar-projects) achieve this with a varying level of functionality. Vimteractive aims to create the simplest tool for sending things from text to interpreter, and making it easy to add additional interpreters. In particular, my main aim in starting this was to get a vim-ipython like interface to the command line [maple](https://www.maplesoft.com/).
 
 
 ## Example Usage
