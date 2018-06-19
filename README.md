@@ -44,14 +44,13 @@ ax.set_ylabel('$y$')
 ```
 Now start an ipython interpreter in vim with `:Iipython`. You should see a preview window open on the left with your ipython prompt. Position your cursor over the first line, and press control-s `<C-s>`. You should see this line now appear in the first prompt of the preview window. Do the same with the second and fourth lines. At the fourth line, you should see a figure appear once it's constructed with `plt.subplots()`. Continue by sending lines to the interpreter. You can send multiple lines by doing a visual selection and pressing `<C-s>`.
 
-In general, interpreters are started with `:I<interpreter name>` for example `:Imaple` or `Ibash`.
+In general, interpreters are started with `:I<interpreter name>` for example `:Imaple` or `:Ibash`,
 and you can send line(s) of code from a text file to an interpreter in the preview window with `<C-s>`
 
 ## Extending functionality
 This project is very much in an alpha phase, so if you have any issues that arise on your system, feel free to [contact me](mailto:williamjameshandley@gmail.com).
 
-If you want to add additional interpreters, in many cases, you simply need to add another python class at the bottom of the
-file `plugin/vimteractive.py`, and an extra `I<interpreter name>` command to `plugin/vimteractive.vim`. Feel free to create a [fork and pull request](https://gist.github.com/Chaser324/ce0505fbed06b947d962) with your proposed changes
+If you want to add additional interpreters, in many cases, you simply need to add an extra `I<interpreter name>` command to `plugin/vimteractive.vim`. Feel free to create a [fork and pull request](https://gist.github.com/Chaser324/ce0505fbed06b947d962) with your proposed changes
 
 ## Similar projects
 - [vim-ipython](https://github.com/ivanov/vim-ipython)
