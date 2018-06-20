@@ -65,10 +65,10 @@ you wish to a new file if it contains valuable output
 
 ### Supported terminals
 
-- :Iipython Activate an ipython terminal
-- :Ipython  Activate a python terminal
-- :Imaple   Activate a maple terminal
-- :Ibash    Activate a bash terminal
+- `:Iipython` Activate an ipython terminal
+- `:Ipython`  Activate a python terminal
+- `:Imaple`   Activate a maple terminal
+- `:Ibash`    Activate a bash terminal
 
 ### Sending commands
 
