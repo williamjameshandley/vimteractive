@@ -24,21 +24,30 @@ command!  Ibash    :call Vimteractive_session('bash')
 command!  Imaple   :call Vimteractive_session('maple -c "interface(errorcursor=false);"')
 
 " Control-S in normal mode to send current line
-noremap  <silent> <C-s>      :call Vimteractive_send(getline('.')."\n")<CR>
+noremap  <silent> <C-s>      :call Vimteractive_sendline(getline('.'))<CR>
 
 " Control-S in insert mode to send current line
-inoremap <silent> <C-s> <Esc>:call Vimteractive_send(getline('.')."\n")<CR>a
+inoremap <silent> <C-s> <Esc>:call Vimteractive_sendline(getline('.'))<CR>a
 
 " Control-S in visual mode to send multiple lines
-vnoremap <silent> <C-s> <Esc>:call Vimteractive_send(getreg('*'))<CR>
+vnoremap <silent> <C-s> <Esc>:call Vimteractive_sendlines(getline("'<","'>"))<CR>
 
 
 " Plugin commands
 " ===============
 
-" Send a general command to the terminal buffer
-function! Vimteractive_send(expr)
-    call term_sendkeys(g:vimteractive_buffer_name, a:expr)
+" Send a line to the terminal buffer
+function! Vimteractive_sendline(line)
+    call term_sendkeys(g:vimteractive_buffer_name, a:line."\n")
+endfunction
+
+" Send list of lines one at a time to the terminal buffer
+function! Vimteractive_sendlines(lines)
+    for l in a:lines
+        call Vimteractive_sendline(l)
+        " Pause to let prompt catch up
+        sleep 10m
+    endfor
 endfunction
 
 " Start a vimteractive session
