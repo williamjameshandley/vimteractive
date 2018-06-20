@@ -36,15 +36,15 @@ However, I can't stand typing into anything other than vim. Anywhere else, my sc
 
 Create a python file `vimteractive_test.py` with the following content:
 ```python
-    import matplotlib.pyplot as plt
-    import numpy
+import matplotlib.pyplot as plt
+import numpy
 
-    fig, ax = plt.subplots()
-    x = numpy.linspace(-2,2,1000)
-    y = x**3-x
-    ax.plot(x, y)
-    ax.set_xlabel('$x$')
-    ax.set_ylabel('$y$')
+fig, ax = plt.subplots()
+x = numpy.linspace(-2,2,1000)
+y = x**3-x
+ax.plot(x, y)
+ax.set_xlabel('$x$')
+ax.set_ylabel('$y$')
 ```
 
 Now start an ipython interpreter in vim with `:Iipython`. You should see a
