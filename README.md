@@ -42,7 +42,9 @@ ax.plot(x, y)
 ax.set_xlabel('$x$')
 ax.set_ylabel('$y$')
 ```
-Now start an ipython interpreter in vim with `:Iipython`. You should see a preview window open on the left with your ipython prompt. Position your cursor over the first line, and press control-s `<C-s>`. You should see this line now appear in the first prompt of the preview window. Do the same with the second and fourth lines. At the fourth line, you should see a figure appear once it's constructed with `plt.subplots()`. Continue by sending lines to the interpreter. You can send multiple lines by doing a visual selection and pressing `<C-s>`.
+Now start an ipython interpreter in vim with `:Iipython`. You should see a preview window open above with your ipython prompt. Position your cursor over the first line of `vimteractive_test.py`, and press control-s `<C-s>`. You should see this line now appear in the first prompt of the preview window. Do the same with the second and fourth lines. At the fourth line, you should see a figure appear once it's constructed with `plt.subplots()`. Continue by sending lines to the interpreter. You can send multiple lines by doing a visual selection and pressing `<C-s>`.
+
+If you switch windows with `<C-W>k`, you will see the terminal buffer switch to a more usual looking normal-mode buffer, from which you can perform traditional normal mode commands. However, if you try to insert, you will enter the terminal, and be able to enter commands interactively into the prompt as if you had run it in the command line. You can save this buffer if you wish to a new file if it contains valuable output
 
 In general, interpreters are started with `:I<interpreter name>` for example `:Imaple` or `:Ibash`,
 and you can send line(s) of code from a text file to an interpreter in the preview window with `<C-s>`

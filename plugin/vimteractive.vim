@@ -11,12 +11,14 @@
 
 " The name of the vimteractive terminal buffer
 let g:vimteractive_buffer_name = "Vimteractive"
+let g:vimteractive_terminal = ''
+
 
 " User commands
 " =============
 
 " Commands to start a session
-command!  Iipython :call Vimteractive_session('ipython --simple-prompt') 
+command!  Iipython :call Vimteractive_session('ipython --simple-prompt --matplotlib') 
 command!  Ipython  :call Vimteractive_session('python')  
 command!  Ibash    :call Vimteractive_session('bash')
 command!  Imaple   :call Vimteractive_session('maple -c "interface(errorcursor=false);"')
@@ -31,7 +33,6 @@ inoremap <silent> <C-s> <Esc>:call Vimteractive_send(getline('.')."\n")<CR>a
 vnoremap <silent> <C-s> <Esc>:call Vimteractive_send(getreg('*'))<CR>
 
 
-
 " Plugin commands
 " ===============
 
@@ -42,29 +43,40 @@ endfunction
 
 " Start a vimteractive session
 function! Vimteractive_session(terminal)
-    if has('terminal') 
-        if bufnr(g:vimteractive_buffer_name) == -1
-            " If no vimteractive buffer exists:
-            " Start the terminal
-            let job = term_start(a:terminal, {"term_name":g:vimteractive_buffer_name})
-            " Unlist the buffer
-            set nobuflisted
-            " Return to the previous window
-            wincmd p
-        elseif bufwinnr(g:vimteractive_buffer_name) == -1
-            " Else if vimteractive buffer not open:
-            " Split the window
-            split
-            " switch the top window to the vimteractive buffer
-            execute ":b " . g:vimteractive_buffer_name
-            " Return to the previous window
-            wincmd p
-        else
-            " Else if throw error
-            echoerr "vimteractive already open. Quit before opening a new buffer"
-        endif
-    else
+
+    if has('terminal') == 0
         echoerr "Your version of vim is not compiled with +terminal. Cannot use vimteractive"
+        return
+    endif
+
+    if g:vimteractive_terminal != '' && g:vimteractive_terminal != a:terminal
+        echoerr "Cannot run: " . a:terminal " Alreading running: " . g:vimteractive_terminal
+        return
+    endif
+
+    if bufnr(g:vimteractive_buffer_name) == -1
+        " If no vimteractive buffer exists:
+        " Start the terminal
+        let job = term_start(a:terminal, {"term_name":g:vimteractive_buffer_name})
+        " Unlist the buffer
+        set nobuflisted
+        " Return to the previous window
+        wincmd p
+        " Name the current terminal
+        let g:vimteractive_terminal = a:terminal
+
+    elseif bufwinnr(g:vimteractive_buffer_name) == -1
+        " Else if vimteractive buffer not open:
+        " Split the window
+        split
+        " switch the top window to the vimteractive buffer
+        execute ":b " . g:vimteractive_buffer_name
+        " Return to the previous window
+        wincmd p
+
+    else
+        " Else if throw error
+        echoerr "vimteractive already open. Quit before opening a new buffer"
     endif
 endfunction
 
