@@ -4,7 +4,7 @@
 
 
 ==============================================================================
-CONTENTS                                                  *syntastic-contents*
+CONTENTS                                               *vimteractive-contents*
 
     1.Intro........................................|vimteractive-intro|
     2.Usage........................................|vimteractive-usage|
