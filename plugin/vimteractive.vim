@@ -58,11 +58,6 @@ function! Vimteractive_session(terminal)
         return
     endif
 
-    if g:vimteractive_terminal != '' && g:vimteractive_terminal != a:terminal
-        echoerr "Cannot run: " . a:terminal " Alreading running: " . g:vimteractive_terminal
-        return
-    endif
-
     if bufnr(g:vimteractive_buffer_name) == -1
         " If no vimteractive buffer exists:
         " Start the terminal
@@ -71,8 +66,6 @@ function! Vimteractive_session(terminal)
         set nobuflisted
         " Return to the previous window
         wincmd p
-        " Name the current terminal
-        let g:vimteractive_terminal = a:terminal
 
     elseif bufwinnr(g:vimteractive_buffer_name) == -1
         " Else if vimteractive buffer not open:
