@@ -5,12 +5,13 @@ Vimteractive was inspired by the workflow of the [vim-ipython](https://github.co
 
 This plugin is designed to extend a subset of the functionality of vim-ipython to other interpreters (including ipython). It is based around the unix philosophy of ["do one thing and do it well"](https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well). It aims to provide a robust and simple link from between text files and interactive interpreters. Vimteractive will never aim to do things like autocompletion, leaving that to other, more developed tools such as [YouCompleteMe](https://github.com/Valloric/YouCompleteMe).
 
-At the moment, vimteractive supports the following interpreters:
+The activating commands are 
+- ipython (:Iipython) 
+- python  (:Ipython) 
+- maple   (:Imaple)
+- bash    (:Ibash)
 
-- python
-- ipython
-- maple
-- bash
+Commands may be sent from a text file to the chosen terminal using `CTRL-S`. 
 
 ## Installation
 - Installation should be relatively painless via the usual routes such as [Vundle](https://github.com/VundleVim/Vundle.vim) or [Pathogen](https://github.com/tpope/vim-pathogen)
@@ -29,25 +30,57 @@ However, I can't stand typing into anything other than vim. Anywhere else, my sc
 [Many Projects](#similar-projects) achieve this with a varying level of functionality. Vimteractive aims to create the simplest tool for sending things from text to interpreter, and making it easy to add additional interpreters. In particular, my main aim in starting this was to get a vim-ipython like interface to the command line [maple](https://www.maplesoft.com/).
 
 
-## Example Usage
+## Usage
+
+### Example usage:
+
 Create a python file `vimteractive_test.py` with the following content:
 ```python
-import matplotlib.pyplot as plt
-import numpy
-    
-fig, ax = plt.subplots()
-x = numpy.linspace(-2,2,1000)
-y = x**3-x
-ax.plot(x, y)
-ax.set_xlabel('$x$')
-ax.set_ylabel('$y$')
+    import matplotlib.pyplot as plt
+    import numpy
+
+    fig, ax = plt.subplots()
+    x = numpy.linspace(-2,2,1000)
+    y = x**3-x
+    ax.plot(x, y)
+    ax.set_xlabel('$x$')
+    ax.set_ylabel('$y$')
 ```
-Now start an ipython interpreter in vim with `:Iipython`. You should see a preview window open above with your ipython prompt. Position your cursor over the first line of `vimteractive_test.py`, and press control-s `<C-s>`. You should see this line now appear in the first prompt of the preview window. Do the same with the second and fourth lines. At the fourth line, you should see a figure appear once it's constructed with `plt.subplots()`. Continue by sending lines to the interpreter. You can send multiple lines by doing a visual selection and pressing `<C-s>`.
 
-If you switch windows with `<C-W>k`, you will see the terminal buffer switch to a more usual looking normal-mode buffer, from which you can perform traditional normal mode commands. However, if you try to insert, you will enter the terminal, and be able to enter commands interactively into the prompt as if you had run it in the command line. You can save this buffer if you wish to a new file if it contains valuable output
+Now start an ipython interpreter in vim with `:Iipython`. You should see a
+preview window open above with your ipython prompt. Position your cursor over
+the first line of `vimteractive_test.py`, and press  `CTRL-S`. You should see this
+line now appear in the first prompt of the preview window. Do the same with
+the second and fourth lines. At the fourth line, you should see a figure
+appear once it's constructed with `plt.subplots()`. Continue by sending lines to
+the interpreter. You can send multiple lines by doing a visual selection and
+pressing `CTRL-S`.
 
-In general, interpreters are started with `:I<interpreter name>` for example `:Imaple` or `:Ibash`,
-and you can send line(s) of code from a text file to an interpreter in the preview window with `<C-s>`
+If you switch windows with `CTRL-W+k`, you will see the terminal buffer switch
+to a more usual looking normal-mode buffer, from which you can perform
+traditional normal mode commands. However, if you try to insert, you will
+enter the terminal, and be able to enter commands interactively into the
+prompt as if you had run it in the command line. You can save this buffer if
+you wish to a new file if it contains valuable output
+
+### Supported terminals
+
+- :Iipython Activate an ipython terminal
+- :Ipython  Activate a python terminal
+- :Imaple   Activate a maple terminal
+- :Ibash    Activate a bash terminal
+
+### Sending commands
+
+`CTRL-S` sends lines of text to the interpreter in a mode-dependent manner:
+
+In Normal mode, `CTRL-S` sends the line currently occupied by the cursor
+the terminal.
+
+In Insert mode, `CTRL-S` sends the line currently being edited, and then
+returns to insert mode at the same location.
+
+In Visual mode, `CTRL-S` sends all currently selected lines to the terminal.
 
 ## Extending functionality
 This project is very much in an alpha phase, so if you have any issues that arise on your system, feel free to [contact me](mailto:williamjameshandley@gmail.com).

@@ -7,7 +7,7 @@
 CONTENTS                                                  *syntastic-contents*
 
     1.Intro........................................|vimteractive-intro|
-    2.Usage........................................|vimteractive-example-usage|
+    2.Usage........................................|vimteractive-usage|
     3.Extending functionality......................|vimteractive-extending|
     4.About........................................|vimteractive-about|
     5.License......................................|vimteractive-license|
@@ -22,15 +22,19 @@ Vimteractive was inspired by the workflow of the vim-ipython plugin:
 This plugin is designed to extend a subset of the functionality of vimteractive
 to other interpreters (including ipython). 
 
-At the moment, vimteractive supports the following interpreters:
+The activating commands are 
+- ipython |:Iipython| 
+- python  |:Ipython| 
+- maple   |:Imaple|
+- bash    |:Ibash|
 
-- python
-- ipython
-- maple
-- bash
+Commands may be sent from a text file to the chosen terminal using CTRL-S. 
+See |v_CTRL_S| for more details.
 
 ==============================================================================
-2. Example Usage                                  *vimteractive-example-usage*
+2. Usage                                                  *vimteractive-usage*
+
+Example usage:
 
 Create a python file vimteractive_test.py with the following content:
 
@@ -45,21 +49,48 @@ Create a python file vimteractive_test.py with the following content:
     ax.set_ylabel('$y$')
 
 Now start an ipython interpreter in vim with :Iipython. You should see a
-terminal window open in a split window. Position your cursor
-over the first line, and press control-s <C-s>. You should see this line now
-appear in the first prompt of the preview window. Do the same with the second
-and fourth lines. At the fourth line, you should see a figure appear once it's
-constructed with plt.subplots(`. Continue by sending lines to the
-interpreter. You can send multiple lines by doing a visual selection and
-pressing <C-s>.
+preview window open above with your ipython prompt. Position your cursor over
+the first line of vimteractive_test.py, and press  CTRL-S. You should see this
+line now appear in the first prompt of the preview window. Do the same with
+the second and fourth lines. At the fourth line, you should see a figure
+appear once it's constructed with plt.subplots(). Continue by sending lines to
+the interpreter. You can send multiple lines by doing a visual selection and
+pressing CTRL-S.
 
-In general, interpreters are started with :I<interpreter name> for example
-:Imaple or :Ibash, and you can send line(s) of code from a text file to an
-interpreter in the preview window with <C-s>.
+If you switch windows with CTRL-W k, you will see the terminal buffer switch
+to a more usual looking normal-mode buffer, from which you can perform
+traditional normal mode commands. However, if you try to insert, you will
+enter the terminal, and be able to enter commands interactively into the
+prompt as if you had run it in the command line. You can save this buffer if
+you wish to a new file if it contains valuable output
+
+
+Supported terminals                                   *vimteractive-terminals*
+*:Iipython* Activate an ipython terminal
+*:Ipython*  Activate a python terminal
+*:Imaple*   Activate a maple terminal
+*:Ibash*    Activate a bash terminal
+
+Sending commands                                                    *v_CTRL_S*
+
+CTRL-S sends lines of text to the interpreter in a mode-dependent manner:
+
+In |Normal-mode|, CTRL-S sends the line currently occupied by the cursor
+the terminal.
+
+In |Insert-mode|, CTRL-S sends the line currently being edited, and then
+returns to insert mode at the same location.
+
+In |Visual-mode|, CTRL-S sends all currently selected lines to the terminal.
 
 
 ==============================================================================
 3. Extending functionality                            *vimteractive-extending*
+
+This project is very much in an alpha phase, so if you have any issues that
+arise on your system, feel free to contact me:
+
+    williamjameshandley@gmail.com.
 
 In many cases, you simply need to add an extra I<interpreter name> command to
 plugin/vimteractive.vim
@@ -69,6 +100,7 @@ plugin/vimteractive.vim
 4. About                                          *vimteractive-functionality*
 
 The core maintainer of vimteractive is:
+
     Will Handley (GitHub: williamjameshandley)
 
 Find the latest version of vimteractive at:
