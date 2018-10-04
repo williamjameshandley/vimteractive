@@ -94,3 +94,6 @@ If you want to add additional interpreters, in many cases, you simply need to ad
 - [vim-slime](https://github.com/jpalardy/vim-slime)
 - [tslime_ipython](https://github.com/eldridgejm/tslime_ipython)
 - [vipy](https://github.com/johndgiese/vipy)
+
+## To do
+- [ ] shutdown & restart more cleanly
