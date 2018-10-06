@@ -9,18 +9,24 @@
 " Plugin variables
 " ================
 
-" The name of the vimteractive terminal buffer
+" Name of the vimteractive terminal buffer
 let g:vimteractive_buffer_name = "Vimteractive"
 let g:vimteractive_terminal = ''
+
+" Variables for running the various sessions
+let g:vimteractive_ipython_command = 'ipython --matplotlib --no-autoindent'
+let g:vimteractive_python_command = 'python'
+let g:vimteractive_bash_command = 'bash'
+let g:vimteractive_maple_command = 'maple -c "interface(errorcursor=false);"'
 
 " User commands
 " =============
 
 " Commands to start a session
-command!  Iipython :call Vimteractive_session('ipython --matplotlib --no-autoindent') 
-command!  Ipython  :call Vimteractive_session('python')  
-command!  Ibash    :call Vimteractive_session('bash')
-command!  Imaple   :call Vimteractive_session('maple -c "interface(errorcursor=false);"')
+command!  Iipython :call Vimteractive_session(g:vimteractive_ipython_command) 
+command!  Ipython  :call Vimteractive_session(g:vimteractive_python_command)  
+command!  Ibash    :call Vimteractive_session(g:vimteractive_bash_command)
+command!  Imaple   :call Vimteractive_session(g:vimteractive_maple_command)
 
 " Control-S in normal mode to send current line
 noremap  <silent> <C-s>      :call Vimteractive_sendline(getline('.'))<CR>
@@ -30,6 +36,9 @@ inoremap <silent> <C-s> <Esc>:call Vimteractive_sendline(getline('.'))<CR>a
 
 " Control-S in visual mode to send multiple lines
 vnoremap <silent> <C-s> <Esc>:call Vimteractive_sendlines(getline("'<","'>"))<CR>
+
+" Alt-S in normal mode to send all lines up to this point
+noremap <silent> <A-s> :call Vimteractive_sendlines(getline(1,"'>"))<CR>
 
 
 " Plugin commands
@@ -44,8 +53,7 @@ endfunction
 function! Vimteractive_sendlines(lines)
     for l in a:lines
         call Vimteractive_sendline(l)
-        " Pause to let prompt catch up
-        sleep 50m
+        call term_wait(g:vimteractive_buffer_name, "50m")
     endfor
 endfunction
 
@@ -97,6 +105,3 @@ autocmd BufEnter * if &buftype == 'terminal' | call feedkeys("\<C-W>N")  | endif
 
 " Switch back to terminal mode when exiting
 autocmd BufLeave * if &buftype == 'terminal' | silent! normal! i  | endif
-
-" Deactivate global variable on deletion
-autocmd BufDelete,QuitPre * if &buftype == 'terminal' | let g:vimteractive_terminal='' | execute ":bd " . g:vimteractive_buffer_name  | endif
