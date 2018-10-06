@@ -13,12 +13,11 @@
 let g:vimteractive_buffer_name = "Vimteractive"
 let g:vimteractive_terminal = ''
 
-
 " User commands
 " =============
 
 " Commands to start a session
-command!  Iipython :call Vimteractive_session('ipython --simple-prompt --matplotlib') 
+command!  Iipython :call Vimteractive_session('ipython --matplotlib --no-autoindent') 
 command!  Ipython  :call Vimteractive_session('python')  
 command!  Ibash    :call Vimteractive_session('bash')
 command!  Imaple   :call Vimteractive_session('maple -c "interface(errorcursor=false);"')
@@ -46,7 +45,7 @@ function! Vimteractive_sendlines(lines)
     for l in a:lines
         call Vimteractive_sendline(l)
         " Pause to let prompt catch up
-        sleep 10m
+        sleep 50m
     endfor
 endfunction
 
@@ -58,6 +57,11 @@ function! Vimteractive_session(terminal)
         return
     endif
 
+    if g:vimteractive_terminal != '' && g:vimteractive_terminal != a:terminal
+        echoerr "Cannot run: " . a:terminal " Alreading running: " . g:vimteractive_terminal
+        return
+    endif
+
     if bufnr(g:vimteractive_buffer_name) == -1
         " If no vimteractive buffer exists:
         " Start the terminal
@@ -66,6 +70,8 @@ function! Vimteractive_session(terminal)
         set nobuflisted
         " Return to the previous window
         wincmd p
+        " Name the current terminal
+        let g:vimteractive_terminal = a:terminal
 
     elseif bufwinnr(g:vimteractive_buffer_name) == -1
         " Else if vimteractive buffer not open:
@@ -91,3 +97,6 @@ autocmd BufEnter * if &buftype == 'terminal' | call feedkeys("\<C-W>N")  | endif
 
 " Switch back to terminal mode when exiting
 autocmd BufLeave * if &buftype == 'terminal' | silent! normal! i  | endif
+
+" Deactivate global variable on deletion
+autocmd BufDelete,QuitPre * if &buftype == 'terminal' | let g:vimteractive_terminal='' | execute ":bd " . g:vimteractive_buffer_name  | endif
