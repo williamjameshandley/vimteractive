@@ -14,11 +14,17 @@ The activating commands are
 Commands may be sent from a text file to the chosen terminal using `CTRL-S`. 
 
 ## Installation
-- Installation should be relatively painless via the usual routes such as [Vundle](https://github.com/VundleVim/Vundle.vim) or [Pathogen](https://github.com/tpope/vim-pathogen)
+To use the key-bindings, you should first disable the `CTRL-S` default, which is a terminal command to freeze the output. You can disable this by putting
+```bash
+stty -ixon
+```
+into your `.bashrc`
 
--  If you're masochistic enough to use [Arch](https://wiki.archlinux.org/index.php/Arch_Linux)/[Manjaro](https://manjaro.org/), it is also installable via the [aur](https://aur.archlinux.org/packages/vim-vimteractive)
+Installation should be relatively painless via the usual routes such as [Vundle](https://github.com/VundleVim/Vundle.vim), [Pathogen](https://github.com/tpope/vim-pathogen) or the vim 8 native package manager (`:help packages`)
 
-- For old-school users, there is also a package on the [vim repo](https://www.vim.org/scripts/script.php?script_id=5687)
+If you're masochistic enough to use [Arch](https://wiki.archlinux.org/index.php/Arch_Linux)/[Manjaro](https://manjaro.org/), it is also installable via the [aur](https://aur.archlinux.org/packages/vim-vimteractive)
+
+For old-school users, there is also a package on the [vim repo](https://www.vim.org/scripts/script.php?script_id=5687)
 
 
 ## Motivation
@@ -82,6 +88,8 @@ returns to insert mode at the same location.
 
 In Visual mode, `CTRL-S` sends all currently selected lines to the terminal.
 
+`ALT-S` sends all lines from the start to the current line.
+
 ## Extending functionality
 This project is very much in an alpha phase, so if you have any issues that arise on your system, feel free to [contact me](mailto:williamjameshandley@gmail.com).
 
@@ -97,3 +105,8 @@ If you want to add additional interpreters, in many cases, you simply need to ad
 
 ## To do
 - [ ] shutdown & restart more cleanly
+
+## Changelist
+- v1.1 : 
+    - [Bracketed paste](https://cirw.in/blog/bracketed-paste) seems to fix most of ipython issues.
+    - `ALT-S` sends all lines from start to current line.

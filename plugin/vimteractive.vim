@@ -38,7 +38,7 @@ inoremap <silent> <C-s> <Esc>:call Vimteractive_sendline(getline('.'))<CR>a
 vnoremap <silent> <C-s> <Esc>:call Vimteractive_sendlines(getline("'<","'>"))<CR>
 
 " Alt-S in normal mode to send all lines up to this point
-noremap <silent> <A-s> :call Vimteractive_sendlines(getline(1,"'>"))<CR>
+noremap <silent> <A-s> :call Vimteractive_sendlines(getline(1,'.'))<CR>
 
 
 " Plugin commands
@@ -51,10 +51,7 @@ endfunction
 
 " Send list of lines one at a time to the terminal buffer
 function! Vimteractive_sendlines(lines)
-    for l in a:lines
-        call Vimteractive_sendline(l)
-        call term_wait(g:vimteractive_buffer_name, "50m")
-    endfor
+    call term_sendkeys(g:vimteractive_buffer_name,"[200~" . join(a:lines, "\n") . "[201~\n")
 endfunction
 
 " Start a vimteractive session

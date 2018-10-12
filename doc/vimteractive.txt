@@ -83,6 +83,7 @@ returns to insert mode at the same location.
 
 In |Visual-mode|, CTRL-S sends all currently selected lines to the terminal.
 
+ALT-S sends all lines from the start to the current line.
 
 ==============================================================================
 3. Extending functionality                            *vimteractive-extending*
