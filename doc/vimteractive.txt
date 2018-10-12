@@ -34,6 +34,14 @@ See |v_CTRL_S| for more details.
 ==============================================================================
 2. Usage                                                  *vimteractive-usage*
 
+To use the key-bindings, you should first disable the CTRL-S default, which is
+a terminal command to freeze the output. You can disable this by putting
+
+stty -ixon
+
+into your .bashrc
+
+------------------------------------------------------------------------------
 Example usage:
 
 Create a python file vimteractive_test.py with the following content:
