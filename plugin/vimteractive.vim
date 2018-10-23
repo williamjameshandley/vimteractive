@@ -49,7 +49,7 @@ function! Vimteractive_sendline(line)
     call term_sendkeys(g:vimteractive_buffer_name, a:line."\n")
 endfunction
 
-" Send list of lines one at a time to the terminal buffer
+" Send list of lines to the terminal buffer, surrounded with a bracketed paste
 function! Vimteractive_sendlines(lines)
     call term_sendkeys(g:vimteractive_buffer_name,"[200~" . join(a:lines, "\n") . "[201~\n")
 endfunction
@@ -69,14 +69,13 @@ function! Vimteractive_session(terminal)
 
     if bufnr(g:vimteractive_buffer_name) == -1
         " If no vimteractive buffer exists:
+        "
         " Start the terminal
         let job = term_start(a:terminal, {"term_name":g:vimteractive_buffer_name})
-        " Unlist the buffer
-        set nobuflisted
-        " Return to the previous window
-        wincmd p
-        " Name the current terminal
-        let g:vimteractive_terminal = a:terminal
+        set nobuflisted                          " Unlist the buffer
+        set nonumber                             " Turn off line numbering if off
+        wincmd p                                 " Return to the previous window
+        let g:vimteractive_terminal = a:terminal " Name the current terminal
 
     elseif bufwinnr(g:vimteractive_buffer_name) == -1
         " Else if vimteractive buffer not open:
