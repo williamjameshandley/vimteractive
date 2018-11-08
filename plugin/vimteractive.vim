@@ -46,7 +46,7 @@ noremap <silent> <A-s> :call Vimteractive_sendlines(getline(1,'.'))<CR>
 
 " Send a line to the terminal buffer
 function! Vimteractive_sendline(line)
-    call term_sendkeys(g:vimteractive_buffer_name, a:line."\n")
+    call term_sendkeys(g:vimteractive_buffer_name,"[200~" . a:line . "[201~\n")
 endfunction
 
 " Send list of lines to the terminal buffer, surrounded with a bracketed paste
@@ -69,7 +69,6 @@ function! Vimteractive_session(terminal)
 
     if bufnr(g:vimteractive_buffer_name) == -1
         " If no vimteractive buffer exists:
-        "
         " Start the terminal
         let job = term_start(a:terminal, {"term_name":g:vimteractive_buffer_name})
         set nobuflisted                          " Unlist the buffer
