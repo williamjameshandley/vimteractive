@@ -1,6 +1,6 @@
-===========================================================================
-vimteractive: send commands from text files to interactive programs via vim 
-===========================================================================
+============
+Vimteractive
+============
 :vimteractive: send commands from text files to interactive programs via vim 
 :Author: Will Handley
 :Version: 1.2
