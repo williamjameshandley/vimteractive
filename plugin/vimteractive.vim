@@ -17,6 +17,7 @@ let g:vimteractive_terminal = ''
 let g:vimteractive_ipython_command = 'ipython --matplotlib --no-autoindent'
 let g:vimteractive_python_command = 'python'
 let g:vimteractive_bash_command = 'bash'
+let g:vimteractive_zsh_command = 'zsh'
 let g:vimteractive_maple_command = 'maple -c "interface(errorcursor=false);"'
 
 " User commands
@@ -26,6 +27,7 @@ let g:vimteractive_maple_command = 'maple -c "interface(errorcursor=false);"'
 command!  Iipython :call Vimteractive_session(g:vimteractive_ipython_command) 
 command!  Ipython  :call Vimteractive_session(g:vimteractive_python_command)  
 command!  Ibash    :call Vimteractive_session(g:vimteractive_bash_command)
+command!  Izsh     :call Vimteractive_session(g:vimteractive_zsh_command)
 command!  Imaple   :call Vimteractive_session(g:vimteractive_maple_command)
 
 " Control-S in normal mode to send current line

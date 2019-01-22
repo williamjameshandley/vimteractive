@@ -21,8 +21,12 @@ interactive interpreters. Vimteractive will never aim to do things like
 autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__.
 
-The activating commands are - ipython ``:Iipython`` - python
-``:Ipython`` - maple ``:Imaple`` - bash ``:Ibash``
+The activating commands are
+- ipython ``:Iipython``
+- python ``:Ipython``
+- maple ``:Imaple``
+- bash ``:Ibash``
+- zsh ``:Izsh``
 
 Commands may be sent from a text file to the chosen terminal using
 ``CTRL-S``.
@@ -120,6 +124,7 @@ Supported terminals
 -  ``:Ipython`` Activate a python terminal
 -  ``:Imaple`` Activate a maple terminal
 -  ``:Ibash`` Activate a bash terminal
+-  ``:Izsh`` Activate a zsh terminal
 
 Sending commands
 ~~~~~~~~~~~~~~~~

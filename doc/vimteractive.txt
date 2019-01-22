@@ -27,6 +27,7 @@ The activating commands are
 - python  |:Ipython| 
 - maple   |:Imaple|
 - bash    |:Ibash|
+- zsh     |:Izsh|
 
 Commands may be sent from a text file to the chosen terminal using CTRL-S. 
 See |v_CTRL_S| for more details.
@@ -78,6 +79,7 @@ Supported terminals                                   *vimteractive-terminals*
 *:Ipython*  Activate a python terminal
 *:Imaple*   Activate a maple terminal
 *:Ibash*    Activate a bash terminal
+*:Izsh*     Activate a zsh terminal
 
 Sending commands                                                    *v_CTRL_S*
 
