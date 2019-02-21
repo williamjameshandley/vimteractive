@@ -34,6 +34,8 @@ Commands may be sent from a text file to the chosen terminal using
 Installation
 ------------
 
+Since this package leverages the native vim interactive terminal, it is only compatible with vim 8 or greater.
+
 To use the key-bindings, you should first disable the ``CTRL-S``
 default, which is a terminal command to freeze the output. You can
 disable this by putting
