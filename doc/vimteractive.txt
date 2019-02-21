@@ -32,6 +32,10 @@ The activating commands are
 Commands may be sent from a text file to the chosen terminal using CTRL-S. 
 See |v_CTRL_S| for more details.
 
+Since this package leverages the native vim interactive terminal, it is 
+only compatible with vim 8 or greater.
+
+
 ==============================================================================
 2. Usage                                                  *vimteractive-usage*
 
