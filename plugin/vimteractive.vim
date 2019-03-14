@@ -10,7 +10,7 @@
 " ================
 
 " Name of the vimteractive terminal buffer
-let g:vimteractive_buffer_name = "Vimteractive"
+let g:vimteractive_buffer_name = "vimteractive_buffer"
 let g:vimteractive_terminal = ''
 
 " Variables for running the various sessions
