@@ -22,6 +22,7 @@ autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__.
 
 The activating commands are
+
 - ipython ``:Iipython``
 - python ``:Ipython``
 - maple ``:Imaple``
