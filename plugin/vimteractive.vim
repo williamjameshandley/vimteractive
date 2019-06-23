@@ -76,6 +76,7 @@ function! Vimteractive_session(terminal)
         " Start the terminal
         let job = term_start(a:terminal, {"term_name":g:vimteractive_buffer_name})
         set nobuflisted                          " Unlist the buffer
+        set norelativenumber                     " Turn off line numbering if off
         set nonumber                             " Turn off line numbering if off
         wincmd p                                 " Return to the previous window
         let g:vimteractive_terminal = a:terminal " Name the current terminal
