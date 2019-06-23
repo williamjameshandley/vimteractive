@@ -25,6 +25,7 @@ The activating commands are
 
 - ipython ``:Iipython``
 - python ``:Ipython``
+- julia ``:Ijulia``
 - maple ``:Imaple``
 - bash ``:Ibash``
 - zsh ``:Izsh``
