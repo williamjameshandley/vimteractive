@@ -126,6 +126,7 @@ Supported terminals
 
 -  ``:Iipython`` Activate an ipython terminal
 -  ``:Ipython`` Activate a python terminal
+-  ``:Ijulia`` Activate a julia terminal
 -  ``:Imaple`` Activate a maple terminal
 -  ``:Ibash`` Activate a bash terminal
 -  ``:Izsh`` Activate a zsh terminal
