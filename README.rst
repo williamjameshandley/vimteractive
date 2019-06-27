@@ -16,7 +16,7 @@ This plugin is designed to extend a subset of the functionality of
 vim-ipython to other interpreters (including ipython). It is based
 around the unix philosophy of `"do one thing and do it
 well" <https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well>`__.
-It aims to provide a robust and simple link from between text files and
+It aims to provide a robust and simple link between text files and
 interactive interpreters. Vimteractive will never aim to do things like
 autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__.
