@@ -61,6 +61,8 @@ it is also installable via the
 For old-school users, there is also a package on the `vim
 repo <https://www.vim.org/scripts/script.php?script_id=5687>`__
 
+Depending on your package manager, you may need to run ``:helptags <path/to/repo/docs>`` to install the help documentation
+
 Motivation
 ----------
 
@@ -178,9 +180,9 @@ To do
 
 Changelist
 ----------
-:v1.6: [CtrlP bugfix](https://github.com/williamjameshandley/vimteractive/pull/4)
+:v1.6: CtrlP `bugfix <https://github.com/williamjameshandley/vimteractive/pull/4>`__
 :v1.5: Added julia support
-:v1.4: [Buffer rename](https://github.com/williamjameshandley/vimteractive/pull/3)
+:v1.4: `Buffer rename <https://github.com/williamjameshandley/vimteractive/pull/3>`_
 :v1.3: Added zsh support
 :v1.2:
    - no line numbers in terminal window
