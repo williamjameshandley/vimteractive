@@ -104,4 +104,4 @@ endfunction
 autocmd BufEnter * if &buftype == 'terminal' | call feedkeys("\<C-W>N")  | endif
 
 " Switch back to terminal mode when exiting
-autocmd BufLeave * if &buftype == 'terminal' | silent! normal! i  | endif
+autocmd BufLeave * if &buftype == 'terminal' | execute "silent! normal! i"  | endif
