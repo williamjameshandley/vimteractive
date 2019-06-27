@@ -154,8 +154,7 @@ Extending functionality
 -----------------------
 
 This project is very much in an alpha phase, so if you have any issues
-that arise on your system, feel free to `contact
-me <mailto:williamjameshandley@gmail.com>`__.
+that arise on your system, feel free to `leave an issue <https://github.com/williamjameshandley/vimteractive/issues/new>`__.
 
 If you want to add additional interpreters, in many cases, you simply
 need to add an extra ``I<interpreter name>`` command to
@@ -173,10 +172,6 @@ Similar projects
 -  `tslime_ipython <https://github.com/eldridgejm/tslime_ipython>`__
 -  `vipy <https://github.com/johndgiese/vipy>`__
 
-To do
------
-
--  [ ] shutdown & restart more cleanly
 
 Changelist
 ----------
