@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim 
 :Author: Will Handley
-:Version: 1.5
+:Version: 1.6
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -178,7 +178,10 @@ To do
 
 Changelist
 ----------
-
+:v1.6: [CtrlP bugfix](https://github.com/williamjameshandley/vimteractive/pull/4)
+:v1.5: Added julia support
+:v1.4: [Buffer rename](https://github.com/williamjameshandley/vimteractive/pull/3)
+:v1.3: Added zsh support
 :v1.2:
    - no line numbers in terminal window
 :v1.1:
