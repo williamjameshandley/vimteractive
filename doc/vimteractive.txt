@@ -82,7 +82,7 @@ you wish to a new file if it contains valuable output
 Supported terminals                                   *vimteractive-terminals*
 *:Iipython* Activate an ipython terminal
 *:Ipython*  Activate a python terminal
-*:Ijulia*  Activate a julia terminal
+*:Ijulia*   Activate a julia terminal
 *:Imaple*   Activate a maple terminal
 *:Ibash*    Activate a bash terminal
 *:Izsh*     Activate a zsh terminal
