@@ -20,6 +20,7 @@ let g:vimteractive_bash_command = 'bash'
 let g:vimteractive_zsh_command = 'zsh'
 let g:vimteractive_julia_command = 'julia'
 let g:vimteractive_maple_command = 'maple -c "interface(errorcursor=false);"'
+let g:vimteractive_clojure_command = 'clojure'
 
 " User commands
 " =============
@@ -31,6 +32,7 @@ command!  Ibash    :call Vimteractive_session(g:vimteractive_bash_command)
 command!  Izsh     :call Vimteractive_session(g:vimteractive_zsh_command)
 command!  Ijulia   :call Vimteractive_session(g:vimteractive_julia_command)
 command!  Imaple   :call Vimteractive_session(g:vimteractive_maple_command)
+command!  Iclojure :call Vimteractive_session(g:vimteractive_clojure_command)
 
 " Control-S in normal mode to send current line
 noremap  <silent> <C-s>      :call Vimteractive_sendline(getline('.'))<CR>
