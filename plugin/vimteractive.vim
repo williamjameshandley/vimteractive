@@ -22,6 +22,8 @@ endif
 
 let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent'
 let g:vimteractive_commands.python = 'python'
+let g:vimteractive_commands.python2 = 'python2'
+let g:vimteractive_commands.python3 = 'python3'
 let g:vimteractive_commands.bash = 'bash'
 let g:vimteractive_commands.zsh = 'zsh'
 let g:vimteractive_commands.julia = 'julia'
