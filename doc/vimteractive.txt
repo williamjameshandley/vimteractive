@@ -73,7 +73,7 @@ Create a python file "test.py" with the following content:
 
 Now start an ipython interpreter in vim with :Iipython. You should see a
 preview window open above with your ipython prompt. Position your cursor over
-the first line of vimteractive_test.py, and press  CTRL-S. You should see this
+the first line of test.py, and press  CTRL-S. You should see this
 line now appear in the first prompt of the preview window. Do the same with
 the second and fourth lines. At the fourth line, you should see a figure
 appear once it's constructed with plt.subplots(). Continue by sending lines to
