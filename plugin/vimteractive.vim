@@ -21,8 +21,8 @@ if !has_key(g:, 'vimteractive_commands')
 endif
 
 let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent'
-let g:vimteractive_commands.ipython2 = 'ipython3 --matplotlib --no-autoindent'
-let g:vimteractive_commands.ipython3 = 'ipython2 --matplotlib --no-autoindent'
+let g:vimteractive_commands.ipython2 = 'ipython2 --matplotlib --no-autoindent'
+let g:vimteractive_commands.ipython3 = 'ipython3 --matplotlib --no-autoindent'
 let g:vimteractive_commands.python = 'python'
 let g:vimteractive_commands.python2 = 'python2'
 let g:vimteractive_commands.python3 = 'python3'
