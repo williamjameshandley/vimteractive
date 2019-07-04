@@ -12,98 +12,60 @@
 " Name of the vimteractive terminal buffer
 let g:vimteractive_buffer_name = "vimteractive_buffer"
 let g:vimteractive_terminal = ''
+let g:current_term_type = ''
 
 " Variables for running the various sessions
-let g:vimteractive_ipython_command = 'ipython --matplotlib --no-autoindent'
-let g:vimteractive_python_command = 'python'
-let g:vimteractive_bash_command = 'bash'
-let g:vimteractive_zsh_command = 'zsh'
-let g:vimteractive_julia_command = 'julia'
-let g:vimteractive_maple_command = 'maple -c "interface(errorcursor=false);"'
-let g:vimteractive_clojure_command = 'clojure'
+"
+if !has_key(g:, 'vimteractive_commands')
+	let g:vimteractive_commands = { }
+endif
 
-" User commands
-" =============
+let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent'
+let g:vimteractive_commands.python = 'python'
+let g:vimteractive_commands.bash = 'bash'
+let g:vimteractive_commands.zsh = 'zsh'
+let g:vimteractive_commands.julia = 'julia'
+let g:vimteractive_commands.maple = 'maple -c "interface(errorcursor=false);"'
+let g:vimteractive_commands.clojure = 'clojure'
 
-" Commands to start a session
-command!  Iipython :call Vimteractive_session(g:vimteractive_ipython_command) 
-command!  Ipython  :call Vimteractive_session(g:vimteractive_python_command)  
-command!  Ibash    :call Vimteractive_session(g:vimteractive_bash_command)
-command!  Izsh     :call Vimteractive_session(g:vimteractive_zsh_command)
-command!  Ijulia   :call Vimteractive_session(g:vimteractive_julia_command)
-command!  Imaple   :call Vimteractive_session(g:vimteractive_maple_command)
-command!  Iclojure :call Vimteractive_session(g:vimteractive_clojure_command)
+" Override default shells for different filetypes
+if !has_key(g:, 'vimteractive_default_shells')
+	let g:vimteractive_default_shells = { }
+endif
+
+" If 0, disable bracketed paste escape sequences
+let g:vimteractive_bracketed_paste = {
+	\ 'clojure': 0
+	\ }
+
+if !has_key(g:, 'vimteractive_loaded')
+	let g:vimteractive_loaded = 1
+
+	for term_type in keys(g:vimteractive_commands)
+		execute 'command! I' . term_type . " :call vimteractive#session('" . term_type . "')"
+	endfor
+
+	command! Iterm :call vimteractive#session('-auto-')
+endif
 
 " Control-S in normal mode to send current line
-noremap  <silent> <C-s>      :call Vimteractive_sendline(getline('.'))<CR>
+noremap  <silent> <C-s>      :call vimteractive#sendline(getline('.'))<CR>
 
 " Control-S in insert mode to send current line
-inoremap <silent> <C-s> <Esc>:call Vimteractive_sendline(getline('.'))<CR>a
+inoremap <silent> <C-s> <Esc>:call vimteractive#sendline(getline('.'))<CR>a
 
 " Control-S in visual mode to send multiple lines
-vnoremap <silent> <C-s> <Esc>:call Vimteractive_sendlines(getline("'<","'>"))<CR>
+vnoremap <silent> <C-s> <Esc>:call vimteractive#sendlines(getline("'<","'>"))<CR>
 
 " Alt-S in normal mode to send all lines up to this point
-noremap <silent> <A-s> :call Vimteractive_sendlines(getline(1,'.'))<CR>
-
-
-" Plugin commands
-" ===============
-
-" Send a line to the terminal buffer
-function! Vimteractive_sendline(line)
-    call term_sendkeys(g:vimteractive_buffer_name,"[200~" . a:line . "[201~\n")
-endfunction
-
-" Send list of lines to the terminal buffer, surrounded with a bracketed paste
-function! Vimteractive_sendlines(lines)
-    call term_sendkeys(g:vimteractive_buffer_name,"[200~" . join(a:lines, "\n") . "[201~\n")
-endfunction
-
-" Start a vimteractive session
-function! Vimteractive_session(terminal)
-
-    if has('terminal') == 0
-        echoerr "Your version of vim is not compiled with +terminal. Cannot use vimteractive"
-        return
-    endif
-
-    if g:vimteractive_terminal != '' && g:vimteractive_terminal != a:terminal
-        echoerr "Cannot run: " . a:terminal " Alreading running: " . g:vimteractive_terminal
-        return
-    endif
-
-    if bufnr(g:vimteractive_buffer_name) == -1
-        " If no vimteractive buffer exists:
-        " Start the terminal
-        let job = term_start(a:terminal, {"term_name":g:vimteractive_buffer_name})
-        set nobuflisted                          " Unlist the buffer
-        set norelativenumber                     " Turn off line numbering if off
-        set nonumber                             " Turn off line numbering if off
-        wincmd p                                 " Return to the previous window
-        let g:vimteractive_terminal = a:terminal " Name the current terminal
-
-    elseif bufwinnr(g:vimteractive_buffer_name) == -1
-        " Else if vimteractive buffer not open:
-        " Split the window
-        split
-        " switch the top window to the vimteractive buffer
-        execute ":b " . g:vimteractive_buffer_name
-        " Return to the previous window
-        wincmd p
-
-    else
-        " Else if throw error
-        echoerr "vimteractive already open. Quit before opening a new buffer"
-    endif
-endfunction
+noremap <silent> <A-s> :call vimteractive#sendlines(getline(1,'.'))<CR>
 
 
 " Plugin Behaviour
 " ================
 
 " Switch to normal mode when entering terminal window
-autocmd BufEnter * if &buftype == 'terminal' | call feedkeys("\<C-W>N")  | endif
+autocmd BufEnter * if &buftype == 'terminal' && bufname('%') == g:vimteractive_buffer_name | call feedkeys("\<C-W>N")  | endif
 
 " Switch back to terminal mode when exiting
-autocmd BufLeave * if &buftype == 'terminal' | execute "silent! normal! i"  | endif
+autocmd BufLeave * if &buftype == 'terminal'  && bufname('%') == g:vimteractive_buffer_name | execute "silent! normal! i"  | endif
