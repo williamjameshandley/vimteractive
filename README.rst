@@ -7,8 +7,6 @@ Vimteractive
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
-Send commands from text files to interactive programs via vim.
-
 Vimteractive was inspired by the workflow of the
 `vim-ipython <https://github.com/ivanov/vim-ipython>`__ plugin.
 
@@ -48,7 +46,7 @@ disable this by putting
 
    stty -ixon
 
-into your ``.bashrc``
+into your ``.bashrc`` (or equivalent shell profile file).
 
 Installation should be relatively painless via the usual routes such as
 `Vundle <https://github.com/VundleVim/Vundle.vim>`__,
@@ -137,31 +135,6 @@ Supported terminals
 -  ``:Iclojure`` Activate a clojure terminal
 -  ``:Iterm`` Activate default terminal for this filetype
 
-You can easily add your interpreter to Vimteractive, using the following code in your ``.vimrc``:
-
-.. code:: vim
-
-    " Mapping from Vimterpreter command to shell command
-    " This would give you :Iasyncpython command
-    let g:vimteractive_commands = {
-        \ 'asyncpython': 'python3 -m asyncio'
-        \ }
-
-    " If you see strange symbols like ^[[200~ when sending lines
-    " to your new interpreter, disable bracketed paste for it
-    " It's not needed for python3 -m asyncio, code below is only
-    " an example.
-    let g:vimteractive_bracketed_paste = {
-        \ 'asyncpython': 0
-        \ }
-
-    " If you want to set interpreter as default (used by :Iterm),
-    " map filetype to it. If not set, :Iterm will use interpreter
-    " named same with filetype.
-    let g:vimteractive_default_shells = {
-        \ 'python': 'asyncpython'
-        \ }
-
 Sending commands
 ~~~~~~~~~~~~~~~~
 
@@ -186,6 +159,33 @@ This project is very much in an alpha phase, so if you have any issues
 that arise on your system, feel free to `leave an issue <https://github.com/williamjameshandley/vimteractive/issues/new>`__ or create a `fork and pull
 request <https://gist.github.com/Chaser324/ce0505fbed06b947d962>`__ with
 your proposed changes
+
+You can easily add your interpreter to Vimteractive, using the following code
+in your ``.vimrc``:
+
+.. code:: vim
+
+    " Mapping from Vimterpreter command to shell command
+    " This would give you :Iasyncpython command
+    let g:vimteractive_commands = {
+        \ 'asyncpython': 'python3 -m asyncio'
+        \ }
+
+    " If you see strange symbols like ^[[200~ when sending lines
+    " to your new interpreter, disable bracketed paste for it
+    " It's not needed for python3 -m asyncio, code below is only
+    " an example.
+    let g:vimteractive_bracketed_paste = {
+        \ 'asyncpython': 0
+        \ }
+
+    " If you want to set interpreter as default (used by :Iterm),
+    " map filetype to it. If not set, :Iterm will use interpreter
+    " named same with filetype.
+    let g:vimteractive_default_shells = {
+        \ 'python': 'asyncpython'
+        \ }
+
 
 Similar projects
 ----------------

@@ -20,7 +20,13 @@ Vimteractive was inspired by the workflow of the vim-ipython plugin:
     https://github.com/ivanov/vim-ipython
 
 This plugin is designed to extend a subset of the functionality of vimteractive
-to other interpreters (including ipython). 
+to other interpreters (including ipython). This plugin is designed to extend a
+subset of the functionality of vim-ipython to other interpreters (including
+ipython). It is based around the unix philosophy of "do one thing and do it
+well".  It aims to provide a robust and simple link between text files and
+interactive interpreters. Vimteractive will never aim to do things like
+autocompletion, leaving that to other, more developed tools such as
+YouCompleteMe.
 
 The activating commands are 
 - ipython |:Iipython| 
@@ -48,7 +54,7 @@ a terminal command to freeze the output. You can disable this by putting
 
 stty -ixon
 
-into your .bashrc
+into your .bashrc (or equivalent shell profile file)
 
 ------------------------------------------------------------------------------
 Example usage:
