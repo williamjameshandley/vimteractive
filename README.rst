@@ -48,20 +48,18 @@ disable this by putting
 
 into your ``.bashrc`` (or equivalent shell profile file).
 
-Installation should be relatively painless via the usual routes such as
+Installation should be relatively painless via 
+`the usual routes <https://vimawesome.com/plugin/vimteractive>`_ such as
 `Vundle <https://github.com/VundleVim/Vundle.vim>`__,
 `Pathogen <https://github.com/tpope/vim-pathogen>`__ or the vim 8 native
-package manager (``:help packages``)
-
+package manager (``:help packages``).
 If you’re masochistic enough to use
 `Arch <https://wiki.archlinux.org/index.php/Arch_Linux>`__/`Manjaro <https://manjaro.org/>`__,
 it is also installable via the
-`aur <https://aur.archlinux.org/packages/vim-vimteractive>`__
-
+`aur <https://aur.archlinux.org/packages/vim-vimteractive>`__.
 For old-school users, there is also a package on the `vim
-repo <https://www.vim.org/scripts/script.php?script_id=5687>`__
-
-Depending on your package manager, you may need to run ``:helptags <path/to/repo/docs>`` to install the help documentation
+repo <https://www.vim.org/scripts/script.php?script_id=5687>`__.
+Depending on your package manager, you may need to run ``:helptags <path/to/repo/docs>`` to install the help documentation.
 
 Motivation
 ----------
