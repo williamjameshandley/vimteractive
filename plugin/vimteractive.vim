@@ -41,6 +41,7 @@ let g:vimteractive_bracketed_paste = {
 if !has_key(g:, 'vimteractive_loaded')
 	let g:vimteractive_loaded = 1
 
+	" Building :I* commands (like :Ipython, :Iipython and so)
 	for term_type in keys(g:vimteractive_commands)
 		execute 'command! I' . term_type . " :call vimteractive#session('" . term_type . "')"
 	endfor
