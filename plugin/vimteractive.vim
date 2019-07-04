@@ -70,7 +70,7 @@ noremap <silent> <A-s> :call vimteractive#sendlines(getline(1,'.'))<CR>
 " ================
 
 " Switch to normal mode when entering terminal window
-autocmd BufEnter * if &buftype == 'terminal' && bufname('%') == g:vimteractive_buffer_name | call feedkeys("\<C-W>N")  | endif
+autocmd BufEnter * if &buftype ==# 'terminal' && bufname('%') ==# g:vimteractive_buffer_name | call feedkeys("\<C-W>N")  | endif
 
 " Switch back to terminal mode when exiting
-autocmd BufLeave * if &buftype == 'terminal'  && bufname('%') == g:vimteractive_buffer_name | execute "silent! normal! i"  | endif
+autocmd BufLeave * if &buftype ==# 'terminal'  && bufname('%') ==# g:vimteractive_buffer_name | execute "silent! normal! i"  | endif
