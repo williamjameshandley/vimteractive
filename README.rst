@@ -29,6 +29,8 @@ The activating commands are
 - maple ``:Imaple``
 - bash ``:Ibash``
 - zsh ``:Izsh``
+- clojure ``:Iclojure``
+- autodetect based on filetype ``:Iterm``
 
 Commands may be sent from a text file to the chosen terminal using
 ``CTRL-S``.
@@ -132,6 +134,33 @@ Supported terminals
 -  ``:Imaple`` Activate a maple terminal
 -  ``:Ibash`` Activate a bash terminal
 -  ``:Izsh`` Activate a zsh terminal
+-  ``:Iclojure`` Activate a clojure terminal
+-  ``:Iterm`` Activate default terminal for this filetype
+
+You can easily add your interpreter to Vimteractive, usign following code in your ``.vimrc``:
+
+.. code:: vim
+
+    " Mapping from Vimterpreter command to shell command
+    " This would give you :Iasyncpython command
+    let g:vimteractive_commands = {
+        \ 'asyncpython': 'python3 -m asyncio'
+        \ }
+
+    " If you see strange symbols like ^[[200~ when sending lines
+    " to your new interpreter, disable bracketed paste for it
+    " It's not needed for python3 -m asyncio, code below is only
+    " an example.
+    let g:vimteractive_bracketed_paste = {
+        \ 'asyncpython': 0
+        \ }
+
+    " If you want to set interpreter as default (used by :Iterm),
+    " map filetype to it. If not set, :Iterm will use interpreter
+    " named same with filetype.
+    let g:vimteractive_default_shells = {
+        \ 'python': 'asyncpython'
+        \ }
 
 Sending commands
 ~~~~~~~~~~~~~~~~
@@ -154,11 +183,7 @@ Extending functionality
 -----------------------
 
 This project is very much in an alpha phase, so if you have any issues
-that arise on your system, feel free to `leave an issue <https://github.com/williamjameshandley/vimteractive/issues/new>`__.
-
-If you want to add additional interpreters, in many cases, you simply
-need to add an extra ``I<interpreter name>`` command to
-``plugin/vimteractive.vim``. Feel free to create a `fork and pull
+that arise on your system, feel free to `leave an issue <https://github.com/williamjameshandley/vimteractive/issues/new>`__ or create a `fork and pull
 request <https://gist.github.com/Chaser324/ce0505fbed06b947d962>`__ with
 your proposed changes
 
