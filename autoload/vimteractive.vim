@@ -20,7 +20,7 @@ function! vimteractive#session(terminal_type)
         return
     endif
 
-	if a:terminal_type == '-auto-'
+	if a:terminal_type ==# '-auto-'
 		let term_type = get(g:vimteractive_default_shells, &filetype, &filetype)
 		if has_key(g:vimteractive_commands, term_type)
 			let l:terminal = get(g:vimteractive_commands, term_type)
