@@ -115,7 +115,7 @@ g:vimteractive_commands variable. For example:
 	let g:vimteractive_commands = { 'pythonasync': 'python -m asyncio' }
 
 will provide you :Ipythonasync command starting Python 3.8+ asyncio REPL.
-If you want to make this command default (used by *:Iterm*) for python
+If you want to make this command default (used by |:Iterm|) for python
 filetype, you should do
 
 	let g:vimteractive_default_shells = { 'python': 'pythonasync' }
