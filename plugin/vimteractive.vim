@@ -39,7 +39,10 @@ endif
 
 " If 0, disable bracketed paste escape sequences
 let g:vimteractive_bracketed_paste = {
-	\ 'clojure': 0
+	\ 'clojure': 0,
+	\ 'python': 0,
+	\ 'python2': 0,
+	\ 'python3': 0,
 	\ }
 
 if !has_key(g:, 'vimteractive_loaded')
