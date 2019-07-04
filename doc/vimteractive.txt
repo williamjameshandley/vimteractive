@@ -48,7 +48,7 @@ a terminal command to freeze the output. You can disable this by putting
 
 stty -ixon
 
-into your shell config file
+into your .bashrc
 
 ------------------------------------------------------------------------------
 Example usage:
@@ -83,14 +83,14 @@ you wish to a new file if it contains valuable output
 
 
 Supported terminals                                   *vimteractive-terminals*
-*:Iipython* Activate an ipython terminal
-*:Ipython*  Activate a python terminal
-*:Ijulia*   Activate a julia terminal
-*:Imaple*   Activate a maple terminal
-*:Ibash*    Activate a bash terminal
-*:Izsh*     Activate a zsh terminal
-*:Iclojure*	Activate a clojure terminal
-*:Iterm*	Activate a terminal based on current filetype
+*:Iipython* 	Activate an ipython terminal
+*:Ipython*  	Activate a python terminal
+*:Ijulia*   	Activate a julia terminal
+*:Imaple*   	Activate a maple terminal
+*:Ibash*    	Activate a bash terminal
+*:Izsh*     	Activate a zsh terminal
+*:Iclojure*		Activate a clojure terminal
+*:Iterm*		Activate a terminal based on current filetype
 
 Sending commands                                                    *v_CTRL_S*
 
@@ -115,8 +115,7 @@ g:vimteractive_commands variable. For example:
 	let g:vimteractive_commands = { 'pythonasync': 'python -m asyncio' }
 
 will provide you :Ipythonasync command starting Python 3.8+ asyncio REPL.
-If you want to make this command default (used by |:Iterm|) for python
-filetype, you should do
+If you want to make this command default for python filetype, you should do
 
 	let g:vimteractive_default_shells = { 'python': 'pythonasync' }
 
