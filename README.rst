@@ -137,7 +137,7 @@ Supported terminals
 -  ``:Iclojure`` Activate a clojure terminal
 -  ``:Iterm`` Activate default terminal for this filetype
 
-You can easily add your interpreter to Vimteractive, usign following code in your ``.vimrc``:
+You can easily add your interpreter to Vimteractive, using the following code in your ``.vimrc``:
 
 .. code:: vim
 
