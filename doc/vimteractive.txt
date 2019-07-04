@@ -59,7 +59,7 @@ into your .bashrc (or equivalent shell profile file)
 ------------------------------------------------------------------------------
 Example usage:
 
-Create a python file vimteractive_test.py with the following content:
+Create a python file "test.py" with the following content:
 
     import matplotlib.pyplot as plt
     import numpy

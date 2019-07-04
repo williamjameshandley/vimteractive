@@ -14,7 +14,7 @@ This plugin is designed to extend a subset of the functionality of
 vim-ipython to other interpreters (including ipython). It is based
 around the unix philosophy of `"do one thing and do it
 well" <https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well>`__.
-It aims to provide a robust and simple link between text files and
+Vimteractive aims to provide a robust and simple link between text files and
 interactive interpreters. Vimteractive will never aim to do things like
 autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__.
@@ -36,7 +36,7 @@ Commands may be sent from a text file to the chosen terminal using
 Installation
 ------------
 
-Since this package leverages the native vim interactive terminal, it is only compatible with vim 8 or greater.
+Since this package leverages the native vim interactive terminal, vimteractive is only compatible with vim 8 or greater.
 
 To use the key-bindings, you should first disable the ``CTRL-S``
 default, which is a terminal command to freeze the output. You can
@@ -53,9 +53,9 @@ Installation should be relatively painless via
 `Vundle <https://github.com/VundleVim/Vundle.vim>`__,
 `Pathogen <https://github.com/tpope/vim-pathogen>`__ or the vim 8 native
 package manager (``:help packages``).
-If you’re masochistic enough to use
+If you're masochistic enough to use
 `Arch <https://wiki.archlinux.org/index.php/Arch_Linux>`__/`Manjaro <https://manjaro.org/>`__,
-it is also installable via the
+you can install vimteractive via the
 `aur <https://aur.archlinux.org/packages/vim-vimteractive>`__.
 For old-school users, there is also a package on the `vim
 repo <https://www.vim.org/scripts/script.php?script_id=5687>`__.
@@ -69,7 +69,7 @@ exploratory analyses in python. They leverage the interactivity of the
 python kernel to allow you to keep results of calculations in memory
 whilst developing further code to process them.
 
-However, I can’t stand typing into anything other than vim. Anywhere
+However, I can't stand typing into anything other than vim. Anywhere
 else, my screen fills with hjklEB, or worse, I close the window with a
 careless ``<C-w>``. I want a technique that allows me to operate on
 plain text files, but still be able to work interactively with the
@@ -90,8 +90,7 @@ Example usage:
 
 |example_usage|
 
-Create a python file ``vimteractive_test.py`` with the following
-content:
+Create a python file ``test.py`` with the following content:
 
 .. code:: python
 
@@ -110,7 +109,7 @@ see a preview window open above with your ipython prompt. Position your
 cursor over the first line of ``vimteractive_test.py``, and press
 ``CTRL-S``. You should see this line now appear in the first prompt of
 the preview window. Do the same with the second and fourth lines. At the
-fourth line, you should see a figure appear once it’s constructed with
+fourth line, you should see a figure appear once it's constructed with
 ``plt.subplots()``. Continue by sending lines to the interpreter. You
 can send multiple lines by doing a visual selection and pressing
 ``CTRL-S``.
