@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim 
 :Author: Will Handley
-:Version: 1.6
+:Version: 1.7
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -200,6 +200,7 @@ Similar projects
 
 Changelist
 ----------
+:v1.7: `Autodetection of terminals <https://github.com/williamjameshandley/vimteractive/pull/5>`__
 :v1.6: CtrlP `bugfix <https://github.com/williamjameshandley/vimteractive/pull/4>`__
 :v1.5: Added julia support
 :v1.4: `Buffer rename <https://github.com/williamjameshandley/vimteractive/pull/3>`_
