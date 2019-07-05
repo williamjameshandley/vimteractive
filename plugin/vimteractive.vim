@@ -9,13 +9,16 @@
 " Plugin variables
 " ================
 
-" Name of the vimteractive terminal buffer
-let g:vimteractive_buffer_name = "vimteractive_buffer"
-let g:vimteractive_terminal = ''
-let g:current_term_type = ''
+" Name and type of the vimteractive terminal buffer
+let g:vimteractive_terminal = { }
+let g:vimteractive_current_term_type = { }
+
+" Automatically start default terminal on first ^S
+if !has_key(g:, 'vimteractive_autostart')
+	let g:vimteractive_autostart = 1
+endif
 
 " Variables for running the various sessions
-"
 if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }
 endif
@@ -38,12 +41,19 @@ if !has_key(g:, 'vimteractive_default_shells')
 endif
 
 " If 0, disable bracketed paste escape sequences
-let g:vimteractive_bracketed_paste = {
-	\ 'clojure': 0,
-	\ 'python': 0,
-	\ 'python2': 0,
-	\ 'python3': 0,
-	\ }
+if !has_key(g:, 'vimteractive_bracketed_paste')
+	let g:vimteractive_bracketed_paste = { }
+endif
+let g:vimteractive_bracketed_paste.clojure = 0
+let g:vimteractive_bracketed_paste.python = 0
+let g:vimteractive_bracketed_paste.python2 = 0
+let g:vimteractive_bracketed_paste.python3 = 0
+
+" If present, wait this amount of time in ms when starting term on ^S
+if !has_key(g:, 'vimteractive_slow_prompt')
+	let g:vimteractive_slow_prompt = { }
+endif
+let g:vimteractive_slow_prompt.clojure = 200
 
 if !has_key(g:, 'vimteractive_loaded')
 	let g:vimteractive_loaded = 1
@@ -54,6 +64,8 @@ if !has_key(g:, 'vimteractive_loaded')
 	endfor
 
 	command! Iterm :call vimteractive#session('-auto-')
+	command! -nargs=? -complete=customlist,vimteractive#term_list Iconn
+		\ :call vimteractive#connect(<f-args>)
 endif
 
 " Control-S in normal mode to send current line
@@ -67,13 +79,3 @@ vnoremap <silent> <C-s> <Esc>:call vimteractive#sendlines(getline("'<","'>"))<CR
 
 " Alt-S in normal mode to send all lines up to this point
 noremap <silent> <A-s> :call vimteractive#sendlines(getline(1,'.'))<CR>
-
-
-" Plugin Behaviour
-" ================
-
-" Switch to normal mode when entering terminal window
-autocmd BufEnter * if &buftype ==# 'terminal' && bufname('%') ==# g:vimteractive_buffer_name | call feedkeys("\<C-W>N")  | endif
-
-" Switch back to terminal mode when exiting
-autocmd BufLeave * if &buftype ==# 'terminal'  && bufname('%') ==# g:vimteractive_buffer_name | execute "silent! normal! i"  | endif

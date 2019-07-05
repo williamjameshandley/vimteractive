@@ -31,7 +31,13 @@ The activating commands are
 - autodetect based on filetype ``:Iterm``
 
 Commands may be sent from a text file to the chosen terminal using
-``CTRL-S``.
+``CTRL-S``. If there is no terminal, ``CTRL-S`` will automatically
+open one for you using ``:Iterm``.
+
+It's highly recommended to set your default Python shell to IPython
+(see "Extending functionality" section for instructions). If you prefer
+not to do it, make sure, that every top-level block has at least one newline
+after it.
 
 Installation
 ------------
@@ -122,6 +128,10 @@ interactively into the prompt as if you had run it in the command line.
 You can save this buffer if you wish to a new file if it contains
 valuable output
 
+You may want to send lines to one terminal from two buffers. To achieve that,
+run ``:Iconn <buffer_name>`` where ``<buffer_name>`` is a name of buffer
+containing terminal. If there is only one terminal, you can use just ``:Iconn``.
+
 Supported terminals
 ~~~~~~~~~~~~~~~~~~~
 
@@ -171,9 +181,10 @@ in your ``.vimrc``:
         \ }
 
     " If you see strange symbols like ^[[200~ when sending lines
-    " to your new interpreter, disable bracketed paste for it
-    " It's not needed for python3 -m asyncio, code below is only
-    " an example.
+    " to your new interpreter, disable bracketed paste for it.
+    " You can also try it when your shell is misbehaving some way.
+    " It's needed for any standard Python REPL including
+    " python3 -m asyncio
     let g:vimteractive_bracketed_paste = {
         \ 'asyncpython': 0
         \ }
@@ -183,6 +194,14 @@ in your ``.vimrc``:
     " named same with filetype.
     let g:vimteractive_default_shells = {
         \ 'python': 'asyncpython'
+        \ }
+
+    " If your interpreter startup time is big, you may want to
+    " wait before sending commands. Set time in milliseconds in
+    " this dict to do it. This is not needed for python3, but
+    " can be useful for other REPLs like Clojure.
+    let g:vimteractive_slow_prompt = {
+        \ 'asyncpython': 200
         \ }
 
 
