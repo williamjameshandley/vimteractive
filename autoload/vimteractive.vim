@@ -1,9 +1,11 @@
+" (Re)open a terminal buffer in a split window
 function! s:show_term(bufnr)
 	split
 	execute ":b " . g:vimteractive_terminal[a:bufnr]
 	wincmd p
 endfunction
 
+" Check terminal exists, and clean out any unused variables if it does not
 function! s:check_alive(bufnr)
 	if bufexists(g:vimteractive_terminal[a:bufnr])
 		return 1
