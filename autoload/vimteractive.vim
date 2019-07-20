@@ -17,12 +17,6 @@ if !exists('s:vimteractive_buffers')
     let s:vimteractive_buffers = []
 end
 
-" Add a terminal to the list as needed.
-function! s:add_term(term_bufname)
-    call add(s:vimteractive_buffers, bufnr(a:term_bufname))
-endfunction
-
-
 " Remove a terminal from the list on deletion.
 function! s:del_term()
     let l:term_bufname = expand('<afile>')
@@ -85,6 +79,19 @@ function! vimteractive#sendlines(lines)
 	endif
 endfunction
 
+" Generate a new terminal name
+
+function! s:new_name(terminal_type)
+    " Create a new terminal name
+	let l:term_bufname = "term_" . a:terminal_type
+	let i = 1
+	while bufnr(l:term_bufname) != -1
+		let l:term_bufname = "term_" . a:terminal_type . '_' . i
+		let i += 1
+	endwhile
+    return l:term_bufname
+endfunction
+
 
 " Start a vimteractive terminal
 function! vimteractive#term_start(terminal_type)
@@ -93,37 +100,33 @@ function! vimteractive#term_start(terminal_type)
         return
     endif
 
-    " Determine the terminal type and starting command
+    " Determine the terminal type
 	if a:terminal_type ==# '-auto-'
 		let l:terminal_type = get(g:vimteractive_default_shells, &filetype, &filetype)
-		if has_key(g:vimteractive_commands, l:terminal_type)
-			let l:terminal_command = get(g:vimteractive_commands, l:terminal_type)
-		else
-			echoerr "Cannot determine terminal commmand for filetype " . &filetype
-			return
-		endif
 	else
         let l:terminal_type = a:terminal_type
-		let l:terminal_command = get(g:vimteractive_commands, l:terminal_type)
 	endif
 
+    " Retrieve starting command
+    if has_key(g:vimteractive_commands, l:terminal_type)
+        let l:terminal_command = get(g:vimteractive_commands, l:terminal_type)
+    else
+        echoerr "Cannot determine terminal commmand for filetype " . &filetype
+        return
+    endif
 
-    " Create a new terminal name
-	let l:term_bufname = "term_" . l:terminal_type
-	let i = 1
-	while bufnr(l:term_bufname) != -1
-		let l:term_bufname = "term_" . l:terminal_type . '_' . i
-		let i += 1
-	endwhile
-
+	" Create a new term
 	echom "Starting " . l:terminal_command
-	" Else we want to create a new term
+    let l:term_bufname = s:new_name(l:terminal_type)
 	call term_start(l:terminal_command, {
 		\ "term_name": l:term_bufname,
 		\ "term_finish": "close",
 		\ "term_kill": "term"
 		\ })
-    call s:add_term(l:term_bufname)
+
+    " Add this terminal to the buffer list, and store type
+    call add(s:vimteractive_buffers, bufnr(l:term_bufname))
+    let b:vimteractive_terminal_type = l:terminal_type
 
 	" Turn line numbering off
 	set nonumber norelativenumber
@@ -131,15 +134,6 @@ function! vimteractive#term_start(terminal_type)
 	autocmd BufEnter <buffer> call feedkeys("\<C-W>N")
 	" Switch to insert mode when leaving buffer
 	autocmd BufLeave <buffer> execute "silent! normal! i"
-	" Make :quit really do the right thing
-	cabbrev <buffer> q bdelete! "
-	cabbrev <buffer> qu bdelete! "
-	cabbrev <buffer> qui bdelete! "
-	cabbrev <buffer> quit bdelete! "
-
-    " Store type of terminal in terminal buffer
-    let b:vimteractive_terminal_type = l:terminal_type
-
 	" Return to previous window
 	wincmd p
 
