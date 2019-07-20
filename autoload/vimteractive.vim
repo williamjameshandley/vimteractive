@@ -22,6 +22,7 @@ function! s:add_term(term_bufname)
     call add(s:vimteractive_buffers, bufnr(a:term_bufname))
 endfunction
 
+
 " Remove a terminal from the list on deletion.
 function! s:del_term()
     let l:term_bufname = expand('<afile>')
@@ -32,6 +33,7 @@ function! s:del_term()
     endif
 endfunction
 
+
 " Listen for Buffer close events if they're in the terminal list
 autocmd BufDelete * call <SID>del_term()
 
@@ -40,6 +42,7 @@ function! vimteractive#buffer_list(...)
     let l:vimteractive_buffers = copy(s:vimteractive_buffers)
     return map(l:vimteractive_buffers, 'bufname(v:val)')
 endfunction
+
 
 " Reopen a terminal buffer in a split window if necessary
 function! s:show_term()
@@ -50,6 +53,7 @@ function! s:show_term()
         wincmd p
     endif
 endfunction
+
 
 " Send list of lines to the terminal buffer, surrounded with a bracketed paste
 function! vimteractive#sendlines(lines)
@@ -80,6 +84,7 @@ function! vimteractive#sendlines(lines)
 		call term_sendkeys(b:vimteractive_connected_terminal, join(a:lines, "\n") . "\n")
 	endif
 endfunction
+
 
 " Start a vimteractive terminal
 function! vimteractive#term_start(terminal_type)
@@ -175,5 +180,3 @@ function! vimteractive#connect(buffer_name = '')
 	echom "Connected " . bufname("%") . " to " . l:buffer_name
 
 endfunction
-
-
