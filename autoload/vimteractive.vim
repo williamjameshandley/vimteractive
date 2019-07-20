@@ -112,8 +112,6 @@ function! vimteractive#session(terminal_type)
 		\ "term_kill": "term"
 		\ })
 
-	" Unlist the buffer
-	" set nobuflisted
 	" Turn line numbering off
 	set nonumber norelativenumber
 	" Switch to terminal-normal mode when entering buffer
