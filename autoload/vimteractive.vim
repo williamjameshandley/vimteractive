@@ -1,5 +1,3 @@
-let s:iconn_cw_winnr = -1
-
 function! s:show_term(bufnr)
 	split
 	execute ":b " . g:vimteractive_terminal[a:bufnr]
