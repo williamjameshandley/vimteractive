@@ -9,10 +9,6 @@
 " Plugin variables
 " ================
 
-" Name and type of the vimteractive terminal buffer
-let g:vimteractive_terminal = { }
-let g:vimteractive_current_term_type = { }
-
 " Automatically start default terminal on first ^S
 if !has_key(g:, 'vimteractive_autostart')
 	let g:vimteractive_autostart = 1
@@ -55,6 +51,9 @@ if !has_key(g:, 'vimteractive_slow_prompt')
 endif
 let g:vimteractive_slow_prompt.clojure = 200
 
+" Plugin commands
+" ===============
+
 if !has_key(g:, 'vimteractive_loaded')
 	let g:vimteractive_loaded = 1
 
@@ -67,6 +66,10 @@ if !has_key(g:, 'vimteractive_loaded')
 	command! -nargs=? -complete=customlist,vimteractive#buffer_list Iconn
 		\ :call vimteractive#connect(<f-args>)
 endif
+                    
+
+" Plugin key mappings
+" ===================
 
 " Control-S in normal mode to send current line
 noremap  <silent> <C-s>      :call vimteractive#sendlines([getline('.')])<CR>
