@@ -27,116 +27,118 @@ endfunction
 " Listen for Buffer close events if they're in the terminal list
 autocmd BufDelete * call <SID>del_term()
 
+" List all running terminal names
+function! vimteractive#term_list(...)
+    let l:term_bufnrs = copy(s:term_bufnrs)
+    return map(l:term_bufnrs, 'bufname(v:val)')
+endfunction
+ 
 
 " (Re)open a terminal buffer in a split window
-function! s:show_term(bufnr)
+function! s:show_term()
 	split
-	execute ":b " . g:vimteractive_terminal[a:bufnr]
+	execute ":b " . b:vimteractive_terminal
 	wincmd p
 endfunction
 
 " Check terminal exists, and clean out any unused variables if it does not
-function! s:check_alive(bufnr)
-	if bufexists(g:vimteractive_terminal[a:bufnr])
-		return 1
-	else
-		unlet g:vimteractive_terminal[a:bufnr]
-		unlet g:vimteractive_current_term_type[a:bufnr]
-		return 0
-	endif
-endfunction
-
-" List all running terminal names
-function! vimteractive#term_list(...)
-    return map(s:term_bufnrs, 'bufname(v:val)')
-endfunction
+"function! s:check_alive(bufnr)
+"	if bufexists(g:vimteractive_terminal[a:bufnr])
+"		return 1
+"	else
+"		unlet g:vimteractive_terminal[a:bufnr]
+"		unlet g:vimteractive_current_term_type[a:bufnr]
+"		return 0
+"	endif
+"endfunction
 
 " Send list of lines to the terminal buffer, surrounded with a bracketed paste
 function! vimteractive#sendlines(lines)
-	let l:bufnr = bufnr('%')
-	let l:term_buffer_name = get(g:vimteractive_terminal, l:bufnr, -1)
-	if l:term_buffer_name == -1 || !s:check_alive(l:bufnr)
-		if g:vimteractive_autostart
-			call vimteractive#session('-auto-')
-			let l:term_buffer_name = get(g:vimteractive_terminal, l:bufnr, -1)
-			while term_getline(l:term_buffer_name, 1) == ''
-				sleep 10m " Waiting for prompt
-			endwhile
-			let l:slow = get(g:vimteractive_slow_prompt, g:vimteractive_current_term_type[l:bufnr])
-			if l:slow
-				execute "sleep " . l:slow . "m"
-			endif
-			redraw
-		else
-			echoerr "Nowhere to send lines, call :Iterm first"
-			return
-		endif
-	endif
-	let l:term_type = g:vimteractive_current_term_type[l:bufnr]
+	"let l:bufnr = bufnr('%')
+	"let l:term_buffer_name = get(g:vimteractive_terminal, l:bufnr, -1)
+	"if l:term_buffer_name == -1 || !s:check_alive(l:bufnr)
+	"	if g:vimteractive_autostart
+	"		call vimteractive#term_start('-auto-')
+	"		let l:term_buffer_name = get(g:vimteractive_terminal, l:bufnr, -1)
+	"		while term_getline(l:term_buffer_name, 1) == ''
+	"			sleep 10m " Waiting for prompt
+	"		endwhile
+	"		let l:slow = get(g:vimteractive_slow_prompt, g:vimteractive_current_term_type[l:bufnr])
+	"		if l:slow
+	"			execute "sleep " . l:slow . "m"
+	"		endif
+	"		redraw
+	"	else
+	"		echoerr "Nowhere to send lines, call :Iterm first"
+	"		return
+	"	endif
+	"endif
+	let l:term_type = getbufvar(b:vimteractive_terminal, "term_type")
 
-	if bufwinnr(l:term_buffer_name) == -1
-		call s:show_term(l:bufnr)
-	endif
+	"if bufwinnr(l:term_buffer_name) == -1
+	"	call s:show_term()
+	"endif
 
 	if get(g:vimteractive_bracketed_paste, l:term_type, 1)
-		call term_sendkeys(l:term_buffer_name,"[200~" . join(a:lines, "\n") . "[201~\n")
+		call term_sendkeys(b:vimteractive_terminal,"[200~" . join(a:lines, "\n") . "[201~\n")
 	else
-		call term_sendkeys(l:term_buffer_name, join(a:lines, "\n") . "\n")
+		call term_sendkeys(b:vimteractive_terminal, join(a:lines, "\n") . "\n")
 	endif
 endfunction
 
-" Start a vimteractive session
-function! vimteractive#session(terminal_type)
+" Start a vimteractive terminal
+function! vimteractive#term_start(terminal_type)
     if has('terminal') == 0
         echoerr "Your version of vim is not compiled with +terminal. Cannot use vimteractive"
         return
     endif
 
-	let l:bufnr = bufnr('%')
-	let l:terminal_type = a:terminal_type
+    " Determine the terminal type and starting command
 	if a:terminal_type ==# '-auto-'
-		let term_type = get(g:vimteractive_default_shells, &filetype, &filetype)
-		if has_key(g:vimteractive_commands, term_type)
-			let l:terminal = get(g:vimteractive_commands, term_type)
-			let l:terminal_type = term_type
+		let l:terminal_type = get(g:vimteractive_default_shells, &filetype, &filetype)
+		if has_key(g:vimteractive_commands, l:terminal_type)
+			let l:terminal_command = get(g:vimteractive_commands, l:terminal_type)
 		else
 			echoerr "Cannot determine terminal commmand for filetype " . &filetype
 			return
 		endif
 	else
-		let l:terminal = get(g:vimteractive_commands, a:terminal_type)
+        let l:terminal_type = a:terminal_type
+		let l:terminal_command = get(g:vimteractive_commands, l:terminal_type)
 	endif
-
 	" If we have already running Vimteractive terminal
-    if has_key(g:vimteractive_terminal, l:bufnr) && s:check_alive(l:bufnr)
-		if g:vimteractive_current_term_type[l:bufnr] == l:terminal
-			if bufwinnr(g:vimteractive_terminal[l:bufnr]) == -1
-				call s:show_term(l:bufnr)
-			else
-				echom "Terminal of type " . l:terminal_type . " already running for this buffer"
-			endif
-		else
-			echoerr "Cannot run: " . l:terminal
-				\ ". Already running: " . g:vimteractive_terminal[l:bufnr]
-		endif
-		return
-    endif
+	"let l:bufnr = bufnr('%')
+    "if has_key(g:vimteractive_terminal, l:bufnr) && s:check_alive(l:bufnr)
+	"	if g:vimteractive_current_term_type[l:bufnr] == l:terminal
+	"		if bufwinnr(g:vimteractive_terminal[l:bufnr]) == -1
+	"			call s:show_term(l:bufnr)
+	"		else
+	"			echom "Terminal of type " . l:terminal_type . " already running for this buffer"
+	"		endif
+	"	else
+	"		echoerr "Cannot run: " . l:terminal
+	"			\ ". Already running: " . g:vimteractive_terminal[l:bufnr]
+	"	endif
+	"	return
+    "endif
 
-	let l:term_buffer_name = "term_" . l:terminal_type
+
+    " Create a new terminal name
+	let l:term_bufname = "term_" . l:terminal_type
 	let i = 1
-	while bufnr(l:term_buffer_name) != -1
-		let l:term_buffer_name = "term_" . l:terminal_type . '_' . i
+	while bufnr(l:term_bufname) != -1
+		let l:term_bufname = "term_" . l:terminal_type . '_' . i
 		let i += 1
 	endwhile
 
-	echom "Starting " . l:terminal
+	echom "Starting " . l:terminal_command
 	" Else we want to create a new term
-	call term_start(l:terminal, {
-		\ "term_name": l:term_buffer_name,
+	call term_start(l:terminal_command, {
+		\ "term_name": l:term_bufname,
 		\ "term_finish": "close",
 		\ "term_kill": "term"
 		\ })
-    call s:add_term(l:term_buffer_name)
+    call s:add_term(l:term_bufname)
 
 	" Turn line numbering off
 	set nonumber norelativenumber
@@ -150,15 +152,18 @@ function! vimteractive#session(terminal_type)
 	cabbrev <buffer> qui bdelete! "
 	cabbrev <buffer> quit bdelete! "
 
+    " Store type of terminal in terminal buffer
+    let b:vimteractive_terminal_type = l:terminal_type
+
 	" Return to previous window
 	wincmd p
 
 	" Store name and type of current buffer
-	let g:vimteractive_terminal[l:bufnr] = l:term_buffer_name
-	let g:vimteractive_current_term_type[l:bufnr] = l:terminal_type
+    let b:vimteractive_terminal = bufnr(l:term_bufname)
+
 endfunction
 
-" Connect to vimteractive session
+" Connect to vimteractive terminal
 function! vimteractive#connect(buffer_name = '')
 	let l:buffer_name = a:buffer_name
 	if strlen(a:buffer_name) ==# 0
@@ -176,12 +181,9 @@ function! vimteractive#connect(buffer_name = '')
 		return
 	endif
 
-	let l:bufnr = bufnr('%')
-
-	let g:vimteractive_terminal[l:bufnr] = l:buffer_name
-	let g:vimteractive_current_term_type[l:bufnr] =
-		\ substitute(l:buffer_name, '^term_\(.*\)\(_[0-9]\+\)\=$', '\1', '')
+    let b:vimteractive_terminal = bufnr(l:buffer_name)
 	echom "Connected " . bufname("%") . " to " . l:buffer_name
+
 endfunction
 
 

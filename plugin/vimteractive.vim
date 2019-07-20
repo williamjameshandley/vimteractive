@@ -60,10 +60,10 @@ if !has_key(g:, 'vimteractive_loaded')
 
 	" Building :I* commands (like :Ipython, :Iipython and so)
 	for term_type in keys(g:vimteractive_commands)
-		execute 'command! I' . term_type . " :call vimteractive#session('" . term_type . "')"
+		execute 'command! I' . term_type . " :call vimteractive#term_start('" . term_type . "')"
 	endfor
 
-	command! Iterm :call vimteractive#session('-auto-')
+	command! Iterm :call vimteractive#term_start('-auto-')
 	command! -nargs=? -complete=customlist,vimteractive#term_list Iconn
 		\ :call vimteractive#connect(<f-args>)
 endif
