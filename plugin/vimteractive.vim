@@ -64,7 +64,7 @@ if !has_key(g:, 'vimteractive_loaded')
 	endfor
 
 	command! Iterm :call vimteractive#term_start('-auto-')
-	command! -nargs=? -complete=customlist,vimteractive#term_list Iconn
+	command! -nargs=? -complete=customlist,vimteractive#buffer_list Iconn
 		\ :call vimteractive#connect(<f-args>)
 endif
 
