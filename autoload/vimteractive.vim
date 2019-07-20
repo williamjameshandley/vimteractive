@@ -1,3 +1,33 @@
+" Initialise the list of terminal buffer numbers on startup
+if !exists('s:term_bufnrs')
+    let s:term_bufnrs = []
+end
+
+" List the terminal buffer numbers
+function! TermBufnrs()
+    return copy(s:term_bufnrs)
+endfunction
+
+" Add a terminal to the list.
+function! s:add_term(term_bufname)
+    let term_bufnr = bufnr(a:term_bufname)
+    call add(s:term_bufnrs, term_bufnr)
+endfunction
+
+" Remove a terminal from the list on deletion.
+function! s:del_term()
+    let term_bufname = expand('<afile>')
+    let term_bufnr = bufnr(term_bufname)
+    let term_index = index(s:term_bufnrs, term_bufnr)
+    if term_index >= 0
+        call remove(s:term_bufnrs, term_index)
+    endif
+endfunction
+
+" Listen for Buffer close events if they're in the terminal list
+autocmd BufDelete * call <SID>del_term()
+
+
 " (Re)open a terminal buffer in a split window
 function! s:show_term(bufnr)
 	split
@@ -106,6 +136,7 @@ function! vimteractive#session(terminal_type)
 		\ "term_finish": "close",
 		\ "term_kill": "term"
 		\ })
+    call s:add_term(l:term_buffer_name)
 
 	" Turn line numbering off
 	set nonumber norelativenumber
@@ -131,7 +162,7 @@ endfunction
 function! vimteractive#connect(buffer_name = '')
 	let l:buffer_name = a:buffer_name
 	if strlen(a:buffer_name) ==# 0
-		let all_terms = vimteractive#term_list()
+		let all_terms = s:term_list()
 		if len(all_terms) ==# 1
 			let l:buffer_name = all_terms[0]
 		else
@@ -152,3 +183,5 @@ function! vimteractive#connect(buffer_name = '')
 		\ substitute(l:buffer_name, '^term_\(.*\)\(_[0-9]\+\)\=$', '\1', '')
 	echom "Connected " . bufname("%") . " to " . l:buffer_name
 endfunction
+
+
