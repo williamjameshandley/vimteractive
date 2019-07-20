@@ -46,9 +46,9 @@ function! s:check_alive(bufnr)
 	endif
 endfunction
 
-" List all running terminals
+" List all running terminal names
 function! vimteractive#term_list(...)
-	return filter(uniq(values(g:vimteractive_terminal)), 'bufexists(v:val)')
+    return map(s:term_bufnrs, 'bufname(v:val)')
 endfunction
 
 " Send list of lines to the terminal buffer, surrounded with a bracketed paste
