@@ -69,10 +69,10 @@ if !has_key(g:, 'vimteractive_loaded')
 endif
 
 " Control-S in normal mode to send current line
-noremap  <silent> <C-s>      :call vimteractive#sendline(getline('.'))<CR>
+noremap  <silent> <C-s>      :call vimteractive#sendlines([getline('.')])<CR>
 
 " Control-S in insert mode to send current line
-inoremap <silent> <C-s> <Esc>:call vimteractive#sendline(getline('.'))<CR>a
+inoremap <silent> <C-s> <Esc>:call vimteractive#sendlines([getline('.')])<CR>a
 
 " Control-S in visual mode to send multiple lines
 vnoremap <silent> <C-s> <Esc>:call vimteractive#sendlines(getline("'<","'>"))<CR>

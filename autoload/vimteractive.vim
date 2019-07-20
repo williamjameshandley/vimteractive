@@ -55,11 +55,6 @@ function! vimteractive#sendlines(lines)
 	endif
 endfunction
 
-" Send a line to the terminal buffer
-function! vimteractive#sendline(line)
-	call vimteractive#sendlines([a:line])
-endfunction
-
 " Start a vimteractive session
 function! vimteractive#session(terminal_type)
     if has('terminal') == 0
