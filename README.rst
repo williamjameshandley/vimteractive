@@ -196,7 +196,7 @@ Similar projects
 -  `tslime_ipython <https://github.com/eldridgejm/tslime_ipython>`__
 -  `vipy <https://github.com/johndgiese/vipy>`__
 
-.. |example_usage| image:: https://raw.githubusercontent.com/williamjameshandley/vimteractive/master/images/example_usage.png
+.. |example_usage| image:: https://raw.githubusercontent.com/williamjameshandley/vimteractive/master/images/example_usage.gif
 
 Changelist
 ----------
