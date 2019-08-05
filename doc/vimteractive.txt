@@ -37,7 +37,16 @@ The activating commands are
 - clojure |:Iclojure|
 - zsh     |:Izsh|
 
-You can also let Vimteractive detect interpreter using |:Iterm|
+You can also let Vimteractive detect interpreter using |:Iterm| or just send
+some lines: Vimteractive will create terminal if needed. Note: it's highly
+recommended to use IPython as your default Python interpreter. You can set it
+like this:
+
+	let g:vimteractive_default_shells = { 'python': 'ipython' }
+
+Default Python REPL support for pasting is really bad and you should use
+IPython whenever possible. If you need to use default Python REPL, you must
+put newline after every top-level block.
 
 Commands may be sent from a text file to the chosen terminal using CTRL-S. 
 See |v_CTRL_S| for more details.
@@ -87,6 +96,9 @@ enter the terminal, and be able to enter commands interactively into the
 prompt as if you had run it in the command line. You can save this buffer if
 you wish to a new file if it contains valuable output
 
+By default every buffer is connected to separate terminal. If you want to
+connect two buffers to one terminal, use |:Iconn| command.
+
 
 Supported terminals                                   *vimteractive-terminals*
 
@@ -113,8 +125,17 @@ In |Visual-mode|, CTRL-S sends all currently selected lines to the terminal.
 
 ALT-S sends all lines from the start to the current line.
 
+If there is no active terminal for current buffer, CTRL-S will automatically
+create one for you using |:Iterm|.
+
 ==============================================================================
-3. Extending functionality                            *vimteractive-extending*
+3. Connecting to existing REPLs             *:Iconn* *vimteractive-connecting*
+:Iconn [{buffer}]	Connect current buffer to REPL in {buffer}. You can
+					connect any number of buffers to one REPL. {buffer}
+					can be omited if there is only one terminal.
+
+==============================================================================
+4. Extending functionality                            *vimteractive-extending*
 
 To add a new interpreter to Vimteractive, you should define
 g:vimteractive_commands variable. For example:
@@ -131,13 +152,19 @@ you may try to disable bracketed paste mode for it:
 
 	let g:vimteractive_bracketed_paste = { 'pythonasync': 0 }
 
+If your interpreter has slow-starting REPL (like Clojure), you may want to
+wait before sending data to it at the first time. Specify time to wait in
+milliseconds like this:
+
+	let g:vimteractive_slow_prompt = { 'pythonasync': 200 }
+
 This project is very much in an alpha phase, so if you have any issues that
 arise on your system, feel free to contact me:
 
     williamjameshandley@gmail.com.
 
 ==============================================================================
-4. About                                          *vimteractive-functionality*
+5. About                                          *vimteractive-functionality*
 
 The core maintainer of vimteractive is:
 
@@ -148,6 +175,6 @@ Find the latest version of vimteractive at:
     http://github.com/williamjameshandley/vimteractive
 
 ==============================================================================
-5. License                                              *vimteractive-license*
+6. License                                              *vimteractive-license*
 
 Vimteractive is licensed under GPL 3.0
