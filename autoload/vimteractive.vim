@@ -121,10 +121,18 @@ function! vimteractive#term_start(term_type)
 	" Create a new term
 	echom "Starting " . l:term_command
     let l:term_bufname = s:new_name(l:term_type)
-	call term_start(l:term_command, {
-		\ "term_name": l:term_bufname,
-		\ "term_finish": "close"
-		\ })
+	if v:version < 801
+        call term_start(l:term_command, {
+		    \ "term_name": l:term_bufname,
+	        \ "term_finish": "close"
+		    \ })
+    else
+        call term_start(l:term_command, {
+		    \ "term_name": l:term_bufname,
+	        \ "term_kill": "term",
+            \ "term_finish": "close"
+		    \ })
+    endif
 
     " Add this terminal to the buffer list, and store type
     call add(s:vimteractive_buffers, bufnr(l:term_bufname))
