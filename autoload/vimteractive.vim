@@ -123,8 +123,7 @@ function! vimteractive#term_start(term_type)
     let l:term_bufname = s:new_name(l:term_type)
 	call term_start(l:term_command, {
 		\ "term_name": l:term_bufname,
-		\ "term_finish": "close",
-		\ "term_kill": "term"
+		\ "term_finish": "close"
 		\ })
 
     " Add this terminal to the buffer list, and store type
@@ -161,7 +160,7 @@ endfunction
 
 
 " Connect to vimteractive terminal
-function! vimteractive#connect(bufname = '')
+function! vimteractive#connect(bufname)
     if len(s:vimteractive_buffers) == 0
         echoerr "No vimteractive terminal buffers present"
         echoerr "call :Iterm to start a new one"
