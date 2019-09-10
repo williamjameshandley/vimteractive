@@ -42,12 +42,12 @@ endfunction
 " Generate a new terminal name
 function! s:new_name(term_type)
     " Create a new terminal name
-	let l:term_bufname = "term_" . a:term_type
-	let i = 1
-	while bufnr(l:term_bufname) != -1
-		let l:term_bufname = "term_" . a:term_type . '_' . i
-		let i += 1
-	endwhile
+    let l:term_bufname = "term_" . a:term_type
+    let i = 1
+    while bufnr(l:term_bufname) != -1
+        let l:term_bufname = "term_" . a:term_type . '_' . i
+        let i += 1
+    endwhile
     return l:term_bufname
 endfunction
 
@@ -67,13 +67,13 @@ endfunction
 function! vimteractive#sendlines(lines)
     " Autostart a terminal if desired
     if !exists("b:vimteractive_connected_term") 
-		if g:vimteractive_autostart
+        if g:vimteractive_autostart
             call vimteractive#term_start('-auto-')
-		else
-			echoerr "No terminal connected."
+        else
+            echoerr "No terminal connected."
             echoerr "call :Iterm to start a new one, or :Iconn to connect to an existing one"
-			return
-		endif
+            return
+        endif
     endif
 
     " Check if connected terminal is still alive
@@ -85,14 +85,14 @@ function! vimteractive#sendlines(lines)
 
     call s:show_term()
 
-	let l:term_type = getbufvar(b:vimteractive_connected_term, "term_type")
+    let l:term_type = getbufvar(b:vimteractive_connected_term, "term_type")
     
     mark`
-	if get(g:vimteractive_bracketed_paste, l:term_type, 1)
-		call term_sendkeys(b:vimteractive_connected_term,"[200~" . join(a:lines, "\n") . "[201~\n")
-	else
-		call term_sendkeys(b:vimteractive_connected_term, join(a:lines, "\n") . "\n")
-	endif
+    if get(g:vimteractive_bracketed_paste, l:term_type, 1)
+        call term_sendkeys(b:vimteractive_connected_term,"[200~" . join(a:lines, "\n") . "[201~\n")
+    else
+        call term_sendkeys(b:vimteractive_connected_term, join(a:lines, "\n") . "\n")
+    endif
 endfunction
 
 
@@ -104,11 +104,11 @@ function! vimteractive#term_start(term_type)
     endif
 
     " Determine the terminal type
-	if a:term_type ==# '-auto-'
-		let l:term_type = get(g:vimteractive_default_shells, &filetype, &filetype)
-	else
+    if a:term_type ==# '-auto-'
+        let l:term_type = get(g:vimteractive_default_shells, &filetype, &filetype)
+    else
         let l:term_type = a:term_type
-	endif
+    endif
 
     " Retrieve starting command
     if has_key(g:vimteractive_commands, l:term_type)
@@ -118,34 +118,41 @@ function! vimteractive#term_start(term_type)
         return
     endif
 
-	" Create a new term
-	echom "Starting " . l:term_command
+    " Create a new term
+    echom "Starting " . l:term_command
     let l:term_bufname = s:new_name(l:term_type)
-	call term_start(l:term_command, {
-		\ "term_name": l:term_bufname,
-		\ "term_finish": "close",
-		\ "term_kill": "term"
-		\ })
+    if v:version < 801
+        call term_start(l:term_command, {
+            \ "term_name": l:term_bufname,
+            \ "term_finish": "close"
+            \ })
+    else
+        call term_start(l:term_command, {
+            \ "term_name": l:term_bufname,
+            \ "term_kill": "term",
+            \ "term_finish": "close"
+            \ })
+    endif
 
     " Add this terminal to the buffer list, and store type
     call add(s:vimteractive_buffers, bufnr(l:term_bufname))
     let b:vimteractive_term_type = l:term_type
 
-	" Turn line numbering off
-	set nonumber norelativenumber
-	" Switch to terminal-normal mode when entering buffer
-	autocmd BufEnter <buffer> call feedkeys("\<C-W>N")
-	" Switch to insert mode when leaving buffer
-	autocmd BufLeave <buffer> execute "silent! normal! i"
-	" Make :quit really do the right thing
-	cabbrev <buffer> q bdelete! "
-	cabbrev <buffer> qu bdelete! "
-	cabbrev <buffer> qui bdelete! "
-	cabbrev <buffer> quit bdelete! "
-	" Return to previous window
-	wincmd p
+    " Turn line numbering off
+    set nonumber norelativenumber
+    " Switch to terminal-normal mode when entering buffer
+    autocmd BufEnter <buffer> call feedkeys("\<C-W>N")
+    " Switch to insert mode when leaving buffer
+    autocmd BufLeave <buffer> execute "silent! normal! i"
+    " Make :quit really do the right thing
+    cabbrev <buffer> q bdelete! "
+    cabbrev <buffer> qu bdelete! "
+    cabbrev <buffer> qui bdelete! "
+    cabbrev <buffer> quit bdelete! "
+    " Return to previous window
+    wincmd p
 
-	" Store name and type of current buffer
+    " Store name and type of current buffer
     let b:vimteractive_connected_term = bufnr(l:term_bufname)
 
     " Pause as necessary
@@ -161,30 +168,30 @@ endfunction
 
 
 " Connect to vimteractive terminal
-function! vimteractive#connect(bufname = '')
+function! vimteractive#connect(bufname)
     if len(s:vimteractive_buffers) == 0
         echoerr "No vimteractive terminal buffers present"
         echoerr "call :Iterm to start a new one"
         return
     endif
 
-	let l:bufname = a:bufname
-	if strlen(a:bufname) ==# 0
-		if len(s:vimteractive_buffers) ==# 1
-			let l:bufname = vimteractive#buffer_list()[0] 
-		else
-			echom "Please specify terminal from "
+    let l:bufname = a:bufname
+    if strlen(a:bufname) ==# 0
+        if len(s:vimteractive_buffers) ==# 1
+            let l:bufname = vimteractive#buffer_list()[0] 
+        else
+            echom "Please specify terminal from "
             echom vimteractive#buffer_list()
-			return
-		endif
-	endif
+            return
+        endif
+    endif
 
-	if !bufexists(l:bufname)
-		echoerr "Buffer " . l:bufname . " is not found or already disconnected"
-		return
-	endif
+    if !bufexists(l:bufname)
+        echoerr "Buffer " . l:bufname . " is not found or already disconnected"
+        return
+    endif
 
     let b:vimteractive_connected_term = bufnr(l:bufname)
-	echom "Connected " . bufname("%") . " to " . l:bufname
+    echom "Connected " . bufname("%") . " to " . l:bufname
 
 endfunction
