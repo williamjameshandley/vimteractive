@@ -169,19 +169,22 @@ endfunction
 
 " Connect to vimteractive terminal
 function! vimteractive#connect(...)
-    " Check if there was an argument passed to this function
-    if len(a:000) == 0
-        let l:bufname = ''
-    else
-        let l:bufname = a:0[0]
-    endif
+    " Check that there are buffers to connect to
     if len(s:vimteractive_buffers) == 0
         echoerr "No vimteractive terminal buffers present"
         echoerr "call :Iterm to start a new one"
         return
     endif
+
+    " Check if there was an argument passed to this function
+    if a:0 == 0
+        let l:bufname = ''
+    else
+        let l:bufname = a:1
+    endif
+
     " Check if bufname isn't just ''
-    if strlen(l:bufname) ==# 0
+    if l:bufname == ''
         if len(s:vimteractive_buffers) ==# 1
             let l:bufname = vimteractive#buffer_list()[0] 
         else
