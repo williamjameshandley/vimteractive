@@ -89,9 +89,9 @@ function! vimteractive#sendlines(lines)
     
     mark`
     if get(g:vimteractive_bracketed_paste, l:term_type, 1)
-        call term_sendkeys(b:vimteractive_connected_term,"[200~" . join(a:lines, "\n") . "[201~\n")
+        call term_sendkeys(b:vimteractive_connected_term,"[200~" . a:lines . "[201~\n")
     else
-        call term_sendkeys(b:vimteractive_connected_term, join(a:lines, "\n") . "\n")
+        call term_sendkeys(b:vimteractive_connected_term, a:lines . "\n")
     endif
 endfunction
 

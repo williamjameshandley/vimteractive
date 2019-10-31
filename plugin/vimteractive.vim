@@ -72,13 +72,13 @@ endif
 " ===================
 
 " Control-S in normal mode to send current line
-noremap  <silent> <C-s>      :call vimteractive#sendlines([getline('.')])<CR>
+noremap  <silent> <C-s>      :call vimteractive#sendlines(getline('.'))<CR>
 
 " Control-S in insert mode to send current line
-inoremap <silent> <C-s> <Esc>:call vimteractive#sendlines([getline('.')])<CR>a
+inoremap <silent> <C-s> <Esc>:call vimteractive#sendlines(getline('.'))<CR>a
 
 " Control-S in visual mode to send multiple lines
-vnoremap <silent> <C-s> <Esc>:call vimteractive#sendlines(getline("'<","'>"))<CR>
+vnoremap <silent> <C-s> <Esc>:call vimteractive#sendlines(getreg('*'))<CR>
 
 " Alt-S in normal mode to send all lines up to this point
-noremap <silent> <A-s> :call vimteractive#sendlines(getline(1,'.'))<CR>
+noremap <silent> <A-s> :call vimteractive#sendlines(join(getline(1,'.'), "\n"))<CR>
