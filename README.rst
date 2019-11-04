@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim 
 :Author: Will Handley
-:Version: 2.0.2
+:Version: 2.1.0
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -156,8 +156,7 @@ cursor the terminal.
 In Insert mode, ``CTRL-S`` sends the line currently being edited, and
 then returns to insert mode at the same location.
 
-In Visual mode, ``CTRL-S`` sends all currently selected lines to the
-terminal.
+In Visual mode, ``CTRL-S`` sends the current selection to the terminal.
 
 ``ALT-S`` sends all lines from the start to the current line.
 
@@ -219,6 +218,7 @@ Similar projects
 
 Changelist
 ----------
+:v2.1: `Visual selection improvement <https://github.com/williamjameshandley/vimteractive/pull/15>`__
 :v2.0: `Multiple terminal functionality <https://github.com/williamjameshandley/vimteractive/pull/9>`__
 :v1.7: `Autodetection of terminals <https://github.com/williamjameshandley/vimteractive/pull/5>`__
 :v1.6: CtrlP `bugfix <https://github.com/williamjameshandley/vimteractive/pull/4>`__

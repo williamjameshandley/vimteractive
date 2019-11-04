@@ -19,14 +19,12 @@ Vimteractive was inspired by the workflow of the vim-ipython plugin:
 
     https://github.com/ivanov/vim-ipython
 
-This plugin is designed to extend a subset of the functionality of vimteractive
-to other interpreters (including ipython). This plugin is designed to extend a
-subset of the functionality of vim-ipython to other interpreters (including
-ipython). It is based around the unix philosophy of "do one thing and do it
-well".  It aims to provide a robust and simple link between text files and
-interactive interpreters. Vimteractive will never aim to do things like
-autocompletion, leaving that to other, more developed tools such as
-YouCompleteMe.
+This plugin is designed to extend a subset of the functionality of vim-ipython
+to other interpreters (including ipython). It is based around the unix
+philosophy of "do one thing and do it well".  It aims to provide a robust and
+simple link between text files and interactive interpreters. Vimteractive will
+never aim to do things like autocompletion, leaving that to other, more
+developed tools such as YouCompleteMe.
 
 The activating commands are 
 - ipython |:Iipython| 
@@ -121,7 +119,7 @@ the terminal.
 In |Insert-mode|, CTRL-S sends the line currently being edited, and then
 returns to insert mode at the same location.
 
-In |Visual-mode|, CTRL-S sends all currently selected lines to the terminal.
+In |Visual-mode|, CTRL-S sends the current selection to the terminal.
 
 ALT-S sends all lines from the start to the current line.
 
@@ -132,7 +130,7 @@ create one for you using |:Iterm|.
 3. Connecting to existing REPLs             *:Iconn* *vimteractive-connecting*
 :Iconn [{buffer}]	Connect current buffer to REPL in {buffer}. You can
 					connect any number of buffers to one REPL. {buffer}
-					can be omited if there is only one terminal.
+					can be omitted if there is only one terminal.
 
 ==============================================================================
 4. Extending functionality                            *vimteractive-extending*
