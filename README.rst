@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim 
 :Author: Will Handley
-:Version: 2.1.0
+:Version: 2.1.1
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -193,14 +193,6 @@ in your ``.vimrc``:
     " named same with filetype.
     let g:vimteractive_default_shells = {
         \ 'python': 'asyncpython'
-        \ }
-
-    " If your interpreter startup time is big, you may want to
-    " wait before sending commands. Set time in milliseconds in
-    " this dict to do it. This is not needed for python3, but
-    " can be useful for other REPLs like Clojure.
-    let g:vimteractive_slow_prompt = {
-        \ 'asyncpython': 200
         \ }
 
 

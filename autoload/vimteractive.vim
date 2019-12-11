@@ -68,7 +68,9 @@ function! vimteractive#sendlines(lines)
     " Autostart a terminal if desired
     if !exists("b:vimteractive_connected_term") 
         if g:vimteractive_autostart
-            call vimteractive#term_start('-auto-')
+            if vimteractive#term_start('-auto-') 
+                return
+            endif
         else
             echoerr "No terminal connected."
             echoerr "call :Iterm to start a new one, or :Iconn to connect to an existing one"
@@ -119,23 +121,20 @@ function! vimteractive#term_start(term_type)
     endif
 
     " Create a new term
-    echom "Starting " . l:term_command
     let l:term_bufname = s:new_name(l:term_type)
-    if v:version < 801
-        call term_start(l:term_command, {
-            \ "term_name": l:term_bufname,
-            \ "term_finish": "close"
-            \ })
-    else
-        call term_start(l:term_command, {
-            \ "term_name": l:term_bufname,
-            \ "term_kill": "term",
-            \ "term_finish": "close"
-            \ })
+    let l:term_start = {"term_name": s:new_name(l:term_type) , "term_finish":"close"}
+    if v:version >= 801
+        let term_start.term_kill = "term"
+    endif
+    let l:term_bufnr = term_start(l:term_command, l:term_start)
+    sleep 10m
+    if term_getstatus(l:term_bufnr) != "running"
+        echoerr "Could not start " . l:term_command 
+        return 1
     endif
 
     " Add this terminal to the buffer list, and store type
-    call add(s:vimteractive_buffers, bufnr(l:term_bufname))
+    call add(s:vimteractive_buffers, l:term_bufnr)
     let b:vimteractive_term_type = l:term_type
 
     " Turn line numbering off
@@ -144,25 +143,11 @@ function! vimteractive#term_start(term_type)
     autocmd BufEnter <buffer> call feedkeys("\<C-W>N")
     " Switch to insert mode when leaving buffer
     autocmd BufLeave <buffer> execute "silent! normal! i"
-    " Make :quit really do the right thing
-    cabbrev <buffer> q bdelete! "
-    cabbrev <buffer> qu bdelete! "
-    cabbrev <buffer> qui bdelete! "
-    cabbrev <buffer> quit bdelete! "
     " Return to previous window
     wincmd p
 
     " Store name and type of current buffer
-    let b:vimteractive_connected_term = bufnr(l:term_bufname)
-
-    " Pause as necessary
-    while term_getline(b:vimteractive_connected_term, 1) == ''
-        sleep 10m " Waiting for prompt
-    endwhile
-    if get(g:vimteractive_slow_prompt, l:term_type)
-        execute "sleep " . l:slow . "m"
-    endif
-    redraw
+    let b:vimteractive_connected_term = l:term_bufnr
 
 endfunction
 

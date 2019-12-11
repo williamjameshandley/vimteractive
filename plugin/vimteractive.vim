@@ -45,12 +45,6 @@ let g:vimteractive_bracketed_paste.python = 0
 let g:vimteractive_bracketed_paste.python2 = 0
 let g:vimteractive_bracketed_paste.python3 = 0
 
-" If present, wait this amount of time in ms when starting term on ^S
-if !has_key(g:, 'vimteractive_slow_prompt')
-	let g:vimteractive_slow_prompt = { }
-endif
-let g:vimteractive_slow_prompt.clojure = 200
-
 " Plugin commands
 " ===============
 
