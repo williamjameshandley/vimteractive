@@ -227,6 +227,7 @@ Similar projects
 
 Changelist
 ----------
+:v2.2: `Vertical splitting option <https://github.com/williamjameshandley/vimteractive/pull/21>`__
 :v2.1: `Visual selection improvement <https://github.com/williamjameshandley/vimteractive/pull/15>`__
 :v2.0: `Multiple terminal functionality <https://github.com/williamjameshandley/vimteractive/pull/9>`__
 :v1.7: `Autodetection of terminals <https://github.com/williamjameshandley/vimteractive/pull/5>`__
