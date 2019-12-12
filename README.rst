@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim 
 :Author: Will Handley
-:Version: 2.1.0
+:Version: 2.2.0
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -159,6 +159,15 @@ then returns to insert mode at the same location.
 In Visual mode, ``CTRL-S`` sends the current selection to the terminal.
 
 ``ALT-S`` sends all lines from the start to the current line.
+
+Options
+~~~~~~~
+These options can be put in your ``.vimrc``, or run manually as desired:
+
+.. code:: vim
+
+    let g:vimteractive_vertical = 1    " Vertically split terminals by default
+	let g:vimteractive_autostart = 0   " Don't start terminals by default
 
 Extending functionality
 -----------------------

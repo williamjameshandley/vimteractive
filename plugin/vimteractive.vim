@@ -14,10 +14,16 @@ if !has_key(g:, 'vimteractive_autostart')
 	let g:vimteractive_autostart = 1
 endif
 
+" Start in a horizontal terminal by default
+if !has_key(g:, 'vimteractive_vertical')
+    let g:vimteractive_vertical = 0
+endif
+
 " Variables for running the various sessions
 if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }
 endif
+
 
 let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent'
 let g:vimteractive_commands.ipython2 = 'ipython2 --matplotlib --no-autoindent'

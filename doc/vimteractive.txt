@@ -133,6 +133,14 @@ create one for you using |:Iterm|.
 					can be omitted if there is only one terminal.
 
 ==============================================================================
+3. Vimteractive options                                 *vimteractive-options*
+
+These options can be put in your |.vimrc|, or run manually as desired:
+
+    let g:vimteractive_vertical = 1    " Vertically split terminals by default
+	let g:vimteractive_autostart = 0   " Don't start terminals by default
+
+==============================================================================
 4. Extending functionality                            *vimteractive-extending*
 
 To add a new interpreter to Vimteractive, you should define
@@ -159,7 +167,7 @@ milliseconds like this:
 This project is very much in an alpha phase, so if you have any issues that
 arise on your system, feel free to contact me:
 
-    williamjameshandley@gmail.com.
+    williamjameshandley@gmail.com
 
 ==============================================================================
 5. About                                          *vimteractive-functionality*
