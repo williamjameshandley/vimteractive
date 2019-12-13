@@ -122,7 +122,7 @@ function! vimteractive#term_start(term_type)
 
     " Create a new term
     let l:term_bufname = s:new_name(l:term_type)
-    let l:term_start = {"term_name": s:new_name(l:term_type) , "term_finish":"close"}
+    let l:term_start = {"term_name": s:new_name(l:term_type) , "term_finish":"close", "vertical": g:vimteractive_vertical}
     if v:version >= 801
         let term_start.term_kill = "term"
     endif
