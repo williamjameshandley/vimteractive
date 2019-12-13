@@ -124,13 +124,15 @@ function! vimteractive#term_start(term_type)
     if v:version < 801
         call term_start(l:term_command, {
             \ "term_name": l:term_bufname,
-            \ "term_finish": "close"
+            \ "term_finish": "close",
+            \ "vertical": g:vimteractive_vertical
             \ })
     else
         call term_start(l:term_command, {
             \ "term_name": l:term_bufname,
             \ "term_kill": "term",
-            \ "term_finish": "close"
+            \ "term_finish": "close",
+            \ "vertical": g:vimteractive_vertical
             \ })
     endif
 
