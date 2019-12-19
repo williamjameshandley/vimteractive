@@ -84,7 +84,7 @@ noremap  <silent> <C-s>      :call vimteractive#sendlines(getline('.'))<CR>
 inoremap <silent> <C-s> <Esc>:call vimteractive#sendlines(getline('.'))<CR>a
 
 " Control-S in visual mode to send multiple lines
-vnoremap <silent> <C-s> m`"xy:call vimteractive#sendlines(substitute(getreg('x'), "\n*$", "", ""))<CR>``
+vnoremap <silent> <C-s> m`""y:call vimteractive#sendlines(substitute(getreg('"'), "\n*$", "", ""))<CR>``
 
 " Alt-S in normal mode to send all lines up to this point
 noremap <silent> <A-s> :call vimteractive#sendlines(join(getline(1,'.'), "\n"))<CR>
