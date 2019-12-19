@@ -87,7 +87,6 @@ function! vimteractive#sendlines(lines)
 
     let l:term_type = getbufvar(b:vimteractive_connected_term, "vimteractive_term_type")
     
-    mark`
     if get(g:vimteractive_bracketed_paste, l:term_type, 1)
         call term_sendkeys(b:vimteractive_connected_term,"[200~" . a:lines . "[201~\n")
     else
