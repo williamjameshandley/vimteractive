@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim 
 :Author: Will Handley
-:Version: 2.2.1
+:Version: 2.3.0
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -28,6 +28,7 @@ The activating commands are
 - zsh ``:Izsh``
 - python ``:Ipython``
 - clojure ``:Iclojure``
+- apl ``:Iapl``
 - autodetect based on filetype ``:Iterm``
 
 Commands may be sent from a text file to the chosen terminal using ``CTRL-S``.
@@ -143,6 +144,7 @@ Supported terminals
 -  ``:Izsh`` Activate a zsh terminal
 -  ``:Ipython`` Activate a python terminal
 -  ``:Iclojure`` Activate a clojure terminal
+-  ``:Iapl`` Activate an apl terminal
 -  ``:Iterm`` Activate default terminal for this filetype
 
 Sending commands
