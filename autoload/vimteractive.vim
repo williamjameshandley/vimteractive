@@ -87,10 +87,9 @@ function! vimteractive#sendlines(lines)
 
     call s:show_term()
 
-    let l:term_type = getbufvar(b:vimteractive_connected_term, "term_type")
+    let l:term_type = getbufvar(b:vimteractive_connected_term, "vimteractive_term_type")
     
-    mark`
-    if get(g:vimteractive_bracketed_paste, l:term_type, 1)
+    if get(g:vimteractive_bracketed_paste, l:term_type, g:vimteractive_bracketed_paste_default)
         call term_sendkeys(b:vimteractive_connected_term,"[200~" . a:lines . "[201~\n")
     else
         call term_sendkeys(b:vimteractive_connected_term, a:lines . "\n")
@@ -121,6 +120,7 @@ function! vimteractive#term_start(term_type)
     endif
 
     " Create a new term
+    echom "Starting " . l:term_command
     let l:term_bufname = s:new_name(l:term_type)
     let l:term_start = {"term_name": s:new_name(l:term_type) , "term_finish":"close", "vertical": g:vimteractive_vertical}
     if v:version >= 801
