@@ -35,6 +35,7 @@ The activating commands are
 - zsh     |:Izsh|
 - python  |:Ipython| 
 - clojure |:Iclojure|
+- apl     |:Iclojure|
 - autodetect based on filetype |:Iterm| 
 
 Commands may be sent from a text file to the chosen terminal using CTRL-S. If
@@ -44,7 +45,7 @@ there is no terminal, CTRL-S will automatically open one for you using
 Note: it's highly recommended to use IPython as your default Python
 interpreter. You can set it like this:
 
-	let g:vimteractive_default_shells = { 'python': 'ipython' }
+    let g:vimteractive_default_shells = { 'python': 'ipython' }
 
 Since this package leverages the native vim interactive terminal, it is 
 only compatible with vim 8 or greater.
@@ -96,14 +97,15 @@ connect two buffers to one terminal, use |:Iconn| command.
 ------------------------------------------------------------------------------
 Supported terminals                                   *vimteractive-terminals*
 
-*:Iipython* 	Activate an ipython terminal
-*:Ijulia*   	Activate a julia terminal
-*:Imaple*   	Activate a maple terminal
-*:Ibash*    	Activate a bash terminal
-*:Izsh*     	Activate a zsh terminal
-*:Ipython*  	Activate a python terminal
-*:Iclojure*		Activate a clojure terminal
-*:Iterm*		Activate a terminal based on current filetype
+*:Iipython*     Activate an ipython terminal
+*:Ijulia*       Activate a julia terminal
+*:Imaple*       Activate a maple terminal
+*:Ibash*        Activate a bash terminal
+*:Izsh*         Activate a zsh terminal
+*:Ipython*      Activate a python terminal
+*:Iclojure*     Activate a clojure terminal
+*:Iapl*         Activate an apl terminal
+*:Iterm*        Activate a terminal based on current filetype
 
 ------------------------------------------------------------------------------
 Sending commands                                                    *v_CTRL_S*
@@ -141,7 +143,7 @@ interpreter, you may be on an older system which does not have bracketed paste
 enabled, or have other shell misbehaviour issues. You can change the default
 setting with 
 
-	let g:vimteractive_bracketed_paste_default = 0
+    let g:vimteractive_bracketed_paste_default = 0
 
 
 ==============================================================================
@@ -159,23 +161,23 @@ These options can be put in your |.vimrc|, or run manually as desired:
 To add a new interpreter to Vimteractive, you should define
 g:vimteractive_commands variable. For example:
 
-	let g:vimteractive_commands = { 'pythonasync': 'python -m asyncio' }
+    let g:vimteractive_commands = { 'pythonasync': 'python -m asyncio' }
 
 will provide you :Ipythonasync command starting Python 3.8+ asyncio REPL.
 If you want to make this command default for python filetype, you should do
 
-	let g:vimteractive_default_shells = { 'python': 'pythonasync' }
+    let g:vimteractive_default_shells = { 'python': 'pythonasync' }
 
 If you see escape sequences appearing when you do CTRL-S for your interpreter,
 you may try to disable bracketed paste mode for it:
 
-	let g:vimteractive_bracketed_paste = { 'pythonasync': 0 }
+    let g:vimteractive_bracketed_paste = { 'pythonasync': 0 }
 
 If your interpreter has slow-starting REPL (like Clojure), you may want to
 wait before sending data to it at the first time. Specify time to wait in
 milliseconds like this:
 
-	let g:vimteractive_slow_prompt = { 'pythonasync': 200 }
+    let g:vimteractive_slow_prompt = { 'pythonasync': 200 }
 
 This project is very much in an beta phase, so if you have any issues that
 arise on your system, feel free to contact me:
