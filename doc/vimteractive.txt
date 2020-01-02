@@ -8,9 +8,10 @@ CONTENTS                                               *vimteractive-contents*
 
     1.Intro........................................|vimteractive-intro|
     2.Usage........................................|vimteractive-usage|
-    3.Extending functionality......................|vimteractive-extending|
-    4.About........................................|vimteractive-about|
-    5.License......................................|vimteractive-license|
+    3.Common issues................................|vimteractive-issues|
+    4.Extending functionality......................|vimteractive-extending|
+    5.About........................................|vimteractive-about|
+    6.License......................................|vimteractive-license|
 
 ==============================================================================
 1. Intro                                                  *vimteractive-intro*
@@ -24,34 +25,29 @@ to other interpreters (including ipython). It is based around the unix
 philosophy of "do one thing and do it well".  It aims to provide a robust and
 simple link between text files and interactive interpreters. Vimteractive will
 never aim to do things like autocompletion, leaving that to other, more
-developed tools such as YouCompleteMe.
+developed tools such as YouCompleteMe or TabNine.
 
 The activating commands are 
 - ipython |:Iipython| 
-- python  |:Ipython| 
 - julia   |:Ijulia|
 - maple   |:Imaple|
 - bash    |:Ibash|
-- clojure |:Iclojure|
 - zsh     |:Izsh|
+- python  |:Ipython| 
+- clojure |:Iclojure|
+- autodetect based on filetype |:Iterm| 
 
-You can also let Vimteractive detect interpreter using |:Iterm| or just send
-some lines: Vimteractive will create terminal if needed. Note: it's highly
-recommended to use IPython as your default Python interpreter. You can set it
-like this:
+Commands may be sent from a text file to the chosen terminal using CTRL-S. If
+there is no terminal, CTRL-S will automatically open one for you using
+|:Iterm|.  See |v_CTRL_S| for more details.
+
+Note: it's highly recommended to use IPython as your default Python
+interpreter. You can set it like this:
 
 	let g:vimteractive_default_shells = { 'python': 'ipython' }
 
-Default Python REPL support for pasting is really bad and you should use
-IPython whenever possible. If you need to use default Python REPL, you must
-put newline after every top-level block.
-
-Commands may be sent from a text file to the chosen terminal using CTRL-S. 
-See |v_CTRL_S| for more details.
-
 Since this package leverages the native vim interactive terminal, it is 
 only compatible with vim 8 or greater.
-
 
 ==============================================================================
 2. Usage                                                  *vimteractive-usage*
@@ -64,7 +60,7 @@ stty -ixon
 into your .bashrc (or equivalent shell profile file)
 
 ------------------------------------------------------------------------------
-Example usage:
+Example usage                                             *vimteractive-usage*
 
 Create a python file "test.py" with the following content:
 
@@ -97,18 +93,19 @@ you wish to a new file if it contains valuable output
 By default every buffer is connected to separate terminal. If you want to
 connect two buffers to one terminal, use |:Iconn| command.
 
-
+------------------------------------------------------------------------------
 Supported terminals                                   *vimteractive-terminals*
 
 *:Iipython* 	Activate an ipython terminal
-*:Ipython*  	Activate a python terminal
 *:Ijulia*   	Activate a julia terminal
 *:Imaple*   	Activate a maple terminal
 *:Ibash*    	Activate a bash terminal
 *:Izsh*     	Activate a zsh terminal
+*:Ipython*  	Activate a python terminal
 *:Iclojure*		Activate a clojure terminal
 *:Iterm*		Activate a terminal based on current filetype
 
+------------------------------------------------------------------------------
 Sending commands                                                    *v_CTRL_S*
 
 CTRL-S sends lines of text to the interpreter in a mode-dependent manner:
@@ -126,23 +123,38 @@ ALT-S sends all lines from the start to the current line.
 If there is no active terminal for current buffer, CTRL-S will automatically
 create one for you using |:Iterm|.
 
-==============================================================================
-3. Connecting to existing REPLs             *:Iconn* *vimteractive-connecting*
-:Iconn [{buffer}]	Connect current buffer to REPL in {buffer}. You can
-					connect any number of buffers to one REPL. {buffer}
-					can be omitted if there is only one terminal.
+------------------------------------------------------------------------------
+Connecting to existing REPLs                *:Iconn* *vimteractive-connecting*
+
+:Iconn [{buffer}] connects current buffer to REPL in {buffer}. You can connect
+any number of buffers to one REPL. {buffer} can be omitted if there is only one
+terminal.
 
 ==============================================================================
-3. Vimteractive options                                 *vimteractive-options*
+3. Common issues                                         *vimteractive-issues*
+
+------------------------------------------------------------------------------
+Bracketed paste                          *vimteractive-issues-bracketed-paste* 
+
+If you see strange symbols like ^[[200~ when sending lines to your new
+interpreter, you may be on an older system which does not have bracketed paste
+enabled, or have other shell misbehaviour issues. You can change the default
+setting with 
+
+	let g:vimteractive_bracketed_paste_default = 0
+
+
+==============================================================================
+4. Vimteractive options                                 *vimteractive-options*
 
 These options can be put in your |.vimrc|, or run manually as desired:
 
-    let g:vimteractive_vertical = 1  " Vertically split terminals
-    let g:vimteractive_autostart = 0 " Don't start terminals by default
+    let g:vimteractive_vertical = 1        " Vertically split terminals
+    let g:vimteractive_autostart = 0       " Don't start terminals by default
 
 
 ==============================================================================
-4. Extending functionality                            *vimteractive-extending*
+5. Extending functionality                            *vimteractive-extending*
 
 To add a new interpreter to Vimteractive, you should define
 g:vimteractive_commands variable. For example:
@@ -165,13 +177,13 @@ milliseconds like this:
 
 	let g:vimteractive_slow_prompt = { 'pythonasync': 200 }
 
-This project is very much in an alpha phase, so if you have any issues that
+This project is very much in an beta phase, so if you have any issues that
 arise on your system, feel free to contact me:
 
     williamjameshandley@gmail.com
 
 ==============================================================================
-5. About                                          *vimteractive-functionality*
+6. About                                          *vimteractive-functionality*
 
 The core maintainer of vimteractive is:
 
@@ -182,6 +194,6 @@ Find the latest version of vimteractive at:
     http://github.com/williamjameshandley/vimteractive
 
 ==============================================================================
-6. License                                              *vimteractive-license*
+7. License                                              *vimteractive-license*
 
 Vimteractive is licensed under GPL 3.0
