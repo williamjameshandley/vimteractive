@@ -1,4 +1,4 @@
-*vimteractive.txt*   Sending commands from vim to interactive programs
+*vimteractive*   Sending commands from vim to interactive programs
 
                     Vimteractive - main help file
 
@@ -60,7 +60,7 @@ stty -ixon
 into your .bashrc (or equivalent shell profile file)
 
 ------------------------------------------------------------------------------
-Example usage                                             *vimteractive-usage*
+Example usage                                           *vimteractive-example*
 
 Create a python file "test.py" with the following content:
 
