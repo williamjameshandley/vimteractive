@@ -1,7 +1,7 @@
 ============
 Vimteractive
 ============
-:vimteractive: send commands from text files to interactive programs via vim 
+:vimteractive: send commands from text files to interactive programs via vim
 :Author: Will Handley
 :Version: 2.3.1
 :Homepage: https://github.com/williamjameshandley/vimteractive
@@ -12,7 +12,7 @@ Vimteractive was inspired by the workflow of the
 
 This plugin is designed to extend a subset of the functionality of vim-ipython
 to other interpreters (including ipython). It is based around the unix
-philosophy of `"do one thing and do it well" <https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well>`__. 
+philosophy of `"do one thing and do it well" <https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well>`__.
 Vimteractive aims to provide a robust and simple link between text files and
 interactive interpreters. Vimteractive will never aim to do things like
 autocompletion, leaving that to other, more developed tools such as
@@ -58,7 +58,7 @@ disable this by putting
 
 into your ``.bashrc`` (or equivalent shell profile file).
 
-Installation should be relatively painless via 
+Installation should be relatively painless via
 `the usual routes <https://vimawesome.com/plugin/vimteractive>`_ such as
 `Vundle <https://github.com/VundleVim/Vundle.vim>`__,
 `Pathogen <https://github.com/tpope/vim-pathogen>`__ or the vim 8 native
@@ -179,7 +179,7 @@ Bracketed paste
 If you see strange symbols like ``^[[200~`` when sending lines to your new
 interpreter, you may be on an older system which does not have bracketed paste
 enabled, or have other shell misbehaviour issues. You can change the default
-setting with 
+setting with
 
 .. code:: vim
 
