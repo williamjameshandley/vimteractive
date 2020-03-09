@@ -141,10 +141,12 @@ function! vimteractive#term_start(term_type)
 
     " Turn line numbering off
     set nonumber norelativenumber
-    " Switch to terminal-normal mode when entering buffer
-    autocmd BufEnter <buffer> call feedkeys("\<C-W>N")
-    " Switch to insert mode when leaving buffer
-    autocmd BufLeave <buffer> execute "silent! normal! i"
+    if g:vimteractive_switch_mode
+        " Switch to terminal-normal mode when entering buffer
+        autocmd BufEnter <buffer> call feedkeys("\<C-W>N")
+        " Switch to insert mode when leaving buffer
+        autocmd BufLeave <buffer> execute "silent! normal! i"
+    endif
     " Make :quit really do the right thing
     cabbrev <buffer> q bdelete! "
     cabbrev <buffer> qu bdelete! "
