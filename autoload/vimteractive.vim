@@ -66,7 +66,7 @@ endfunction
 " Send list of lines to the terminal buffer, surrounded with a bracketed paste
 function! vimteractive#sendlines(lines)
     " Autostart a terminal if desired
-    if !exists("b:vimteractive_connected_term") 
+    if !exists("b:vimteractive_connected_term")
         if g:vimteractive_autostart
             call vimteractive#term_start('-auto-')
         else
@@ -86,7 +86,7 @@ function! vimteractive#sendlines(lines)
     call s:show_term()
 
     let l:term_type = getbufvar(b:vimteractive_connected_term, "vimteractive_term_type")
-    
+
     if get(g:vimteractive_bracketed_paste, l:term_type, g:vimteractive_bracketed_paste_default)
         call term_sendkeys(b:vimteractive_connected_term,"[200~" . a:lines . "[201~\n")
     else
@@ -187,7 +187,7 @@ function! vimteractive#connect(...)
     " Check if bufname isn't just ''
     if l:bufname == ''
         if len(s:vimteractive_buffers) ==# 1
-            let l:bufname = vimteractive#buffer_list()[0] 
+            let l:bufname = vimteractive#buffer_list()[0]
         else
             echom "Please specify terminal from "
             echom vimteractive#buffer_list()

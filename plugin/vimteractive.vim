@@ -44,7 +44,7 @@ if !has_key(g:, 'vimteractive_default_shells')
 endif
 
 " If 0, disable bracketed paste escape sequences
-if !has_key(g:, 'vimteractive_bracketed_paste_default') 
+if !has_key(g:, 'vimteractive_bracketed_paste_default')
     let g:vimteractive_bracketed_paste_default=1
 endif
 if !has_key(g:, 'vimteractive_bracketed_paste')
@@ -77,7 +77,7 @@ if !has_key(g:, 'vimteractive_loaded')
 	command! -nargs=? -complete=customlist,vimteractive#buffer_list Iconn
 		\ :call vimteractive#connect(<f-args>)
 endif
-                    
+
 
 " Plugin key mappings
 " ===================
