@@ -19,6 +19,11 @@ if !has_key(g:, 'vimteractive_vertical')
     let g:vimteractive_vertical = 0
 endif
 
+" Switch to normal mode when entering the buffer by default
+if !has_key(g:, 'vimteractive_switch_mode')
+    let g:vimteractive_switch_mode = 1
+endif
+
 " Variables for running the various sessions
 if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }

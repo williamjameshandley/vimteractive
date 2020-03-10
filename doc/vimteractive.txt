@@ -153,6 +153,7 @@ These options can be put in your |.vimrc|, or run manually as desired:
 
     let g:vimteractive_vertical = 1        " Vertically split terminals
     let g:vimteractive_autostart = 0       " Don't start terminals by default
+    let g:vimteractive_switch_mode = 0     " Don't switch to normal mode
 
 
 ==============================================================================
