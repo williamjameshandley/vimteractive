@@ -87,8 +87,11 @@ function! vimteractive#sendlines(lines)
 
     let l:term_type = getbufvar(b:vimteractive_connected_term, "vimteractive_term_type")
 
-    if stridx(term_getstatus(b:vimteractive_connected_term),"normal") != -1
-        execute ":b " . b:vimteractive_connected_term . "| silent! normal! i"
+    " Switch to insert mode if the terminal is currently in normal mode
+    let l:term_status = term_getstatus(b:vimteractive_connected_term)
+    if stridx(l:term_status,"normal") != -1
+        execute ":b " . b:vimteractive_connected_term 
+        execute "silent! normal! i"
         bprevious
     endif
 
