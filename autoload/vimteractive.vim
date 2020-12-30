@@ -87,6 +87,14 @@ function! vimteractive#sendlines(lines)
 
     let l:term_type = getbufvar(b:vimteractive_connected_term, "vimteractive_term_type")
 
+    " Switch to insert mode if the terminal is currently in normal mode
+    let l:term_status = term_getstatus(b:vimteractive_connected_term)
+    if stridx(l:term_status,"normal") != -1
+        execute ":b " . b:vimteractive_connected_term 
+        execute "silent! normal! i"
+        bprevious
+    endif
+
     if get(g:vimteractive_bracketed_paste, l:term_type, g:vimteractive_bracketed_paste_default)
         call term_sendkeys(b:vimteractive_connected_term,"[200~" . a:lines . "[201~\n")
     else
@@ -144,8 +152,6 @@ function! vimteractive#term_start(term_type)
     if g:vimteractive_switch_mode
         " Switch to terminal-normal mode when entering buffer
         autocmd BufEnter <buffer> call feedkeys("\<C-W>N")
-        " Switch to insert mode when leaving buffer
-        autocmd BufLeave <buffer> execute "silent! normal! i"
     endif
     " Make :quit really do the right thing
     cabbrev <buffer> q bdelete! "
