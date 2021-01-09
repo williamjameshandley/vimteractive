@@ -90,9 +90,10 @@ function! vimteractive#sendlines(lines)
     " Switch to insert mode if the terminal is currently in normal mode
     let l:term_status = term_getstatus(b:vimteractive_connected_term)
     if stridx(l:term_status,"normal") != -1
+        let l:current_buffer = bufnr('%')
         execute ":b " . b:vimteractive_connected_term 
         execute "silent! normal! i"
-        bprevious
+        execute ":b " . l:current_buffer
     endif
 
     if get(g:vimteractive_bracketed_paste, l:term_type, g:vimteractive_bracketed_paste_default)
