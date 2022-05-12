@@ -42,6 +42,7 @@ let g:vimteractive_commands.julia = 'julia'
 let g:vimteractive_commands.maple = 'maple -c "interface(errorcursor=false);"'
 let g:vimteractive_commands.clojure = 'clojure'
 let g:vimteractive_commands.apl = 'apl'
+let g:vimteractive_commands.R = 'R'
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_shells')
