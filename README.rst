@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim
 :Author: Will Handley
-:Version: 2.4.1
+:Version: 2.5.0
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -24,6 +24,7 @@ The activating commands are
 - ipython ``:Iipython``
 - julia ``:Ijulia``
 - maple ``:Imaple``
+- mathematica ``:Imathematica``
 - bash ``:Ibash``
 - zsh ``:Izsh``
 - python ``:Ipython``
@@ -140,6 +141,7 @@ Supported terminals
 -  ``:Iipython`` Activate an ipython terminal
 -  ``:Ijulia`` Activate a julia terminal
 -  ``:Imaple`` Activate a maple terminal
+-  ``:Imathematica`` Activate a mathematica terminal
 -  ``:Ibash`` Activate a bash terminal
 -  ``:Izsh`` Activate a zsh terminal
 -  ``:Ipython`` Activate a python terminal

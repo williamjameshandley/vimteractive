@@ -43,6 +43,7 @@ let g:vimteractive_commands.maple = 'maple -c "interface(errorcursor=false);"'
 let g:vimteractive_commands.clojure = 'clojure'
 let g:vimteractive_commands.apl = 'apl'
 let g:vimteractive_commands.R = 'R'
+let g:vimteractive_commands.mathematica = 'math'
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_shells')
@@ -61,6 +62,7 @@ let g:vimteractive_bracketed_paste.python = 0
 let g:vimteractive_bracketed_paste.python2 = 0
 let g:vimteractive_bracketed_paste.python3 = 0
 let g:vimteractive_bracketed_paste.apl = 0
+let g:vimteractive_bracketed_paste.mathematica = 0
 
 " If present, wait this amount of time in ms when starting term on ^S
 if !has_key(g:, 'vimteractive_slow_prompt')
