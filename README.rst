@@ -17,21 +17,21 @@ Vimteractive aims to provide a robust and simple link between text files and
 language shells. Vimteractive will never aim to do things like
 autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__ or
-`Copilot <https://github.com/features/copilot>``.
+`Copilot <https://github.com/features/copilot>`__.
 
 The activating commands are:
 
-- `ipython <https://ipython.readthedocs.io>` ``:Iipython``
-- `julia <https://julialang.org/>` ``:Ijulia``
-- `maple <https://maplesoft.com/>` ``:Imaple``
-- `mathematica <https://www.wolfram.com/mathematica/>` ``:Imathematica``
-- `bash <https://en.wikipedia.org/wiki/Bash_(Unix_shell)>` ``:Ibash``
-- `zsh <https://www.zsh.org/>` ``:Izsh``
-- `python <https://www.python.org/>` ``:Ipython``
-- `clojure <https://clojure.org/>` ``:Iclojure``
-- `apl <https://en.wikipedia.org/wiki/APL_(programming_language)>` ``:Iapl``
-- `R <https://www.r-project.org/>` ``:IR``
-- `sgpt <https://github.com/TheR1D/shell_gpt>` ``:Isgpt``
+- `ipython <https://ipython.readthedocs.io>`__ ``:Iipython``
+- `julia <https://julialang.org/>`__ ``:Ijulia``
+- `maple <https://maplesoft.com/>`__ ``:Imaple``
+- `mathematica <https://www.wolfram.com/mathematica/>`__ ``:Imathematica``
+- `bash <https://en.wikipedia.org/wiki/Bash_(Unix_shell)>`__ ``:Ibash``
+- `zsh <https://www.zsh.org/>`__ ``:Izsh``
+- `python <https://www.python.org/>`__ ``:Ipython``
+- `clojure <https://clojure.org/>`__ ``:Iclojure``
+- `apl <https://en.wikipedia.org/wiki/APL_(programming_language)>`__ ``:Iapl``
+- `R <https://www.r-project.org/>`__ ``:IR``
+- `sgpt <https://github.com/TheR1D/shell_gpt>`__ ``:Isgpt``
 - autodetect based on filetype ``:Iterm``
 
 Commands may be sent from a text file to the chosen REPL using ``CTRL-S``.
