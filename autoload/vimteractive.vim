@@ -10,6 +10,10 @@
 "
 " b:vimteractive_term_type
 "   buffer-local variable held by terminal buffer that indicates the terminal type
+"
+" b:uid
+"   buffer-local variable held by terminal buffer that indicates a
+"   time-dependent UID for disambiguating per-session files
 
 
 " Initialise the list of terminal buffer numbers on startup
@@ -103,9 +107,13 @@ function! vimteractive#sendlines(lines)
     endif
 endfunction
 
+function! vimteractive#get_output()
+
+endfunction
+
 
 " Start a vimteractive terminal
-function! vimteractive#term_start(term_type)
+function! vimteractive#term_start(term_type, ...)
     if has('terminal') == 0
         echoerr "Your version of vim is not compiled with +terminal. Cannot use vimteractive"
         return
@@ -118,6 +126,9 @@ function! vimteractive#term_start(term_type)
         let l:term_type = a:term_type
     endif
 
+    " Name the buffer
+    let l:term_bufname = s:new_name(l:term_type)
+
     " Retrieve starting command
     if has_key(g:vimteractive_commands, l:term_type)
         let l:term_command = get(g:vimteractive_commands, l:term_type)
@@ -126,9 +137,15 @@ function! vimteractive#term_start(term_type)
         return
     endif
 
+    " Generate a time-dependent UID for naming the terminal command etc
+    let b:uid = strftime('%Y-%m-%d-%H:%M:%S')
+    let l:term_command = substitute(l:term_command, 'UID', b:uid, '')
+
+    " Add all other arguments to the command
+    let l:term_command = l:term_command . ' ' . join(a:000, ' ')
+
     " Create a new term
     echom "Starting " . l:term_command
-    let l:term_bufname = s:new_name(l:term_type)
     if v:version < 801
         call term_start(l:term_command, {
             \ "term_name": l:term_bufname,
@@ -212,4 +229,37 @@ function! vimteractive#connect(...)
     let b:vimteractive_connected_term = bufnr(l:bufname)
     echom "Connected " . bufname("%") . " to " . l:bufname
 
+endfunction
+
+function! vimteractive#get_response()
+    let l:term_type = getbufvar(b:vimteractive_connected_term, "vimteractive_term_type")
+    if (l:term_type == 'sgpt')
+        let l:cache_path = getenv('CHAT_CACHE_PATH')
+        if l:cache_path == v:null
+            let l:cache_path = '/tmp/shell_gpt/chat_cache'
+        endif
+        let l:filename = l:cache_path . '/vimteractive-UID'
+        let l:filename = substitute(l:filename, 'UID', b:uid, '')
+        let l:json_content = join(readfile(l:filename), "\n")
+        let l:json_data = json_decode(l:json_content)
+        if len(l:json_data) > 0
+            let l:last_response = l:json_data[-1]['content']
+            return l:last_response
+        endif
+    elseif (l:term_type == 'Ipython')
+        let l:cache_loc = '/tmp/vimteractive_ipython-UID'
+        let l:filename = substitute(l:cache_loc, 'UID', b:uid, '')
+        let lines = readfile(l:filename)
+        let block = []
+        for i in range(len(lines) - 1, 0, -1)
+            if match(lines[i], '^#\[Out\]#') == 0
+                let line = substitute(lines[i], '^#\[Out\]# ', '', '')
+                call add(block, line)
+            else
+                break
+            endif
+        endfor
+        let block = reverse(block)
+        return join(block, "\n")
+    endif
 endfunction
