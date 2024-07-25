@@ -11,7 +11,7 @@ Vimteractive was inspired by the workflow of the
 `vim-ipython <https://github.com/ivanov/vim-ipython>`__ plugin.
 
 This plugin is designed to extend a subset of the functionality of vim-ipython
-to other `REPLs <https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop>` (including ipython). It is based around the unix
+to other `REPLs <https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop>`__ (including ipython). It is based around the unix
 philosophy of `"do one thing and do it well" <https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well>`__.
 Vimteractive aims to provide a robust and simple link between text files and
 language shells. Vimteractive will never aim to do things like
