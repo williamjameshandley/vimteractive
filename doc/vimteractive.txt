@@ -28,14 +28,18 @@ never aim to do things like autocompletion, leaving that to other, more
 developed tools such as YouCompleteMe or TabNine.
 
 The activating commands are
-- ipython |:Iipython|
-- julia   |:Ijulia|
-- maple   |:Imaple|
-- bash    |:Ibash|
-- zsh     |:Izsh|
-- python  |:Ipython|
-- clojure |:Iclojure|
-- apl     |:Iclojure|
+- ipython       |:Iipython|
+- julia         |:Ijulia|
+- maple         |:Imaple|
+- mathematica   |:Imathematica|
+- bash          |:Ibash|
+- zsh           |:Izsh|
+- python        |:Ipython|
+- clojure       |:Iclojure|
+- apl           |:Iclojure|
+- R             |:IR|
+- mathematica   |:Imathematica|
+- sgpt          |:Isgpt|
 - autodetect based on filetype |:Iterm|
 
 Commands may be sent from a text file to the chosen terminal using CTRL-S. If
@@ -100,11 +104,14 @@ Supported terminals                                   *vimteractive-terminals*
 *:Iipython*     Activate an ipython terminal
 *:Ijulia*       Activate a julia terminal
 *:Imaple*       Activate a maple terminal
+*:Imathematica* Activate a mathematica terminal
 *:Ibash*        Activate a bash terminal
 *:Izsh*         Activate a zsh terminal
 *:Ipython*      Activate a python terminal
 *:Iclojure*     Activate a clojure terminal
 *:Iapl*         Activate an apl terminal
+*:IR*           Activate an R terminal
+*:Isgpt*        Activate an sgpt terminal
 *:Iterm*        Activate a terminal based on current filetype
 
 ------------------------------------------------------------------------------
