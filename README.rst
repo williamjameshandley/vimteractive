@@ -17,7 +17,7 @@ Vimteractive aims to provide a robust and simple link between text files and
 interactive interpreters. Vimteractive will never aim to do things like
 autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__ or
-`TabNine <https://tabnine.com>``.
+`TabNine <https://tabnine.com>`__.
 
 The activating commands are
 
