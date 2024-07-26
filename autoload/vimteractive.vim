@@ -13,10 +13,6 @@
 "
 " b:vimteractive_term_type
 "   buffer-local variable held by terminal buffer that indicates the terminal type
-"
-" b:uid
-"   buffer-local variable held by terminal buffer that indicates a
-"   time-dependent UID for disambiguating per-session files
 
 " Initialise the list of terminal buffer numbers on startup
 if !exists('s:vimteractive_buffers')
