@@ -4,6 +4,9 @@
 " s:vimteractive_buffers
 "   script-local variable that keeps track of vimteractive terminal buffers
 "
+" s:vimteractive_logfiles
+"   script-local variable that keeps track of logfiles for each terminal
+"
 " b:vimteractive_connected_term
 "   buffer-local variable held by buffer that indicates the name of the
 "   connected terminal buffer
@@ -15,10 +18,14 @@
 "   buffer-local variable held by terminal buffer that indicates a
 "   time-dependent UID for disambiguating per-session files
 
-
 " Initialise the list of terminal buffer numbers on startup
 if !exists('s:vimteractive_buffers')
     let s:vimteractive_buffers = []
+end
+
+" Initialise the list of logfiles on startup
+if !exists('s:vimteractive_logfiles')
+    let s:vimteractive_logfiles = {}
 end
 
 " Remove a terminal from the list on deletion.
@@ -132,9 +139,12 @@ function! vimteractive#term_start(term_type, ...)
         return
     endif
 
-    " Generate a time-dependent UID for naming the terminal command etc
-    let b:uid = strftime('%Y-%m-%d-%H:%M:%S')
-    let l:term_command = substitute(l:term_command, 'UID', b:uid, '')
+    " Assign a logfile name
+    let l:logfile = tempname() . '-' . l:term_type . '.log'
+    let l:term_command = substitute(l:term_command, '<LOGFILE>', l:logfile, '')
+
+    " Pass any environment variables necessary for logging
+    let $CHAT_CACHE_PATH="/" " sgpt logfiles
 
     " Add all other arguments to the command
     let l:term_command = l:term_command . ' ' . join(a:000, ' ')
@@ -159,6 +169,7 @@ function! vimteractive#term_start(term_type, ...)
     " Add this terminal to the buffer list, and store type
     call add(s:vimteractive_buffers, bufnr(l:term_bufname))
     let b:vimteractive_term_type = l:term_type
+    let s:vimteractive_logfiles[bufnr(l:term_bufname)] = l:logfile
 
     " Turn line numbering off
     set nonumber norelativenumber
@@ -228,35 +239,35 @@ endfunction
 
 function! vimteractive#get_response()
     let l:term_type = getbufvar(b:vimteractive_connected_term, "vimteractive_term_type")
-    if (l:term_type == 'sgpt')
-        let l:cache_path = getenv('CHAT_CACHE_PATH')
-        if l:cache_path == v:null
-            let l:cache_path = '/tmp/shell_gpt/chat_cache'
-        endif
-        let l:filename = l:cache_path . '/vimteractive-UID'
-        let l:filename = substitute(l:filename, 'UID', b:uid, '')
-        let l:json_content = join(readfile(l:filename), "\n")
-        let l:json_data = json_decode(l:json_content)
-        if len(l:json_data) > 0
-            let l:last_response = l:json_data[-1]['content']
-            return l:last_response
-        endif
-    elseif (l:term_type == 'Ipython')
-        let l:cache_loc = '/tmp/vimteractive_ipython-UID'
-        let l:filename = substitute(l:cache_loc, 'UID', b:uid, '')
-        let lines = readfile(l:filename)
-        let block = []
-        for i in range(len(lines) - 1, 0, -1)
-            if match(lines[i], '^#\[Out\]#') == 0
-                let line = substitute(lines[i], '^#\[Out\]# ', '', '')
-                call add(block, line)
-            else
-                break
-            endif
-        endfor
-        let block = reverse(block)
-        return join(block, "\n")
+    return g:vimteractive_get_response[l:term_type]()
+endfunction
+
+" Get the last response from the terminal for sgpt
+function! vimteractive#get_response_sgpt()
+    let l:logfile = s:vimteractive_logfiles[b:vimteractive_connected_term]
+    let l:json_content = join(readfile(l:logfile), "\n")
+    let l:json_data = json_decode(l:json_content)
+    if len(l:json_data) > 0
+        let l:last_response = l:json_data[-1]['content']
+        return l:last_response
     endif
+endfunction
+
+" Get the last response from the terminal for ipython
+function! vimteractive#get_response_ipython()
+    let l:logfile = s:vimteractive_logfiles[b:vimteractive_connected_term]
+    let lines = readfile(l:logfile)
+    let block = []
+    for i in range(len(lines) - 1, 0, -1)
+        if match(lines[i], '^#\[Out\]#') == 0
+            let line = substitute(lines[i], '^#\[Out\]# ', '', '')
+            call add(block, line)
+        else
+            break
+        endif
+    endfor
+    let block = reverse(block)
+    return join(block, "\n")
 endfunction
 
 " Cycle connection forward through terminal buffers

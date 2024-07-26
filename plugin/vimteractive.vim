@@ -29,7 +29,7 @@ if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }
 endif
 
-let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent --logfile="-o /tmp/vimteractive_ipython-UID"'
+let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent --logfile="-o <LOGFILE>"'
 let g:vimteractive_commands.python = 'python'
 let g:vimteractive_commands.bash = 'bash'
 let g:vimteractive_commands.zsh = 'zsh'
@@ -39,7 +39,7 @@ let g:vimteractive_commands.clojure = 'clojure'
 let g:vimteractive_commands.apl = 'apl'
 let g:vimteractive_commands.R = 'R'
 let g:vimteractive_commands.mathematica = 'math'
-let g:vimteractive_commands.sgpt = 'sgpt --repl vimteractive-UID'
+let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_shells')
@@ -65,6 +65,11 @@ if !has_key(g:, 'vimteractive_slow_prompt')
 	let g:vimteractive_slow_prompt = { }
 endif
 let g:vimteractive_slow_prompt.clojure = 200
+
+let g:vimteractive_get_response = {
+            \ 'ipython': function('vimteractive#get_response_ipython'),
+            \ 'sgpt': function('vimteractive#get_response_sgpt')
+            \}
 
 " Plugin commands
 " ===============
