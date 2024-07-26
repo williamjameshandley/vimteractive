@@ -103,3 +103,7 @@ noremap  <silent> <C-y>      :put =vimteractive#get_response()<CR>
 
 " Control-Y in insert mode to get last response
 inoremap <silent> <C-y> <Esc>:put =vimteractive#get_response()<CR>a
+
+" cycle through terminal buffers in the style of unimpaired
+nnoremap ]v :call vimteractive#next_term()<CR>
+nnoremap [v :call vimteractive#prev_term()<CR>

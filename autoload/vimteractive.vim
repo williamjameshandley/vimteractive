@@ -107,11 +107,6 @@ function! vimteractive#sendlines(lines)
     endif
 endfunction
 
-function! vimteractive#get_output()
-
-endfunction
-
-
 " Start a vimteractive terminal
 function! vimteractive#term_start(term_type, ...)
     if has('terminal') == 0
@@ -262,4 +257,28 @@ function! vimteractive#get_response()
         let block = reverse(block)
         return join(block, "\n")
     endif
+endfunction
+
+" Cycle connection forward through terminal buffers
+function! vimteractive#next_term()
+    let l:current_buffer = b:vimteractive_connected_term 
+    let l:current_index = index(s:vimteractive_buffers, l:current_buffer)
+    if l:current_index == -1
+        echom "Not in a terminal buffer"
+        return
+    endif
+    let l:next_index = (l:current_index + 1) % len(s:vimteractive_buffers)
+    call vimteractive#connect(vimteractive#buffer_list()[l:next_index])
+endfunction
+
+" Cycle connection backward through terminal buffers
+function! vimteractive#prev_term()
+    let l:current_buffer = b:vimteractive_connected_term
+    let l:current_index = index(s:vimteractive_buffers, l:current_buffer)
+    if l:current_index == -1
+        echom "Not in a terminal buffer"
+        return
+    endif
+    let l:prev_index = (l:current_index - 1 + len(s:vimteractive_buffers)) % len(s:vimteractive_buffers)
+    call vimteractive#connect(vimteractive#buffer_list()[l:prev_index])
 endfunction

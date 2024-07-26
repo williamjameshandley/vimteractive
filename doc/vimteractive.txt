@@ -155,6 +155,9 @@ Connecting to existing REPLs                *:Iconn* *vimteractive-connecting*
 any number of buffers to one REPL. {buffer} can be omitted if there is only 
 one REPL.
 
+]v and [v can be used to cycle between connected buffers in the style of
+unimpaired.
+
 ==============================================================================
 3. Common issues                                         *vimteractive-issues*
 

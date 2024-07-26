@@ -192,6 +192,8 @@ Connecting to an existing REPL
 connect any number of buffers to one REPL. ``{buffer}`` can be omitted if there
 is only one REPL.
 
+``]v`` and ``[v`` can be used to cycle between connected buffers in the style of 
+`unimpaired <https://github.com/tpope/vim-unimpaired>`__.
 
 Common issues
 -------------
