@@ -29,13 +29,8 @@ if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }
 endif
 
-
-let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent'
-let g:vimteractive_commands.ipython2 = 'ipython2 --matplotlib --no-autoindent'
-let g:vimteractive_commands.ipython3 = 'ipython3 --matplotlib --no-autoindent'
+let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent --logfile="-o <LOGFILE>"'
 let g:vimteractive_commands.python = 'python'
-let g:vimteractive_commands.python2 = 'python2'
-let g:vimteractive_commands.python3 = 'python3'
 let g:vimteractive_commands.bash = 'bash'
 let g:vimteractive_commands.zsh = 'zsh'
 let g:vimteractive_commands.julia = 'julia'
@@ -44,6 +39,7 @@ let g:vimteractive_commands.clojure = 'clojure'
 let g:vimteractive_commands.apl = 'apl'
 let g:vimteractive_commands.R = 'R'
 let g:vimteractive_commands.mathematica = 'math'
+let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_shells')
@@ -70,6 +66,11 @@ if !has_key(g:, 'vimteractive_slow_prompt')
 endif
 let g:vimteractive_slow_prompt.clojure = 200
 
+let g:vimteractive_get_response = {
+            \ 'ipython': function('vimteractive#get_response_ipython'),
+            \ 'sgpt': function('vimteractive#get_response_sgpt')
+            \}
+
 " Plugin commands
 " ===============
 
@@ -78,7 +79,7 @@ if !has_key(g:, 'vimteractive_loaded')
 
 	" Building :I* commands (like :Ipython, :Iipython and so)
 	for term_type in keys(g:vimteractive_commands)
-		execute 'command! I' . term_type . " :call vimteractive#term_start('" . term_type . "')"
+		execute 'command! -nargs=? I' . term_type . " :call vimteractive#term_start('" . term_type . "', <f-args>)"
 	endfor
 
 	command! Iterm :call vimteractive#term_start('-auto-')
@@ -101,3 +102,13 @@ vnoremap <silent> <C-s> m`""y:call vimteractive#sendlines(substitute(getreg('"')
 
 " Alt-S in normal mode to send all lines up to this point
 noremap <silent> <A-s> :call vimteractive#sendlines(join(getline(1,'.'), "\n"))<CR>
+
+" Control-Y in normal mode to get last response
+noremap  <silent> <C-y>      :put =vimteractive#get_response()<CR>
+
+" Control-Y in insert mode to get last response
+inoremap <silent> <C-y> <Esc>:put =vimteractive#get_response()<CR>a
+
+" cycle through terminal buffers in the style of unimpaired
+nnoremap ]v :call vimteractive#next_term()<CR>
+nnoremap [v :call vimteractive#prev_term()<CR>

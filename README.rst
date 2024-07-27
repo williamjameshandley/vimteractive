@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim
 :Author: Will Handley
-:Version: 2.5.0
+:Version: 2.6.0
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -11,30 +11,35 @@ Vimteractive was inspired by the workflow of the
 `vim-ipython <https://github.com/ivanov/vim-ipython>`__ plugin.
 
 This plugin is designed to extend a subset of the functionality of vim-ipython
-to other interpreters (including ipython). It is based around the unix
+to other `REPLs <https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop>`__ (including ipython). It is based around the unix
 philosophy of `"do one thing and do it well" <https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well>`__.
 Vimteractive aims to provide a robust and simple link between text files and
-interactive interpreters. Vimteractive will never aim to do things like
+language shells. Vimteractive will never aim to do things like
 autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__ or
-`TabNine <https://tabnine.com>`__.
+`Copilot <https://github.com/features/copilot>`__.
 
-The activating commands are
+The activating commands are:
 
-- ipython ``:Iipython``
-- julia ``:Ijulia``
-- maple ``:Imaple``
-- mathematica ``:Imathematica``
-- bash ``:Ibash``
-- zsh ``:Izsh``
-- python ``:Ipython``
-- clojure ``:Iclojure``
-- apl ``:Iapl``
+- `ipython <https://ipython.readthedocs.io>`__ ``:Iipython``
+- `julia <https://julialang.org/>`__ ``:Ijulia``
+- `maple <https://maplesoft.com/>`__ ``:Imaple``
+- `mathematica <https://www.wolfram.com/mathematica/>`__ ``:Imathematica``
+- `bash <https://en.wikipedia.org/wiki/Bash_(Unix_shell)>`__ ``:Ibash``
+- `zsh <https://www.zsh.org/>`__ ``:Izsh``
+- `python <https://www.python.org/>`__ ``:Ipython``
+- `clojure <https://clojure.org/>`__ ``:Iclojure``
+- `apl <https://en.wikipedia.org/wiki/APL_(programming_language)>`__ ``:Iapl``
+- `R <https://www.r-project.org/>`__ ``:IR``
+- `sgpt <https://github.com/TheR1D/shell_gpt>`__ ``:Isgpt``
 - autodetect based on filetype ``:Iterm``
 
-Commands may be sent from a text file to the chosen terminal using ``CTRL-S``.
-If there is no terminal, ``CTRL-S`` will automatically open one for you using
+Commands may be sent from a text file to the chosen REPL using ``CTRL-S``.
+If there is no REPL, ``CTRL-S`` will automatically open one for you using
 ``:Iterm``.
+
+For some terminals, the output of the last command may be retrieved with
+``CTRL-Y``.
 
 Note: it's highly recommended to use IPython as your default Python
 interpreter. You can set it like this:
@@ -48,16 +53,6 @@ Installation
 
 Since this package leverages the native vim interactive terminal, vimteractive
 is only compatible with vim 8 or greater.
-
-To use the key-bindings, you should first disable the ``CTRL-S``
-default, which is a terminal command to freeze the output. You can
-disable this by putting
-
-.. code:: bash
-
-   stty -ixon
-
-into your ``.bashrc`` (or equivalent shell profile file).
 
 Installation should be relatively painless via
 `the usual routes <https://vimawesome.com/plugin/vimteractive>`_ such as
@@ -95,6 +90,17 @@ interface to the command line `maple <https://www.maplesoft.com/>`__.
 Usage
 -----
 
+To use the key-bindings, you should first disable the ``CTRL-S``
+default, which is a terminal command to freeze the output. You can
+disable this by putting
+
+.. code:: bash
+
+   stty -ixon
+
+into your ``.bashrc`` (or equivalent shell profile file).
+
+
 Example usage:
 ~~~~~~~~~~~~~~
 
@@ -126,51 +132,68 @@ pressing ``CTRL-S``.
 If you switch windows with ``CTRL-W+k``, you will see the terminal buffer
 switch to a more usual looking normal-mode buffer, from which you can perform
 traditional normal mode commands. However, if you try to insert, you will enter
-the terminal, and be able to enter commands interactively into the prompt as if
+the REPL, and be able to enter commands interactively into the prompt as if
 you had run it in the command line.  You can save this buffer if you wish to a
 new file if it contains valuable output
 
-You may want to send lines to one terminal from two buffers. To achieve that,
+You may want to send lines to one REPL from two buffers. To achieve that,
 run ``:Iconn <buffer_name>`` where ``<buffer_name>`` is a name of buffer
-containing terminal. If there is only one terminal, you can use just
+containing REPL. If there is only one REPL, you can use just
 ``:Iconn``.
 
-Supported terminals
-~~~~~~~~~~~~~~~~~~~
+Supported REPLs
+~~~~~~~~~~~~~~~
 
--  ``:Iipython`` Activate an ipython terminal
--  ``:Ijulia`` Activate a julia terminal
--  ``:Imaple`` Activate a maple terminal
--  ``:Imathematica`` Activate a mathematica terminal
--  ``:Ibash`` Activate a bash terminal
--  ``:Izsh`` Activate a zsh terminal
--  ``:Ipython`` Activate a python terminal
--  ``:Iclojure`` Activate a clojure terminal
--  ``:Iapl`` Activate an apl terminal
--  ``:Iterm`` Activate default terminal for this filetype
+-  ``:Iipython`` Activate an ipython REPL
+-  ``:Ijulia`` Activate a julia REPL
+-  ``:Imaple`` Activate a maple REPL
+-  ``:Imathematica`` Activate a mathematica REPL
+-  ``:Ibash`` Activate a bash REPL
+-  ``:Izsh`` Activate a zsh REPL
+-  ``:Ipython`` Activate a python REPL
+-  ``:Iclojure`` Activate a clojure REPL
+-  ``:Iapl`` Activate an apl REPL
+-  ``:IR`` Activate an R REPL
+-  ``:Isgpt`` Activate an sgpt REPL
+-  ``:Iterm`` Activate default REPL for this filetype
 
 Sending commands
 ~~~~~~~~~~~~~~~~
 
 ``CTRL-S`` sends lines of text to the interpreter in a mode-dependent manner:
 
-In Normal mode, ``CTRL-S`` sends the line currently occupied by the cursor the
-terminal.
+In Normal mode, ``CTRL-S`` sends the line currently occupied by the cursor to the
+REPL.
 
 In Insert mode, ``CTRL-S`` sends the line currently being edited, and then
 returns to insert mode at the same location.
 
-In Visual mode, ``CTRL-S`` sends the current selection to the terminal.
+In Visual mode, ``CTRL-S`` sends the current selection to the REPL.
 
 ``ALT-S`` sends all lines from the start to the current line.
 
-Connecting to an existing terminal
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Retrieving command outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CTRL-Y retrieves the output of the last command sent to the REPL. This only
+implemented in a subset of terminas (``:Iipython`` and ``:Isgpt``)
+
+In ``Normal-mode``, CTRL-Y retrieves the output of the last command sent to the
+REPL and places it in the current buffer.
+
+In ``Insert-mode``, CTRL-Y retrieves the output of the last command sent to the
+REPL and places it in the current buffer, and then returns to insert mode
+after the output.
+
+Connecting to an existing REPL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``:Iconn [{buffer]`` connects current buffer to REPL in ``{buffer}``. You can
 connect any number of buffers to one REPL. ``{buffer}`` can be omitted if there
-is only one terminal.
+is only one REPL.
 
+``]v`` and ``[v`` can be used to cycle between connected buffers in the style of 
+`unimpaired <https://github.com/tpope/vim-unimpaired>`__.
 
 Common issues
 -------------
@@ -194,8 +217,8 @@ These options can be put in your ``.vimrc``, or run manually as desired:
 
 .. code:: vim
 
-    let g:vimteractive_vertical = 1        " Vertically split terminals
-    let g:vimteractive_autostart = 0       " Don't start terminals by default
+    let g:vimteractive_vertical = 1        " Vertically split REPLs
+    let g:vimteractive_autostart = 0       " Don't start REPLs by default
 
 Extending functionality
 -----------------------
@@ -252,20 +275,3 @@ Similar projects
 -  `vipy <https://github.com/johndgiese/vipy>`__
 
 .. |example_usage| image:: https://raw.githubusercontent.com/williamjameshandley/vimteractive/master/images/example_usage.gif
-
-Changelist
-----------
-:v2.2: `Vertical splitting option <https://github.com/williamjameshandley/vimteractive/pull/21>`__
-:v2.1: `Visual selection improvement <https://github.com/williamjameshandley/vimteractive/pull/15>`__
-:v2.0: `Multiple terminal functionality <https://github.com/williamjameshandley/vimteractive/pull/9>`__
-:v1.7: `Autodetection of terminals <https://github.com/williamjameshandley/vimteractive/pull/5>`__
-:v1.6: CtrlP `bugfix <https://github.com/williamjameshandley/vimteractive/pull/4>`__
-:v1.5: Added julia support
-:v1.4: `Buffer rename <https://github.com/williamjameshandley/vimteractive/pull/3>`_
-:v1.3: Added zsh support
-:v1.2:
-   - no line numbers in terminal window
-:v1.1:
-   -  `Bracketed paste <https://cirw.in/blog/bracketed-paste>`__ seems
-      to fix most of ipython issues.
-   -  ``ALT-S`` sends all lines from start to current line.

@@ -4,6 +4,9 @@
 " s:vimteractive_buffers
 "   script-local variable that keeps track of vimteractive terminal buffers
 "
+" s:vimteractive_logfiles
+"   script-local variable that keeps track of logfiles for each terminal
+"
 " b:vimteractive_connected_term
 "   buffer-local variable held by buffer that indicates the name of the
 "   connected terminal buffer
@@ -11,10 +14,14 @@
 " b:vimteractive_term_type
 "   buffer-local variable held by terminal buffer that indicates the terminal type
 
-
 " Initialise the list of terminal buffer numbers on startup
 if !exists('s:vimteractive_buffers')
     let s:vimteractive_buffers = []
+end
+
+" Initialise the list of logfiles on startup
+if !exists('s:vimteractive_logfiles')
+    let s:vimteractive_logfiles = {}
 end
 
 " Remove a terminal from the list on deletion.
@@ -103,9 +110,8 @@ function! vimteractive#sendlines(lines)
     endif
 endfunction
 
-
 " Start a vimteractive terminal
-function! vimteractive#term_start(term_type)
+function! vimteractive#term_start(term_type, ...)
     if has('terminal') == 0
         echoerr "Your version of vim is not compiled with +terminal. Cannot use vimteractive"
         return
@@ -118,6 +124,9 @@ function! vimteractive#term_start(term_type)
         let l:term_type = a:term_type
     endif
 
+    " Name the buffer
+    let l:term_bufname = s:new_name(l:term_type)
+
     " Retrieve starting command
     if has_key(g:vimteractive_commands, l:term_type)
         let l:term_command = get(g:vimteractive_commands, l:term_type)
@@ -126,9 +135,18 @@ function! vimteractive#term_start(term_type)
         return
     endif
 
+    " Assign a logfile name
+    let l:logfile = tempname() . '-' . l:term_type . '.log'
+    let l:term_command = substitute(l:term_command, '<LOGFILE>', l:logfile, '')
+
+    " Pass any environment variables necessary for logging
+    let $CHAT_CACHE_PATH="/" " sgpt logfiles
+
+    " Add all other arguments to the command
+    let l:term_command = l:term_command . ' ' . join(a:000, ' ')
+
     " Create a new term
     echom "Starting " . l:term_command
-    let l:term_bufname = s:new_name(l:term_type)
     if v:version < 801
         call term_start(l:term_command, {
             \ "term_name": l:term_bufname,
@@ -147,6 +165,7 @@ function! vimteractive#term_start(term_type)
     " Add this terminal to the buffer list, and store type
     call add(s:vimteractive_buffers, bufnr(l:term_bufname))
     let b:vimteractive_term_type = l:term_type
+    let s:vimteractive_logfiles[bufnr(l:term_bufname)] = l:logfile
 
     " Turn line numbering off
     set nonumber norelativenumber
@@ -212,4 +231,61 @@ function! vimteractive#connect(...)
     let b:vimteractive_connected_term = bufnr(l:bufname)
     echom "Connected " . bufname("%") . " to " . l:bufname
 
+endfunction
+
+function! vimteractive#get_response()
+    let l:term_type = getbufvar(b:vimteractive_connected_term, "vimteractive_term_type")
+    return g:vimteractive_get_response[l:term_type]()
+endfunction
+
+" Get the last response from the terminal for sgpt
+function! vimteractive#get_response_sgpt()
+    let l:logfile = s:vimteractive_logfiles[b:vimteractive_connected_term]
+    let l:json_content = join(readfile(l:logfile), "\n")
+    let l:json_data = json_decode(l:json_content)
+    if len(l:json_data) > 0
+        let l:last_response = l:json_data[-1]['content']
+        return l:last_response
+    endif
+endfunction
+
+" Get the last response from the terminal for ipython
+function! vimteractive#get_response_ipython()
+    let l:logfile = s:vimteractive_logfiles[b:vimteractive_connected_term]
+    let lines = readfile(l:logfile)
+    let block = []
+    for i in range(len(lines) - 1, 0, -1)
+        if match(lines[i], '^#\[Out\]#') == 0
+            let line = substitute(lines[i], '^#\[Out\]# ', '', '')
+            call add(block, line)
+        else
+            break
+        endif
+    endfor
+    let block = reverse(block)
+    return join(block, "\n")
+endfunction
+
+" Cycle connection forward through terminal buffers
+function! vimteractive#next_term()
+    let l:current_buffer = b:vimteractive_connected_term 
+    let l:current_index = index(s:vimteractive_buffers, l:current_buffer)
+    if l:current_index == -1
+        echom "Not in a terminal buffer"
+        return
+    endif
+    let l:next_index = (l:current_index + 1) % len(s:vimteractive_buffers)
+    call vimteractive#connect(vimteractive#buffer_list()[l:next_index])
+endfunction
+
+" Cycle connection backward through terminal buffers
+function! vimteractive#prev_term()
+    let l:current_buffer = b:vimteractive_connected_term
+    let l:current_index = index(s:vimteractive_buffers, l:current_buffer)
+    if l:current_index == -1
+        echom "Not in a terminal buffer"
+        return
+    endif
+    let l:prev_index = (l:current_index - 1 + len(s:vimteractive_buffers)) % len(s:vimteractive_buffers)
+    call vimteractive#connect(vimteractive#buffer_list()[l:prev_index])
 endfunction

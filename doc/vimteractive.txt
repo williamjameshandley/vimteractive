@@ -21,11 +21,11 @@ Vimteractive was inspired by the workflow of the vim-ipython plugin:
     https://github.com/ivanov/vim-ipython
 
 This plugin is designed to extend a subset of the functionality of vim-ipython
-to other interpreters (including ipython). It is based around the unix
-philosophy of "do one thing and do it well".  It aims to provide a robust and
-simple link between text files and interactive interpreters. Vimteractive will
-never aim to do things like autocompletion, leaving that to other, more
-developed tools such as YouCompleteMe or TabNine.
+to other REPLs (including ipython). It is based around the unix philosophy of
+"do one thing and do it well".  It aims to provide a robust and simple link
+between text files and language shells. Vimteractive will never aim to do
+things like autocompletion, leaving that to other, more developed tools such as
+YouCompleteMe or GitHub copilot.
 
 The activating commands are
 - ipython       |:Iipython|
@@ -37,11 +37,17 @@ The activating commands are
 - python        |:Ipython|
 - clojure       |:Iclojure|
 - apl           |:Iclojure|
+- R             |:IR|
+- mathematica   |:Imathematica|
+- sgpt          |:Isgpt|
 - autodetect based on filetype |:Iterm|
 
-Commands may be sent from a text file to the chosen terminal using CTRL-S. If
-there is no terminal, CTRL-S will automatically open one for you using
+Commands may be sent from a text file to the chosen REPL using CTRL-S. If
+there is no REPL, CTRL-S will automatically open one for you using
 |:Iterm|.  See |v_CTRL_S| for more details.
+
+For some terminals, the output of the last command may be retrieved with
+``CTRL-Y``. See |v_CTRL_Y| for more details.
 
 Note: it's highly recommended to use IPython as your default Python
 interpreter. You can set it like this:
@@ -76,63 +82,81 @@ Create a python file "test.py" with the following content:
     ax.set_xlabel('$x$')
     ax.set_ylabel('$y$')
 
-Now start an ipython interpreter in vim with :Iipython. You should see a
-preview window open above with your ipython prompt. Position your cursor over
-the first line of test.py, and press  CTRL-S. You should see this
-line now appear in the first prompt of the preview window. Do the same with
-the second and fourth lines. At the fourth line, you should see a figure
-appear once it's constructed with plt.subplots(). Continue by sending lines to
-the interpreter. You can send multiple lines by doing a visual selection and
-pressing CTRL-S.
+Now start an ipython REPL in vim with |:Iipython|. You should see a preview
+window open above with your ipython prompt. Position your cursor over the first
+line of test.py, and press  |v_CTRL-S|. You should see this line now appear in the
+first prompt of the preview window. Do the same with the second and fourth
+lines. At the fourth line, you should see a figure appear once it's constructed
+with plt.subplots(). Continue by sending lines to the REPL. You can send
+multiple lines by doing a visual selection and pressing |v_CTRL-S|.
 
 If you switch windows with CTRL-W k, you will see the terminal buffer switch
 to a more usual looking normal-mode buffer, from which you can perform
 traditional normal mode commands. However, if you try to insert, you will
-enter the terminal, and be able to enter commands interactively into the
+enter the REPL, and be able to enter commands interactively into the
 prompt as if you had run it in the command line. You can save this buffer if
 you wish to a new file if it contains valuable output
 
-By default every buffer is connected to separate terminal. If you want to
-connect two buffers to one terminal, use |:Iconn| command.
+You may want to send lines to one REPL from two buffers. To achieve that, run
+:Iconn <buffer_name> where <buffer_name> is a name of buffer containing REPL.
+If there is only one REPL, you can use just |:Iconn|.
 
 ------------------------------------------------------------------------------
 Supported terminals                                   *vimteractive-terminals*
 
-*:Iipython*     Activate an ipython terminal
-*:Ijulia*       Activate a julia terminal
-*:Imaple*       Activate a maple terminal
-*:Imathematica* Activate a mathematica terminal
-*:Ibash*        Activate a bash terminal
-*:Izsh*         Activate a zsh terminal
-*:Ipython*      Activate a python terminal
-*:Iclojure*     Activate a clojure terminal
-*:Iapl*         Activate an apl terminal
-*:Iterm*        Activate a terminal based on current filetype
+*:Iipython*     Activate an ipython REPL
+*:Ijulia*       Activate a julia REPL
+*:Imaple*       Activate a maple REPL
+*:Imathematica* Activate a mathematica REPL
+*:Ibash*        Activate a bash REPL
+*:Izsh*         Activate a zsh REPL
+*:Ipython*      Activate a python REPL
+*:Iclojure*     Activate a clojure REPL
+*:Iapl*         Activate an apl REPL
+*:IR*           Activate an R REPL
+*:Isgpt*        Activate an sgpt REPL
+*:Iterm*        Activate a REPL based on current filetype
 
 ------------------------------------------------------------------------------
 Sending commands                                                    *v_CTRL_S*
 
-CTRL-S sends lines of text to the interpreter in a mode-dependent manner:
+CTRL-S sends lines of text to the REPL in a mode-dependent manner:
 
 In |Normal-mode|, CTRL-S sends the line currently occupied by the cursor
-the terminal.
+the REPL.
 
 In |Insert-mode|, CTRL-S sends the line currently being edited, and then
 returns to insert mode at the same location.
 
-In |Visual-mode|, CTRL-S sends the current selection to the terminal.
+In |Visual-mode|, CTRL-S sends the current selection to the REPL.
 
 ALT-S sends all lines from the start to the current line.
 
-If there is no active terminal for current buffer, CTRL-S will automatically
+If there is no active REPL for current buffer, CTRL-S will automatically
 create one for you using |:Iterm|.
+
+------------------------------------------------------------------------------
+Retrieving command outputs                                          *v_CTRL_Y*
+
+CTRL-Y retrieves the output of the last command sent to the REPL. This only
+implemented in a subset of terminas (|:Iipython| and |:Isgpt|)
+
+In |Normal-mode|, CTRL-Y retrieves the output of the last command sent to the
+REPL and places it in the current buffer.
+
+In |Insert-mode|, CTRL-Y retrieves the output of the last command sent to the
+REPL and places it in the current buffer, and then returns to insert mode
+after the output.
 
 ------------------------------------------------------------------------------
 Connecting to existing REPLs                *:Iconn* *vimteractive-connecting*
 
 :Iconn [{buffer}] connects current buffer to REPL in {buffer}. You can connect
-any number of buffers to one REPL. {buffer} can be omitted if there is only one
-terminal.
+any number of buffers to one REPL. {buffer} can be omitted if there is only 
+one REPL.
+
+]v and [v can be used to cycle between connected buffers in the style of
+unimpaired.
 
 ==============================================================================
 3. Common issues                                         *vimteractive-issues*
@@ -153,8 +177,8 @@ setting with
 
 These options can be put in your |.vimrc|, or run manually as desired:
 
-    let g:vimteractive_vertical = 1        " Vertically split terminals
-    let g:vimteractive_autostart = 0       " Don't start terminals by default
+    let g:vimteractive_vertical = 1        " Vertically split REPLs
+    let g:vimteractive_autostart = 0       " Don't start REPLs by default
     let g:vimteractive_switch_mode = 0     " Don't switch to normal mode
 
 
