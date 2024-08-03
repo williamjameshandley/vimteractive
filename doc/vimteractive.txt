@@ -28,18 +28,19 @@ things like autocompletion, leaving that to other, more developed tools such as
 YouCompleteMe or GitHub copilot.
 
 The activating commands are
-- ipython       |:Iipython|
-- julia         |:Ijulia|
-- maple         |:Imaple|
-- mathematica   |:Imathematica|
-- bash          |:Ibash|
-- zsh           |:Izsh|
-- python        |:Ipython|
-- clojure       |:Iclojure|
-- apl           |:Iclojure|
-- R             |:IR|
-- mathematica   |:Imathematica|
-- sgpt          |:Isgpt|
+- ipython          |:Iipython|
+- julia            |:Ijulia|
+- maple            |:Imaple|
+- mathematica      |:Imathematica|
+- bash             |:Ibash|
+- zsh              |:Izsh|
+- python           |:Ipython|
+- clojure          |:Iclojure|
+- apl              |:Iclojure|
+- R                |:IR|
+- mathematica      |:Imathematica|
+- sgpt             |:Isgpt|
+- gpt-command-line |:Igpt|
 - autodetect based on filetype |:Iterm|
 
 Commands may be sent from a text file to the chosen REPL using CTRL-S. If
@@ -115,6 +116,7 @@ Supported terminals                                   *vimteractive-terminals*
 *:Iapl*         Activate an apl REPL
 *:IR*           Activate an R REPL
 *:Isgpt*        Activate an sgpt REPL
+*:Igpt*         Activate an gpt-command-line REPL
 *:Iterm*        Activate a REPL based on current filetype
 
 ------------------------------------------------------------------------------
@@ -139,7 +141,7 @@ create one for you using |:Iterm|.
 Retrieving command outputs                                          *v_CTRL_Y*
 
 CTRL-Y retrieves the output of the last command sent to the REPL. This only
-implemented in a subset of terminas (|:Iipython| and |:Isgpt|)
+implemented in a subset of REPLs (|:Iipython|, |:Isgpt| and |:Igpt|)
 
 In |Normal-mode|, CTRL-Y retrieves the output of the last command sent to the
 REPL and places it in the current buffer.
