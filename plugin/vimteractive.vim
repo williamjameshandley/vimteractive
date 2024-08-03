@@ -28,38 +28,37 @@ endif
 if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }
 endif
+if !has_key(g:, 'vimteractive_brackets')
+	let g:vimteractive_brackets = { }
+endif
+
+let g:open_bracketed_paste = "[200~"
+let g:close_bracketed_paste = "[201~"
+
 
 let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent --logfile="-o <LOGFILE>"'
 let g:vimteractive_commands.python = 'python'
+let g:vimteractive_brackets.python = ['','']
 let g:vimteractive_commands.bash = 'bash'
 let g:vimteractive_commands.zsh = 'zsh'
 let g:vimteractive_commands.julia = 'julia'
 let g:vimteractive_commands.maple = 'maple -c "interface(errorcursor=false);"'
 let g:vimteractive_commands.clojure = 'clojure'
+let g:vimteractive_brackets.clojure = ['','']
 let g:vimteractive_commands.apl = 'apl'
+let g:vimteractive_brackets.apl = ['','']
 let g:vimteractive_commands.R = 'R'
 let g:vimteractive_commands.mathematica = 'math'
+let g:vimteractive_brackets.mathematica = ['','']
 let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
+let g:vimteractive_brackets.sgpt = ["\"\"\"\<Enter>" . g:open_bracketed_paste, g:close_bracketed_paste . "\<Enter>\"\"\""]
 let g:vimteractive_commands.gpt = 'gpt --log_file <LOGFILE>'
+let g:vimteractive_brackets.gpt = ["\\\<Enter>" . g:open_bracketed_paste, g:close_bracketed_paste . "\<Esc>\<Enter>"]
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_shells')
 	let g:vimteractive_default_shells = { }
 endif
-
-" If 0, disable bracketed paste escape sequences
-if !has_key(g:, 'vimteractive_bracketed_paste_default')
-    let g:vimteractive_bracketed_paste_default=1
-endif
-if !has_key(g:, 'vimteractive_bracketed_paste')
-	let g:vimteractive_bracketed_paste = { }
-endif
-let g:vimteractive_bracketed_paste.clojure = 0
-let g:vimteractive_bracketed_paste.python = 0
-let g:vimteractive_bracketed_paste.python2 = 0
-let g:vimteractive_bracketed_paste.python3 = 0
-let g:vimteractive_bracketed_paste.apl = 0
-let g:vimteractive_bracketed_paste.mathematica = 0
 
 " If present, wait this amount of time in ms when starting term on ^S
 if !has_key(g:, 'vimteractive_slow_prompt')

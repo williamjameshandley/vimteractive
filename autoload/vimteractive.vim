@@ -103,11 +103,19 @@ function! vimteractive#sendlines(lines)
         execute ":b " . l:current_buffer
     endif
 
-    if get(g:vimteractive_bracketed_paste, l:term_type, g:vimteractive_bracketed_paste_default)
-        call term_sendkeys(b:vimteractive_connected_term,"[200~" . a:lines . "[201~\n")
+    if match(a:lines, '\n') >= 0
+        if has_key(g:vimteractive_brackets, l:term_type)
+            let open_bracket = g:vimteractive_brackets[l:term_type][0]
+            let close_bracket = g:vimteractive_brackets[l:term_type][1]
+        else
+            let open_bracket = g:open_bracketed_paste
+            let close_bracket = g:close_bracketed_paste
+        endif
+        let b:lines = open_bracket . a:lines . close_bracket . "\<Enter>"
     else
-        call term_sendkeys(b:vimteractive_connected_term, a:lines . "\n")
+        let b:lines = a:lines . "\<Enter>"
     endif
+    call term_sendkeys(b:vimteractive_connected_term, b:lines)
 endfunction
 
 " Start a vimteractive terminal
