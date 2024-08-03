@@ -32,6 +32,7 @@ The activating commands are:
 - `apl <https://en.wikipedia.org/wiki/APL_(programming_language)>`__ ``:Iapl``
 - `R <https://www.r-project.org/>`__ ``:IR``
 - `sgpt <https://github.com/TheR1D/shell_gpt>`__ ``:Isgpt``
+- `gpt-command-line <https://github.com/kharvd/gpt-cli>`__ ``:Igpt``
 - autodetect based on filetype ``:Iterm``
 
 Commands may be sent from a text file to the chosen REPL using ``CTRL-S``.
@@ -155,6 +156,7 @@ Supported REPLs
 -  ``:Iapl`` Activate an apl REPL
 -  ``:IR`` Activate an R REPL
 -  ``:Isgpt`` Activate an sgpt REPL
+-  ``:Igpt`` Activate an gpt-command-line REPL
 -  ``:Iterm`` Activate default REPL for this filetype
 
 Sending commands
@@ -176,7 +178,7 @@ Retrieving command outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CTRL-Y retrieves the output of the last command sent to the REPL. This only
-implemented in a subset of terminas (``:Iipython`` and ``:Isgpt``)
+implemented in a subset of terminas (``:Iipython``, ``:Isgpt`` and ``:Igpt``)
 
 In ``Normal-mode``, CTRL-Y retrieves the output of the last command sent to the
 REPL and places it in the current buffer.

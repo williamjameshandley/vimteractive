@@ -249,6 +249,21 @@ function! vimteractive#get_response_sgpt()
     endif
 endfunction
 
+
+" Get the last response from the terminal for gpt-command-line
+function! vimteractive#get_response_gpt()
+    let l:logfile = s:vimteractive_logfiles[b:vimteractive_connected_term]
+    let log_data = readfile(l:logfile)
+    let log_data_str = join(log_data, "\n")
+
+    let last_session_index = strridx(log_data_str, 'gptcli-session - INFO - assistant: ')
+    let end_text = strpart(log_data_str, last_session_index+35)
+    let price_index = match(end_text, 'gptcli-price')
+    let last_price_index = strridx(end_text, "\n", price_index-1)
+    return strpart(end_text, 0, last_price_index)
+endfunction
+
+
 " Get the last response from the terminal for ipython
 function! vimteractive#get_response_ipython()
     let l:logfile = s:vimteractive_logfiles[b:vimteractive_connected_term]
@@ -270,10 +285,6 @@ endfunction
 function! vimteractive#next_term()
     let l:current_buffer = b:vimteractive_connected_term 
     let l:current_index = index(s:vimteractive_buffers, l:current_buffer)
-    if l:current_index == -1
-        echom "Not in a terminal buffer"
-        return
-    endif
     let l:next_index = (l:current_index + 1) % len(s:vimteractive_buffers)
     call vimteractive#connect(vimteractive#buffer_list()[l:next_index])
 endfunction
@@ -282,10 +293,6 @@ endfunction
 function! vimteractive#prev_term()
     let l:current_buffer = b:vimteractive_connected_term
     let l:current_index = index(s:vimteractive_buffers, l:current_buffer)
-    if l:current_index == -1
-        echom "Not in a terminal buffer"
-        return
-    endif
     let l:prev_index = (l:current_index - 1 + len(s:vimteractive_buffers)) % len(s:vimteractive_buffers)
     call vimteractive#connect(vimteractive#buffer_list()[l:prev_index])
 endfunction

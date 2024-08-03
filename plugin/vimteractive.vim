@@ -40,6 +40,7 @@ let g:vimteractive_commands.apl = 'apl'
 let g:vimteractive_commands.R = 'R'
 let g:vimteractive_commands.mathematica = 'math'
 let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
+let g:vimteractive_commands.gpt = 'gpt --log_file <LOGFILE>'
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_shells')
@@ -68,7 +69,8 @@ let g:vimteractive_slow_prompt.clojure = 200
 
 let g:vimteractive_get_response = {
             \ 'ipython': function('vimteractive#get_response_ipython'),
-            \ 'sgpt': function('vimteractive#get_response_sgpt')
+            \ 'sgpt': function('vimteractive#get_response_sgpt'),
+            \ 'gpt': function('vimteractive#get_response_gpt')
             \}
 
 " Plugin commands
