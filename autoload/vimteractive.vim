@@ -69,8 +69,7 @@ function! vimteractive#repl_start(...) abort
 
     " Move focus back to vim
     sleep 1000m
-    "call system(printf("xdotool search --sync --onlyvisible --pid %s && xdotool windowactivate %s", l:xterm_pid, l:window_id_before))
-    call system(printf("xdotool windowactivate " . l:window_id_before))
+    call system("xdotool windowactivate " . l:window_id_before)
 endfunction
 
 function! vimteractive#get_panes() abort
@@ -126,7 +125,7 @@ function! vimteractive#connect(pane_name) abort
     else
         let b:slime_bracketed_paste = 0
     endif
-    echom "Connected to " . a:pane_name
+    echo "Connected to " . a:pane_name
 endfunction
 
 function! vimteractive#get_response() abort
