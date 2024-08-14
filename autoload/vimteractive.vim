@@ -2,61 +2,75 @@
 
 " Reopen a terminal buffer in a split window if necessary
 function! vimteractive#show_term() abort
-    if !exists('b:slime_config')
-        let b:slime_config = {"socket_name": "default", "target_pane": ""}
-    endif
-    let b:slime_bracketed_paste = 1
-    let l:pane_name_index = index(vimteractive#get_pane_ids(), b:slime_config["target_pane"])
+    let l:pane_ids = vimteractive#get_pane_ids()
+    let l:pane_name_index = index(l:pane_ids, b:slime_config["target_pane"])
     if l:pane_name_index < 0
-        call vimteractive#repl_start('-auto-')
+        call vimteractive#repl_start()
     endif
 endfunction
 
-" Start a vimteractive terminal
-function! vimteractive#repl_start(repl_type, ...) abort
-    " Determine the terminal type
-    let l:repl_type = a:repl_type
-    if l:repl_type ==# '-auto-'
-        let l:repl_type = get(g:vimteractive_default_shells, &filetype, &filetype)
+function! vimteractive#determine_repl_type(...) abort
+    if a:0 == 0
+        if has_key(g:vimteractive_commands, &filetype)
+            let l:repl_type = &filetype
+        else
+            let l:repl_type = 'gpt'
+        endif
+    else
+        let l:repl_type = a:1
     endif
+    let l:repl_type = get(g:vimteractive_default_repls, l:repl_type, l:repl_type)
+    return l:repl_type
+endfunction
+
+
+" Start a vimteractive terminal
+function! vimteractive#repl_start(...) abort
+    " Determine the type of terminal to start
+    let l:repl_type = call("vimteractive#determine_repl_type", a:000)
 
     " Retrieve starting command
-    let l:repl_command = get(g:vimteractive_commands, l:repl_type, g:vimteractive_commands.gpt)
+    let l:repl_command = g:vimteractive_commands[l:repl_type]
 
-    " Assign session, repl and logfile names
+    " Assign repl and logfile names
     let l:tempname = tempname()
     let l:repl_name = fnamemodify(l:tempname, ':p:h') . '-' . fnamemodify(l:tempname, ':t:r') . '-' . l:repl_type
     let l:logfile_name = l:repl_name . '.log'
 
-    " Define the terminal command
+    " Define the repl command
     let l:repl_command = substitute(l:repl_command, '<LOGFILE>', l:logfile_name, '')
-    let l:repl_command = l:repl_command . ' ' . join(a:000, ' ')
+    let l:repl_command = l:repl_command . ' ' . join(a:000[1:], ' ')
 
     " Define the tmux command
-    let l:tmux_command = "tmux new-session -n " . l:repl_name
+    let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_name
 
     " Define the cleanup command
     let l:rm_command = "rm " . l:logfile_name
 
     " Now join them all together
-    let l:xrepl_command = printf('%s %s "%s && %s" &', g:vimteractive_terminal, l:tmux_command, l:repl_command, l:rm_command)
+    let l:xrepl_command = printf('%s "%s && %s"', l:tmux_command, l:repl_command, l:rm_command)
 
     " Pass any environment variables necessary for logging
     let $CHAT_CACHE_PATH="/" " sgpt logfiles
 
-    " Get the list of panes before starting the terminal
-    let l:panes_before = vimteractive#get_panes()
+    " Get vim window id before starting the terminal
     let l:window_id_before = system("xdotool getactivewindow")
 
-    " Start the terminal
-    call system(l:xrepl_command)
+    " Start tmux
+    let l:output = split(system(l:xrepl_command), ":")
 
-    " Wait for the new pane to appear, and attach to this in slime
-    let b:slime_config["target_pane"] = vimteractive#find_new_pane(l:panes_before)
+    " Start terminal
+    let l:xterm_command = printf('%s tmux attach -t %s & echo $!', g:vimteractive_terminal, l:output[1])
+    let l:xterm_pid = system(l:xterm_command)
+    let l:xterm_pid = substitute(l:xterm_pid, '\n', '', '')
+
+    " Connect to terminal
+    call vimteractive#connect(l:repl_name)
 
     " Move focus back to vim
-    call system("xdotool windowactivate " . l:window_id_before)
-
+    sleep 1000m
+    "call system(printf("xdotool search --sync --onlyvisible --pid %s && xdotool windowactivate %s", l:xterm_pid, l:window_id_before))
+    call system(printf("xdotool windowactivate " . l:window_id_before))
 endfunction
 
 function! vimteractive#get_panes() abort
@@ -80,21 +94,8 @@ function! vimteractive#get_pane_activity(...) abort
     return filter(vimteractive#get_panes(), 'match(v:val, "(active)") != -1')
 endfunction
 
-function! vimteractive#find_new_pane(list_before) abort
-    let l:list_after = copy(a:list_before)
-    while len(l:list_after) == len(a:list_before)
-        let l:list_after = vimteractive#get_panes()
-    endwhile
-    let l:new_pane = filter(l:list_after, 'index(a:list_before, v:val) == -1')
-    return split(l:new_pane[0])[0]
-endfunction
-
-function! vimteractive#pane_name(...) abort
-    if a:0 == 0
-        let l:pane_id = b:slime_config["target_pane"]
-    else
-        let l:pane_id = a:1
-    endif
+function! vimteractive#pane_name() abort
+    let l:pane_id = b:slime_config["target_pane"]
     let l:pane_name_index = index(vimteractive#get_pane_ids(), l:pane_id)
     return vimteractive#get_pane_names()[l:pane_name_index]
 endfunction
@@ -119,6 +120,12 @@ function! vimteractive#connect(pane_name) abort
     let l:pane_index = index(vimteractive#get_pane_names(), a:pane_name)
     let l:pane_id = vimteractive#get_pane_ids()[l:pane_index]
     let b:slime_config["target_pane"] = l:pane_id
+    let l:repl_type = vimteractive#repl_type()
+    if index(g:vimteractive_bracketed_paste, l:repl_type) != -1
+        let b:slime_bracketed_paste = 1
+    else
+        let b:slime_bracketed_paste = 0
+    endif
     echom "Connected to " . a:pane_name
 endfunction
 

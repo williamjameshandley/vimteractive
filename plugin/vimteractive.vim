@@ -33,9 +33,11 @@ let g:vimteractive_commands.mathematica = 'math'
 let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
 let g:vimteractive_commands.gpt = 'gpt --log_file <LOGFILE>'
 
+let g:vimteractive_bracketed_paste = ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'sgpt', 'gpt']
+
 " Override default shells for different filetypes
-if !has_key(g:, 'vimteractive_default_shells')
-	let g:vimteractive_default_shells = { }
+if !has_key(g:, 'vimteractive_default_repls')
+	let g:vimteractive_default_repls = { 'python': 'ipython' }
 endif
 
 let g:vimteractive_get_response = {
