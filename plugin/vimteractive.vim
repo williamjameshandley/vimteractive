@@ -18,12 +18,21 @@ if !exists('g:vimteractive_termina')
     let g:vimteractive_terminal = 'xterm -e'
 endif
 
+if !exists('g:vimteractive_bracketed_paste')
+    let g:vimteractive_bracketed_paste = []
+endif
+
+if !exists('g:vimteractive_get_response')
+    let g:vimteractive_get_response = {}
+endif
+
 let g:slime_target = 'tmux'
+let g:slime_no_mappings=1
 
 let g:vimteractive_commands.ipython = "ipython --matplotlib --no-autoindent --logfile='-o <LOGFILE>'"
 let g:vimteractive_commands.python = 'python'
 let g:vimteractive_commands.bash = 'bash'
-let g:vimteractive_commands.zsh = 'zsh'
+let g:vimteractive_commands.zsh = "zsh -c 'script -qf <LOGFILE>'"
 let g:vimteractive_commands.julia = 'julia'
 let g:vimteractive_commands.maple = 'maple -c "interface(errorcursor=false);"'
 let g:vimteractive_commands.clojure = 'clojure'
@@ -33,18 +42,23 @@ let g:vimteractive_commands.mathematica = 'math'
 let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
 let g:vimteractive_commands.gpt = 'gpt --log_file <LOGFILE>'
 
-let g:vimteractive_bracketed_paste = ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'sgpt', 'gpt']
+let g:vimteractive_bracketed_paste += ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'sgpt', 'gpt']
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_repls')
 	let g:vimteractive_default_repls = { 'python': 'ipython' }
 endif
 
-let g:vimteractive_get_response = {
-            \ 'ipython': function('vimteractive#get_response_ipython'),
-            \ 'sgpt': function('vimteractive#get_response_sgpt'),
-            \ 'gpt': function('vimteractive#get_response_gpt')
-            \}
+for repl in ['ipython', 'sgpt', 'gpt', 'zsh']
+    let g:vimteractive_get_response[repl] = function('vimteractive#get_response_' . repl) 
+endfor
+
+if !exists('g:vimteractive_zsh_prompt_multiline')
+    let g:vimteractive_zsh_prompt_multiline = 1
+endif
+if !exists('g:vimteractive_zsh_prompt')
+    let g:vimteractive_zsh_prompt = '^\$'
+endif
 
 " Plugin commands
 " ===============
@@ -68,7 +82,7 @@ endif
 
 " Control-S in normal or insert mode to send current line
 nnoremap <silent> <C-s> :<c-u>call vimteractive#send_lines(v:count1)<cr>
-inoremap <silent> <C-s> <C-o>:let save_cursor = getpos('.')<CR><Esc>:<c-u>call vimteractive#send_lines(v:count1)<cr>:call setpos('.', save_cursor)<CR>i
+inoremap <silent> <C-s> <C-o>:let save_cursor = getpos('.')<CR><Esc>:<c-u>call vimteractive#send_lines(v:count1)<cr>:<c-u>call setpos('.', save_cursor)<CR>i
 
 " Control-S in visual mode to send multiple lines
 vnoremap <silent> <C-s> :<c-u>call vimteractive#send_op(visualmode(), 1)<cr>
@@ -77,8 +91,9 @@ vnoremap <silent> <C-s> :<c-u>call vimteractive#send_op(visualmode(), 1)<cr>
 nnoremap <silent> <A-s> :<c-u>call vimteractive#send_range(1,'.')<cr>
 
 " Control-Y in normal mode to get last response
-noremap  <silent> <C-y>      :put =vimteractive#get_response()<CR>
-inoremap <silent> <C-y> <C-o>:let save_cursor = getpos('.')<CR><Esc>:put =vimteractive#get_response()<CR>:call setpos('.', save_cursor)<CR>i 
+noremap  <silent> <C-y> :put =vimteractive#get_response()<CR>
+inoremap <silent> <C-y> <C-o>:let save_cursor = getpos('.')<CR><Esc>:put =vimteractive#get_response()<CR>:<c-u>call setpos('.', save_cursor)<CR>i
+vnoremap <silent> <C-y> d:put! =vimteractive#get_response()<CR>
 
 " cycle through terminal buffers in the style of unimpaired
 nnoremap <silent> ]v :call vimteractive#next_term()<CR>

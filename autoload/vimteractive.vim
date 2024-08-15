@@ -156,6 +156,11 @@ function! vimteractive#get_response_gpt() abort
     return strpart(l:end_text, 0, l:last_price_index)
 endfunction
 
+"How can I convert the output of script logging to a readable string in vimscript
+"The output of that is full of unusual characters originating from the /usr/bin/script command
+"How can I echo in vimscript with portions of text highlighted in bold
+
+
 " Get the last response from the terminal for ipython
 function! vimteractive#get_response_ipython() abort
     let l:logfile_name = vimteractive#logfile_name()
@@ -171,6 +176,22 @@ function! vimteractive#get_response_ipython() abort
     endfor
     let block = reverse(block)
     return join(block, "\n")
+endfunction
+
+" Get the last response from the terminal for zsh
+function! vimteractive#get_response_zsh() abort
+    let l:logfile_name = vimteractive#logfile_name()
+    let l:log_data = system("cat " . l:logfile_name . " | perl -pe '" . 's/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g' . "' | col -b ")
+    let lines = split(l:log_data, '\n')
+    let i = len(lines) - 1
+    while i > 0 && match(lines[i], g:vimteractive_zsh_prompt) != 0
+        let i -= 1
+    endwhile
+    let j = i - 1
+    while j > 0 && match(lines[j], g:vimteractive_zsh_prompt) != 0
+        let j -= 1
+    endwhile
+    return join(lines[j+1:i-g:vimteractive_zsh_prompt_multiline], "\n")
 endfunction
 
 
