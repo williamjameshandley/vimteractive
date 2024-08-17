@@ -85,9 +85,9 @@ nnoremap <silent> <C-s> :<c-u>call vimteractive#send_lines(v:count1)<cr>
 inoremap <silent> <C-s> <C-o>:let save_cursor = getpos('.')<CR><Esc>:<c-u>call vimteractive#send_lines(v:count1)<cr>:<c-u>call setpos('.', save_cursor)<CR>i
 
 " Control-S in visual mode to send multiple lines
-vnoremap <silent> <C-s> :<c-u>call vimteractive#send_op(visualmode(), 1)<cr>
+vnoremap <silent> <C-s> :<c-u>call vimteractive#send_op(visualmode(), 1)<cr>`>
 
-" Alt-S in normal mode to send all lines up to this point TODO: Fix this
+" Alt-S in normal mode to send all lines up to this point 
 nnoremap <silent> <A-s> :<c-u>call vimteractive#send_range(1,'.')<cr>
 
 " Control-Y in normal mode to get last response
