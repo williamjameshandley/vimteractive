@@ -26,6 +26,14 @@ if !exists('g:vimteractive_get_response')
     let g:vimteractive_get_response = {}
 endif
 
+if !exists('g:vimteractive_extract_markdown_code_blocks')
+    let g:vimteractive_extract_markdown_code_blocks = 1
+endif
+
+if !exists('g:vimteractive_logfile_cleanup')
+    let g:vimteractive_logfile_cleanup = 1
+endif
+
 let g:slime_target = 'tmux'
 let g:slime_no_mappings=1
 
@@ -42,7 +50,7 @@ let g:vimteractive_commands.mathematica = 'math'
 let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
 let g:vimteractive_commands.gpt = 'gpt --log_file <LOGFILE>'
 
-let g:vimteractive_bracketed_paste += ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'sgpt', 'gpt']
+let g:vimteractive_bracketed_paste += ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'gpt']
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_repls')

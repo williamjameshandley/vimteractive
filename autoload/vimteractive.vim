@@ -45,7 +45,11 @@ function! vimteractive#repl_start(...) abort
     let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_name
 
     " Define the cleanup command
-    let l:rm_command = "rm " . l:logfile_name
+    if g:vimteractive_logfile_cleanup == 1
+        let l:rm_command = "rm " . l:logfile_name
+    else
+        let l:rm_command = "echo 'Logfile: " . l:logfile_name . "'"
+    endif
 
     " Now join them all together
     let l:xrepl_command = printf('%s "%s && %s"', l:tmux_command, l:repl_command, l:rm_command)
@@ -113,10 +117,35 @@ function! vimteractive#logfile_name() abort
     return vimteractive#pane_name() . '.log'
 endfunction
 
+function! vimteractive#extract_markdown_code_blocks(input)
+    let result = ""
+    let in_code_block = 0
+    let lines = split(a:input, '\n')
+    for line in lines
+        if in_code_block == 0 && line =~ '^\s*```.*$'
+            let in_code_block = 1
+        elseif in_code_block == 1 && line =~ '^\s*```.*$'
+            let in_code_block = 0
+        elseif in_code_block == 1
+            let result .= line . "\n"
+        endif
+    endfor
+    if result == ""
+        let result = a:input
+    endif
+    return result
+endfunction
 
 " Connect to vimteractive terminal
-function! vimteractive#connect(pane_name) abort
-    let l:pane_index = index(vimteractive#get_pane_names(), a:pane_name)
+function! vimteractive#connect(...) abort
+    let l:pane_names = vimteractive#get_pane_names()
+    if a:0 == 0 && len(l:pane_names) == 1
+        let l:pane_name = l:pane_names[0]
+        let l:pane_index = 0
+    else
+        let l:pane_name = a:1
+        let l:pane_index = index(l:pane_names, l:pane_name)
+    endif
     let l:pane_id = vimteractive#get_pane_ids()[l:pane_index]
     let b:slime_config["target_pane"] = l:pane_id
     let l:repl_type = vimteractive#repl_type()
@@ -125,12 +154,16 @@ function! vimteractive#connect(pane_name) abort
     else
         let b:slime_bracketed_paste = 0
     endif
-    echo "Connected to " . a:pane_name
+    echo "Connected to " . l:pane_name
 endfunction
 
 function! vimteractive#get_response() abort
     let l:repl_type = vimteractive#repl_type()
-    return g:vimteractive_get_response[l:repl_type]()
+    let l:response = g:vimteractive_get_response[l:repl_type]()
+    if g:vimteractive_extract_markdown_code_blocks
+        let l:response = vimteractive#extract_markdown_code_blocks(l:response)
+    endif
+    return l:response
 endfunction
 
 " Get the last response from the terminal for sgpt
@@ -156,12 +189,7 @@ function! vimteractive#get_response_gpt() abort
     return strpart(l:end_text, 0, l:last_price_index)
 endfunction
 
-"How can I convert the output of script logging to a readable string in vimscript
-"The output of that is full of unusual characters originating from the /usr/bin/script command
-"How can I echo in vimscript with portions of text highlighted in bold
-
-
-" Get the last response from the terminal for ipython
+" get the last response from the terminal for ipython
 function! vimteractive#get_response_ipython() abort
     let l:logfile_name = vimteractive#logfile_name()
     let lines = readfile(l:logfile_name)
