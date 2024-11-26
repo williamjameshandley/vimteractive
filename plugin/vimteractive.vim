@@ -95,8 +95,10 @@ inoremap <silent> <C-s> <C-o>:let save_cursor = getpos('.')<CR><Esc>:<c-u>call v
 " Control-S in visual mode to send multiple lines
 vnoremap <silent> <C-s> :<c-u>call vimteractive#send_op(visualmode(), 1)<cr>`>
 
-" Alt-S in normal mode to send all lines up to this point 
+" Alt-s in normal mode to send all lines up to this point 
 nnoremap <silent> <A-s> :<c-u>call vimteractive#send_range(1,'.')<cr>
+" Alt-shift-s in normal mode to send all lines from this point onwards
+" nnoremap <silent> <A-S> :<c-u>call vimteractive#send_range(1,'.')<cr>
 
 " Control-Y in normal mode to get last response
 noremap  <silent> <C-y> :put =vimteractive#get_response()<CR>
