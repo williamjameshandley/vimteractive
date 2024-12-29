@@ -14,7 +14,7 @@ function! vimteractive#determine_repl_type(...) abort
         if has_key(g:vimteractive_commands, &filetype)
             let l:repl_type = &filetype
         else
-            let l:repl_type = 'gpt'
+            let l:repl_type = g:vimteractive_default_repl
         endif
     else
         let l:repl_type = a:1

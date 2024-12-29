@@ -34,6 +34,10 @@ if !exists('g:vimteractive_logfile_cleanup')
     let g:vimteractive_logfile_cleanup = 1
 endif
 
+if !exists('g:vimteractive_default_repl')
+    let g:vimteractive_default_repl = 'gpt'
+endif
+
 let g:slime_target = 'tmux'
 let g:slime_no_mappings=1
 
