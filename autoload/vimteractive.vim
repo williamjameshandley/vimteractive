@@ -52,7 +52,7 @@ function! vimteractive#repl_start(...) abort
     endif
 
     " Now join them all together
-    let l:xrepl_command = printf('%s "%s && %s"', l:tmux_command, l:repl_command, l:rm_command)
+    let l:xrepl_command = printf('%s "%s && %s || read"', l:tmux_command, l:repl_command, l:rm_command)
 
     " Pass any environment variables necessary for logging
     let $CHAT_CACHE_PATH="/" " sgpt logfiles
