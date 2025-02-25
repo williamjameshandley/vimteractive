@@ -108,3 +108,8 @@ vnoremap <silent> <C-y> d:put! =vimteractive#get_response()<CR>
 " cycle through terminal buffers in the style of unimpaired
 nnoremap <silent> ]v :call vimteractive#next_term()<CR>
 nnoremap <silent> [v :call vimteractive#prev_term()<CR>
+
+" Toggle g:vimteractive_extract_markdown_code_blocks with yok, [ok, ]ok
+nnoremap <silent> yok :let g:vimteractive_extract_markdown_code_blocks = (exists("g:vimteractive_extract_markdown_code_blocks") && g:vimteractive_extract_markdown_code_blocks == 1 ? 0 : 1)<CR>
+nnoremap <silent> [ok :let g:vimteractive_extract_markdown_code_blocks = 0<CR>
+nnoremap <silent> ]ok :let g:vimteractive_extract_markdown_code_blocks = 1<CR>

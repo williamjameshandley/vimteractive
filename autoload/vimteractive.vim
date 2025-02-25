@@ -1,4 +1,4 @@
-" Vimteractive implementation
+" vIMTERACTIVE IMPLEMENTATION
 
 " Reopen a terminal buffer in a split window if necessary
 function! vimteractive#show_term() abort
@@ -39,7 +39,9 @@ function! vimteractive#repl_start(...) abort
 
     " Define the repl command
     let l:repl_command = substitute(l:repl_command, '<LOGFILE>', l:logfile_name, '')
+    let l:repl_command = substitute(l:repl_command, '<SESSION>', l:repl_name, '')
     let l:repl_command = l:repl_command . ' ' . join(a:000[1:], ' ')
+    
 
     " Define the tmux command
     let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_name
@@ -187,6 +189,25 @@ function! vimteractive#get_response_gpt() abort
     let l:price_index = match(l:end_text, 'gptcli-price')
     let l:last_price_index = strridx(l:end_text, "\n", l:price_index-1)
     return strpart(l:end_text, 0, l:last_price_index)
+endfunction
+
+function! vimteractive#get_response_between(start_string, end_string) abort
+    let l:tmux_command = printf('tmux capture-pane -J -p -t %s -S -', b:slime_config["target_pane"])
+    let l:log_data = system(l:tmux_command)
+    let l:repl_name = vimteractive#pane_name()
+    let l:prompt_string = printf('%s)', l:repl_name)
+    let l:last_prompt_index = strridx(l:log_data, a:end_string)
+    let l:second_last_prompt_index = strridx(l:log_data, a:start_string, l:last_prompt_index-1)
+    let l:last_response = strpart(l:log_data, l:second_last_prompt_index, l:last_prompt_index- l:second_last_prompt_index)
+    return l:last_response
+endfunction
+
+
+" Get the last response from the terminal for aichat
+function! vimteractive#get_response_aichat() abort
+    let l:repl_name = vimteractive#pane_name()
+    let l:prompt = printf('%s)', l:repl_name)
+    return vimteractive#get_response_between(l:prompt, l:prompt)
 endfunction
 
 " get the last response from the terminal for ipython
