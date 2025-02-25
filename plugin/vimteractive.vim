@@ -30,10 +30,6 @@ if !exists('g:vimteractive_extract_markdown_code_blocks')
     let g:vimteractive_extract_markdown_code_blocks = 1
 endif
 
-if !exists('g:vimteractive_logfile_cleanup')
-    let g:vimteractive_logfile_cleanup = 1
-endif
-
 if !exists('g:vimteractive_default_repl')
     let g:vimteractive_default_repl = 'gpt'
 endif
@@ -53,8 +49,9 @@ let g:vimteractive_commands.R = 'R'
 let g:vimteractive_commands.mathematica = 'math'
 let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
 let g:vimteractive_commands.gpt = 'gpt --log_file <LOGFILE>'
+let g:vimteractive_commands.aichat = 'aichat --session <SESSION>'
 
-let g:vimteractive_bracketed_paste += ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'gpt']
+let g:vimteractive_bracketed_paste += ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'gpt', 'aichat']
 
 " Override default shells for different filetypes
 if !has_key(g:, 'vimteractive_default_repls')

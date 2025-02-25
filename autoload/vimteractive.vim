@@ -1,4 +1,4 @@
-" vIMTERACTIVE IMPLEMENTATION
+" vimteractive implementation
 
 " Reopen a terminal buffer in a split window if necessary
 function! vimteractive#show_term() abort
@@ -42,19 +42,11 @@ function! vimteractive#repl_start(...) abort
     let l:repl_command = substitute(l:repl_command, '<SESSION>', l:repl_name, '')
     let l:repl_command = l:repl_command . ' ' . join(a:000[1:], ' ')
     
-
     " Define the tmux command
     let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_name
 
-    " Define the cleanup command
-    if g:vimteractive_logfile_cleanup == 1
-        let l:rm_command = "rm " . l:logfile_name
-    else
-        let l:rm_command = "echo 'Logfile: " . l:logfile_name . "'"
-    endif
-
     " Now join them all together
-    let l:xrepl_command = printf('%s "%s && %s || read"', l:tmux_command, l:repl_command, l:rm_command)
+    let l:xrepl_command = printf('%s "%s"', l:tmux_command, l:repl_command)
 
     " Pass any environment variables necessary for logging
     let $CHAT_CACHE_PATH="/" " sgpt logfiles
@@ -74,7 +66,6 @@ function! vimteractive#repl_start(...) abort
     call vimteractive#connect(l:repl_name)
 
     " Move focus back to vim
-    sleep 1000m
     call system("xdotool windowactivate " . l:window_id_before)
 endfunction
 
@@ -191,40 +182,57 @@ function! vimteractive#get_response_gpt() abort
     return strpart(l:end_text, 0, l:last_price_index)
 endfunction
 
-function! vimteractive#get_response_between(start_string, end_string) abort
-    let l:tmux_command = printf('tmux capture-pane -J -p -t %s -S -', b:slime_config["target_pane"])
-    let l:log_data = system(l:tmux_command)
-    let l:repl_name = vimteractive#pane_name()
-    let l:prompt_string = printf('%s)', l:repl_name)
-    let l:last_prompt_index = strridx(l:log_data, a:end_string)
-    let l:second_last_prompt_index = strridx(l:log_data, a:start_string, l:last_prompt_index-1)
-    let l:last_response = strpart(l:log_data, l:second_last_prompt_index, l:last_prompt_index- l:second_last_prompt_index)
-    return l:last_response
-endfunction
-
-
-" Get the last response from the terminal for aichat
+" Get the last response from the aichat terminal and remove any prompt lines.
 function! vimteractive#get_response_aichat() abort
+    " Get the pane prompt
     let l:repl_name = vimteractive#pane_name()
     let l:prompt = printf('%s)', l:repl_name)
-    return vimteractive#get_response_between(l:prompt, l:prompt)
-endfunction
 
-" get the last response from the terminal for ipython
-function! vimteractive#get_response_ipython() abort
-    let l:logfile_name = vimteractive#logfile_name()
-    let lines = readfile(l:logfile_name)
-    let block = []
-    for i in range(len(lines) - 1, 0, -1)
-        if match(lines[i], '^#\[Out\]#') == 0
-            let line = substitute(lines[i], '^#\[Out\]# ', '', '')
-            call add(block, line)
-        else
-            break
+    " Capture the full tmux pane log.
+    let l:tmux_command = printf('tmux capture-pane -J -p -t %s -S -', b:slime_config["target_pane"])
+    let l:log_data = system(l:tmux_command)
+
+    " Find the indices of the last two prompts.
+    let l:last_prompt_index = strridx(l:log_data, l:prompt)
+    let l:second_last_prompt_index = strridx(l:log_data, l:prompt, l:last_prompt_index - 1)
+
+    " Extract the block between the two prompts.
+    let l:last_response_block = strpart(l:log_data, l:second_last_prompt_index, l:last_prompt_index - l:second_last_prompt_index)
+
+    " Split the extracted block by newlines.
+    let l:lines = split(l:last_response_block, "\n")
+    let l:answer_lines = []
+    let l:answer_started = 0
+
+    " Skip any leading prompt lines. Here we check if the line
+    " either starts with the expected prompt or with "..." (the multiline prompt prefix).
+    for l:line in l:lines
+        if !l:answer_started
+            " Check if the line begins with the prompt string (allowing for some trailing characters)
+            if l:line =~ '^\s*' . escape(l:prompt, '\/')
+                " Skip this prompt line.
+                continue
+            endif
+            " Also skip lines that look like part of a multiline prompt (i.e. starting with '...')
+            if l:line =~ '^\s*\.\.\.'
+                continue
+            endif
+            " Once we hit a line that does not match the prompt prefix, we assume it's part of the answer.
+            let l:answer_started = 1
         endif
+        " Collect the remaining lines.
+        call add(l:answer_lines, l:line)
     endfor
-    let block = reverse(block)
-    return join(block, "\n")
+
+    " Remove any leading/trailing empty lines.
+    while !empty(l:answer_lines) && l:answer_lines[0] =~ '^\s*$'
+        call remove(l:answer_lines, 0)
+    endwhile
+    while !empty(l:answer_lines) && l:answer_lines[-1] =~ '^\s*$'
+        call remove(l:answer_lines, -1)
+    endwhile
+
+    return join(l:answer_lines, "\n")
 endfunction
 
 " Get the last response from the terminal for zsh
