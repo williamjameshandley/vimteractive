@@ -235,6 +235,23 @@ function! vimteractive#get_response_aichat() abort
     return join(l:answer_lines, "\n")
 endfunction
 
+" get the last response from the terminal for ipython
+function! vimteractive#get_response_ipython() abort
+    let l:logfile_name = vimteractive#logfile_name()
+    let lines = readfile(l:logfile_name)
+    let block = []
+    for i in range(len(lines) - 1, 0, -1)
+        if match(lines[i], '^#\[Out\]#') == 0
+            let line = substitute(lines[i], '^#\[Out\]# ', '', '')
+            call add(block, line)
+        else
+            break
+        endif
+    endfor
+    let block = reverse(block)
+    return join(block, "\n")
+endfunction
+
 " Get the last response from the terminal for zsh
 function! vimteractive#get_response_zsh() abort
     let l:logfile_name = vimteractive#logfile_name()

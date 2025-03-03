@@ -58,7 +58,7 @@ if !has_key(g:, 'vimteractive_default_repls')
 	let g:vimteractive_default_repls = { 'python': 'ipython' }
 endif
 
-for repl in ['ipython', 'sgpt', 'gpt', 'zsh']
+for repl in ['ipython', 'sgpt', 'gpt', 'zsh', 'aichat']
     let g:vimteractive_get_response[repl] = function('vimteractive#get_response_' . repl) 
 endfor
 
