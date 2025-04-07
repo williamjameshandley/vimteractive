@@ -32,21 +32,25 @@ function! vimteractive#repl_start(...) abort
     " Retrieve starting command
     let l:repl_command = g:vimteractive_commands[l:repl_type]
 
-    " Assign repl and logfile names
+
+    " Assign repl, logfile & session names
     let l:tempname = tempname()
-    let l:repl_name = fnamemodify(l:tempname, ':p:h') . '-' . fnamemodify(l:tempname, ':t:r') . '-' . l:repl_type
+    let l:rand = fnamemodify(fnamemodify(l:tempname, ':h'), ':t')
+    let l:num  = fnamemodify(l:tempname, ':t')
+    let l:repl_name = '/tmp/' . l:rand . '-' . l:num . '-' . l:repl_type
     let l:logfile_name = l:repl_name . '.log'
+    let l:session_name = strftime("%Y-%m-%d") . '-' . l:rand . '-' . l:num
 
     " Define the repl command
     let l:repl_command = substitute(l:repl_command, '<LOGFILE>', l:logfile_name, '')
-    let l:repl_command = substitute(l:repl_command, '<SESSION>', l:repl_name, '')
+    let l:repl_command = substitute(l:repl_command, '<SESSION>', l:session_name, '')
     let l:repl_command = l:repl_command . ' ' . join(a:000[1:], ' ')
     
     " Define the tmux command
     let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_name
 
     " Now join them all together
-    let l:xrepl_command = printf('%s "%s"', l:tmux_command, l:repl_command)
+    let l:xrepl_command = printf('%s "%s; read"', l:tmux_command, l:repl_command)
 
     " Pass any environment variables necessary for logging
     let $CHAT_CACHE_PATH="/" " sgpt logfiles
@@ -186,53 +190,27 @@ endfunction
 function! vimteractive#get_response_aichat() abort
     " Get the pane prompt
     let l:repl_name = vimteractive#pane_name()
-    let l:prompt = printf('%s)', l:repl_name)
+    let l:prompt = fnamemodify(l:repl_name, ':t')
+    let l:prompt = substitute(l:prompt, '-' . vimteractive#repl_type(), '', '')
 
     " Capture the full tmux pane log.
     let l:tmux_command = printf('tmux capture-pane -J -p -t %s -S -', b:slime_config["target_pane"])
     let l:log_data = system(l:tmux_command)
 
-    " Find the indices of the last two prompts.
-    let l:last_prompt_index = strridx(l:log_data, l:prompt)
-    let l:second_last_prompt_index = strridx(l:log_data, l:prompt, l:last_prompt_index - 1)
+    " Split the log data by newlines.
+    let lines = split(l:log_data, '\n')
 
-    " Extract the block between the two prompts.
-    let l:last_response_block = strpart(l:log_data, l:second_last_prompt_index, l:last_prompt_index - l:second_last_prompt_index)
-
-    " Split the extracted block by newlines.
-    let l:lines = split(l:last_response_block, "\n")
-    let l:answer_lines = []
-    let l:answer_started = 0
-
-    " Skip any leading prompt lines. Here we check if the line
-    " either starts with the expected prompt or with "..." (the multiline prompt prefix).
-    for l:line in l:lines
-        if !l:answer_started
-            " Check if the line begins with the prompt string (allowing for some trailing characters)
-            if l:line =~ '^\s*' . escape(l:prompt, '\/')
-                " Skip this prompt line.
-                continue
-            endif
-            " Also skip lines that look like part of a multiline prompt (i.e. starting with '...')
-            if l:line =~ '^\s*\.\.\.'
-                continue
-            endif
-            " Once we hit a line that does not match the prompt prefix, we assume it's part of the answer.
-            let l:answer_started = 1
-        endif
-        " Collect the remaining lines.
-        call add(l:answer_lines, l:line)
-    endfor
-
-    " Remove any leading/trailing empty lines.
-    while !empty(l:answer_lines) && l:answer_lines[0] =~ '^\s*$'
-        call remove(l:answer_lines, 0)
+    let i = len(lines)- 1
+    while i > 0 && match(lines[i], l:prompt) == -1
+        let i -= 1
+        echo i
     endwhile
-    while !empty(l:answer_lines) && l:answer_lines[-1] =~ '^\s*$'
-        call remove(l:answer_lines, -1)
+    let j = i - 1
+    while j > 0 && match(lines[j], l:prompt) == -1
+        let j -= 1
     endwhile
+    return join(lines[j+1:i-1], "\n")
 
-    return join(l:answer_lines, "\n")
 endfunction
 
 " get the last response from the terminal for ipython
