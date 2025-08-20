@@ -16,17 +16,26 @@ The plugin uses a dispatcher architecture to support both vim's native terminal 
    - Configures key mappings (Ctrl-S send, Ctrl-Y retrieve)
    - Default backend is 'tmux' for backward compatibility
    - Default REPL is 'gpt'
+   - All commands defined as lists for proper argument handling
 
 2. **autoload/vimteractive.vim** - Dispatcher layer:
-   - Routes all function calls to appropriate backend
-   - Dynamically sets `g:slime_target` based on chosen backend
+   - Routes all function calls to appropriate backend using `call()` 
+   - Uses try-catch to trigger vim's autoload mechanism
    - Provides unified interface regardless of backend
+   - Supports buffer-local backend override via `b:vimteractive_backend`
 
 3. **autoload/vimteractive/backend/** - Backend implementations:
-   - **tmux.vim**: External terminal via tmux (original implementation)
-   - **vimterminal.vim**: Vim's native terminal (no external dependencies)
+   - **tmux.vim**: External terminal via tmux
+     - Opens terminals in separate xterm windows
+     - Shell-escapes list commands before execution
+     - Uses xdotool for window focus management
+   - **vimterminal.vim**: Vim's native terminal
+     - Uses `term_start()` with list commands (no shell escaping needed)
+     - Terminals appear as vim splits
+     - No external dependencies
 
 4. **autoload/vimteractive/common.vim** - Shared functionality:
+   - `prepare_repl_info()` - Handles command list substitution
    - Log-file based response retrieval (works for both backends)
    - Markdown code block extraction
 
@@ -103,10 +112,11 @@ g:vimteractive_zsh_prompt_multiline  " Lines to skip for multiline prompts
 ## Current Branch Status
 
 The vimteractive3 branch represents a major architectural change:
-- Complete rewrite using tmux instead of vim's native terminal
+- Complete rewrite with dual backend support (tmux and vim terminal)
 - Added AI assistant support (sgpt, gpt-command-line, aichat)
 - Implemented response retrieval for multiple REPLs
 - Added markdown code block extraction
 - Changed default REPL from autodetect to 'gpt'
+- Commands now defined as lists for proper argument handling
 
-Note: README.rst and doc/vimteractive.txt are outdated and don't reflect these changes.
+Documentation is up to date as of the dual backend implementation.

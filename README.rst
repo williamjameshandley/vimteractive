@@ -19,8 +19,19 @@ autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__ or
 `Copilot <https://github.com/features/copilot>`__.
 
-**Note: The vimteractive3 branch now supports both tmux (external terminals) and 
-vim's native terminal as backends. Choose based on your needs and dependencies.**
+**New in vimteractive3: Dual backend support!**
+
+- **tmux backend** (default): Opens REPLs in external terminal windows via tmux
+  
+  - Pros: Terminal persists after vim exits, better for long-running sessions
+  - Cons: Requires tmux, xterm, and xdotool
+  
+- **vimterminal backend**: Uses vim's built-in ``:terminal`` feature
+  
+  - Pros: No external dependencies, integrated vim experience
+  - Cons: Terminal closes with vim
+
+Set your backend with ``let g:vimteractive_backend = 'vimterminal'`` or ``'tmux'``
 
 The activating commands are:
 
@@ -52,6 +63,35 @@ interpreter. You can set it like this:
 .. code:: vim
 
 	let g:vimteractive_default_repls = { 'python': 'ipython' }
+
+Migration from Vimteractive v2
+-------------------------------
+
+**Important changes in v3:**
+
+1. **Default backend is tmux** (external terminals), not vim's native terminal
+2. **New dependency**: vim-slime is now required
+3. **Commands changed**: ``:Ipython`` now starts IPython (not ``:Iipython2`` or ``:Iipython3``)
+
+**To get the v2 experience (vim's native terminal):**
+
+Add this to your ``.vimrc``:
+
+.. code:: vim
+
+	" Use vim's built-in terminal instead of tmux
+	let g:vimteractive_backend = 'vimterminal'
+	
+	" Optional: Configure terminal split behavior
+	let g:vimteractive_vimterminal_config = {
+	    \ 'vertical': 1,     " Use vertical split
+	    \ 'term_rows': 20    " Set terminal height
+	    \ }
+
+**To use the new tmux backend (recommended for long sessions):**
+
+Install the dependencies: tmux, xterm (or another terminal), and xdotool.
+No configuration needed - tmux is the default.
 
 Installation
 ------------
