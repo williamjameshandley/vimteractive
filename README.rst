@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim
 :Author: Will Handley
-:Version: 2.7.1
+:Version: 3.0.0 (vimteractive3 branch)
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -19,6 +19,9 @@ autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__ or
 `Copilot <https://github.com/features/copilot>`__.
 
+**Note: The vimteractive3 branch is a complete rewrite using tmux and vim-slime
+instead of vim's native terminal.**
+
 The activating commands are:
 
 - `ipython <https://ipython.readthedocs.io>`__ ``:Iipython``
@@ -33,33 +36,48 @@ The activating commands are:
 - `R <https://www.r-project.org/>`__ ``:IR``
 - `sgpt <https://github.com/TheR1D/shell_gpt>`__ ``:Isgpt``
 - `gpt-command-line <https://github.com/kharvd/gpt-cli>`__ ``:Igpt``
+- `aichat <https://github.com/sigoden/aichat>`__ ``:Iaichat``
 - autodetect based on filetype ``:Iterm``
 
 Commands may be sent from a text file to the chosen REPL using ``CTRL-S``.
 If there is no REPL, ``CTRL-S`` will automatically open one for you using
 ``:Iterm``.
 
-For some terminals, the output of the last command may be retrieved with
-``CTRL-Y``.
+For supported REPLs (IPython, sgpt, gpt-command-line, aichat, zsh), the output 
+of the last command may be retrieved with ``CTRL-Y``.
 
 Note: it's highly recommended to use IPython as your default Python
 interpreter. You can set it like this:
 
 .. code:: vim
 
-	let g:vimteractive_default_shells = { 'python': 'ipython' }
+	let g:vimteractive_default_repls = { 'python': 'ipython' }
 
 Installation
 ------------
 
-Since this package leverages the native vim interactive terminal, vimteractive
-is only compatible with vim 8 or greater.
+**Dependencies:**
+
+- Vim 8 or greater
+- `tmux <https://github.com/tmux/tmux>`__ (required for terminal multiplexing)
+- `vim-slime <https://github.com/jpalardy/vim-slime>`__ (required for sending text to tmux)
+- `xterm` or another terminal emulator (configurable via ``g:vimteractive_terminal``)
+- `xdotool <https://github.com/jordansissel/xdotool>`__ (for window focus management)
 
 Installation should be relatively painless via
 `the usual routes <https://vimawesome.com/plugin/vimteractive>`_ such as
 `Vundle <https://github.com/VundleVim/Vundle.vim>`__,
 `Pathogen <https://github.com/tpope/vim-pathogen>`__ or the vim 8 native
 package manager (``:help packages``).
+
+**Important:** You must also install vim-slime as it's a required dependency:
+
+.. code:: vim
+
+    " Example for Vundle
+    Plugin 'jpalardy/vim-slime'
+    Plugin 'williamjameshandley/vimteractive'
+
 If you're masochistic enough to use
 `Arch <https://wiki.archlinux.org/index.php/Arch_Linux>`__/`Manjaro <https://manjaro.org/>`__,
 you can install vimteractive via the
@@ -177,8 +195,9 @@ In Visual mode, ``CTRL-S`` sends the current selection to the REPL.
 Retrieving command outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-CTRL-Y retrieves the output of the last command sent to the REPL. This only
-implemented in a subset of terminas (``:Iipython``, ``:Isgpt`` and ``:Igpt``)
+CTRL-Y retrieves the output of the last command sent to the REPL. This is
+implemented for the following REPLs: ``:Iipython``, ``:Isgpt``, ``:Igpt``, 
+``:Iaichat``, and ``:Izsh``
 
 In ``Normal-mode``, CTRL-Y retrieves the output of the last command sent to the
 REPL and places it in the current buffer.
@@ -219,8 +238,9 @@ These options can be put in your ``.vimrc``, or run manually as desired:
 
 .. code:: vim
 
-    let g:vimteractive_vertical = 1        " Vertically split REPLs
-    let g:vimteractive_autostart = 0       " Don't start REPLs by default
+    let g:vimteractive_terminal = 'xterm -e'     " Terminal emulator to use
+    let g:vimteractive_default_repl = 'gpt'      " Default REPL (default: 'gpt')
+    let g:vimteractive_extract_markdown_code_blocks = 1  " Extract code from markdown responses
 
 Extending functionality
 -----------------------
@@ -253,7 +273,7 @@ in your ``.vimrc``:
     " If you want to set interpreter as default (used by :Iterm),
     " map filetype to it. If not set, :Iterm will use interpreter
     " named same with filetype.
-    let g:vimteractive_default_shells = {
+    let g:vimteractive_default_repls = {
         \ 'python': 'asyncpython'
         \ }
 
