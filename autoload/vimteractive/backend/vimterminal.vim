@@ -29,7 +29,7 @@ function! vimteractive#backend#vimterminal#repl_start(...) abort
     let l:bufnr = term_start(l:repl_info.full_command, l:term_options)
 
     " Set the buffer name for identification
-    execute 'file ' . l:repl_info.repl_name
+    execute 'silent! file ' . l:repl_info.repl_name
 
     " Store buffer info for connection
     let b:vimteractive_repl_type = l:repl_info.repl_type
