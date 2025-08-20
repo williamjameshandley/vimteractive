@@ -6,10 +6,6 @@ function! s:dispatch(func, args) abort
     let l:backend = get(b:, 'vimteractive_backend', g:vimteractive_backend)
     
     let l:func_name = 'vimteractive#backend#' . l:backend . '#' . a:func
-    if !exists('*' . l:func_name)
-        echoerr printf("Vimteractive: Function %s not implemented for backend '%s'", a:func, l:backend)
-        return
-    endif
     return call(l:func_name, a:args)
 endfunction
 

@@ -75,7 +75,7 @@ function! vimteractive#backend#tmux#repl_type() abort
         endif
     endfor
     echoerr "Could not determine terminal type from pane name"
-    return 1
+    return ""
 endfunction
 
 " Get logfile name
@@ -109,6 +109,10 @@ endfunction
 
 " Check if terminal needs to be shown
 function! vimteractive#backend#tmux#show_term() abort
+    if !exists('b:slime_config') || !has_key(b:slime_config, 'target_pane')
+        call vimteractive#backend#tmux#repl_start()
+        return
+    endif
     let l:pane_ids = vimteractive#backend#tmux#get_pane_ids()
     let l:pane_name_index = index(l:pane_ids, b:slime_config["target_pane"])
     if l:pane_name_index < 0
