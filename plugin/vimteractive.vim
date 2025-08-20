@@ -43,19 +43,19 @@ endif
 " Slime configuration will be set dynamically based on backend
 let g:slime_no_mappings=1
 
-let g:vimteractive_commands.ipython = "ipython --matplotlib --no-autoindent --logfile='-o <LOGFILE>'"
-let g:vimteractive_commands.python = 'python'
-let g:vimteractive_commands.bash = 'bash'
-let g:vimteractive_commands.zsh = "zsh -c 'script -qf <LOGFILE>'"
-let g:vimteractive_commands.julia = 'julia'
-let g:vimteractive_commands.maple = 'maple -c "interface(errorcursor=false);"'
-let g:vimteractive_commands.clojure = 'clojure'
-let g:vimteractive_commands.apl = 'apl'
-let g:vimteractive_commands.R = 'R'
-let g:vimteractive_commands.mathematica = 'math'
-let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
-let g:vimteractive_commands.gpt = 'gpt --log_file <LOGFILE>'
-let g:vimteractive_commands.aichat = 'aichat --session <SESSION>'
+let g:vimteractive_commands.ipython = ['ipython', '--matplotlib', '--no-autoindent', '--logfile=-o <LOGFILE>']
+let g:vimteractive_commands.python = ['python']
+let g:vimteractive_commands.bash = ['bash']
+let g:vimteractive_commands.zsh = ['zsh', '-c', 'script -qf <LOGFILE>']
+let g:vimteractive_commands.julia = ['julia']
+let g:vimteractive_commands.maple = ['maple', '-c', 'interface(errorcursor=false);']
+let g:vimteractive_commands.clojure = ['clojure']
+let g:vimteractive_commands.apl = ['apl']
+let g:vimteractive_commands.R = ['R']
+let g:vimteractive_commands.mathematica = ['math']
+let g:vimteractive_commands.sgpt = ['sgpt', '--repl', '<LOGFILE>']
+let g:vimteractive_commands.gpt = ['gpt', '--log_file', '<LOGFILE>']
+let g:vimteractive_commands.aichat = ['aichat', '--session', '<SESSION>']
 
 let g:vimteractive_bracketed_paste += ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'gpt', 'aichat']
 

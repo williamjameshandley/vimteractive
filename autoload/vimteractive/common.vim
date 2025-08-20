@@ -15,9 +15,15 @@ function! vimteractive#common#prepare_repl_info(...) abort
     let l:info.logfile_name = l:info.repl_name . '.log'
     let l:info.session_name = printf('%s-%s-%s', strftime("%Y-%m-%d"), l:rand, l:num)
     
-    let l:command = substitute(l:repl_command, '<LOGFILE>', l:info.logfile_name, '')
-    let l:command = substitute(l:command, '<SESSION>', l:info.session_name, '')
-    let l:info.full_command = l:command . ' ' . join(a:000[1:], ' ')
+    " Command must be a list - substitute placeholders in each element
+    let l:command = map(copy(l:repl_command), 'substitute(v:val, "<LOGFILE>", l:info.logfile_name, "g")')
+    let l:command = map(l:command, 'substitute(v:val, "<SESSION>", l:info.session_name, "g")')
+    " Add any extra arguments
+    if len(a:000) > 1
+        let l:info.full_command = l:command + a:000[1:]
+    else
+        let l:info.full_command = l:command
+    endif
     
     return l:info
 endfunction

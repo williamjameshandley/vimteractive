@@ -8,8 +8,9 @@ function! vimteractive#backend#tmux#repl_start(...) abort
     " Define the tmux command
     let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_info.repl_name
 
-    " Now join them all together
-    let l:xrepl_command = printf('%s "%s; read"', l:tmux_command, l:repl_info.full_command)
+    " Command is a list, shell-escape and join it
+    let l:escaped_cmd = join(map(copy(l:repl_info.full_command), 'shellescape(v:val)'), ' ')
+    let l:xrepl_command = printf('%s "%s; read"', l:tmux_command, l:escaped_cmd)
 
     " Pass any environment variables necessary for logging
     let $CHAT_CACHE_PATH="/" " sgpt logfiles
