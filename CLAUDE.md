@@ -24,7 +24,6 @@ The plugin consists of three main components:
    - Handles markdown code block extraction from AI responses
    - Opens external terminal windows (xterm) attached to tmux sessions
 
-3. **autoload/new.vim** - Contains duplicate gpt response function (likely needs cleanup)
 
 ## Key Implementation Details
 

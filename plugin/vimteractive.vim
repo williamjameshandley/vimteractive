@@ -14,7 +14,7 @@ if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }
 endif
 
-if !exists('g:vimteractive_termina')
+if !exists('g:vimteractive_terminal')
     let g:vimteractive_terminal = 'xterm -e'
 endif
 
@@ -80,7 +80,7 @@ if !has_key(g:, 'vimteractive_loaded')
 		execute 'command! -nargs=? I' . repl_type . " :call vimteractive#repl_start('" . repl_type . "', <f-args>)"
 	endfor
 
-	command! Iterm :call vimteractive#repl_start('-auto-')
+	command! Iterm :call vimteractive#repl_start()
 	command! -nargs=? -complete=customlist,vimteractive#get_pane_names Iconn
 		\ :call vimteractive#connect(<f-args>)
 endif

@@ -203,7 +203,6 @@ function! vimteractive#get_response_aichat() abort
     let i = len(lines)- 1
     while i > 0 && match(lines[i], l:prompt) == -1
         let i -= 1
-        echo i
     endwhile
     let j = i - 1
     while j > 0 && match(lines[j], l:prompt) == -1
