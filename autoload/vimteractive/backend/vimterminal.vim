@@ -20,13 +20,6 @@ function! vimteractive#backend#vimterminal#repl_start(...) abort
     " Set slime target for this backend
     let g:slime_target = 'vimterminal'
 
-    " Open terminal in a new split (configurable)
-    let l:split_cmd = 'botright 15split'  " default
-    if exists('g:vimteractive_vimterminal_config') && has_key(g:vimteractive_vimterminal_config, 'split_command')
-        let l:split_cmd = g:vimteractive_vimterminal_config.split_command
-    endif
-    execute l:split_cmd
-
     " Start the terminal with the REPL command
     let l:term_options = {}
     if exists('g:vimteractive_vimterminal_config')
