@@ -2,30 +2,14 @@
 
 " Start a vimteractive terminal using tmux
 function! vimteractive#backend#tmux#repl_start(...) abort
-    " Determine the type of terminal to start
-    let l:repl_type = call("vimteractive#determine_repl_type", a:000)
-
-    " Retrieve starting command
-    let l:repl_command = g:vimteractive_commands[l:repl_type]
-
-    " Assign repl, logfile & session names
-    let l:tempname = tempname()
-    let l:rand = fnamemodify(fnamemodify(l:tempname, ':h'), ':t')
-    let l:num  = fnamemodify(l:tempname, ':t')
-    let l:repl_name = '/tmp/' . l:rand . '-' . l:num . '-' . l:repl_type
-    let l:logfile_name = l:repl_name . '.log'
-    let l:session_name = strftime("%Y-%m-%d") . '-' . l:rand . '-' . l:num
-
-    " Define the repl command
-    let l:repl_command = substitute(l:repl_command, '<LOGFILE>', l:logfile_name, '')
-    let l:repl_command = substitute(l:repl_command, '<SESSION>', l:session_name, '')
-    let l:repl_command = l:repl_command . ' ' . join(a:000[1:], ' ')
+    " Get common REPL information
+    let l:repl_info = call('vimteractive#common#prepare_repl_info', a:000)
     
     " Define the tmux command
-    let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_name
+    let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_info.repl_name
 
     " Now join them all together
-    let l:xrepl_command = printf('%s "%s; read"', l:tmux_command, l:repl_command)
+    let l:xrepl_command = printf('%s "%s; read"', l:tmux_command, l:repl_info.full_command)
 
     " Pass any environment variables necessary for logging
     let $CHAT_CACHE_PATH="/" " sgpt logfiles
@@ -45,7 +29,7 @@ function! vimteractive#backend#tmux#repl_start(...) abort
     let g:slime_target = 'tmux'
 
     " Connect to terminal
-    call vimteractive#backend#tmux#connect(l:repl_name)
+    call vimteractive#backend#tmux#connect(l:repl_info.repl_name)
 
     " Move focus back to vim
     call system("xdotool windowactivate " . l:window_id_before)
@@ -181,6 +165,7 @@ endfunction
 " Cycle connection forward through terminal buffers
 function! vimteractive#backend#tmux#next_term() abort
     let l:pane_ids = vimteractive#backend#tmux#get_pane_ids()
+    if empty(l:pane_ids) | return | endif
     let l:current_index = index(l:pane_ids, b:slime_config["target_pane"]) 
     let l:next_index = (l:current_index + 1) % len(l:pane_ids)
     call vimteractive#backend#tmux#connect(vimteractive#backend#tmux#get_repl_sessions()[l:next_index])
@@ -189,6 +174,7 @@ endfunction
 " Cycle connection backward through terminal buffers
 function! vimteractive#backend#tmux#prev_term() abort
     let l:pane_ids = vimteractive#backend#tmux#get_pane_ids()
+    if empty(l:pane_ids) | return | endif
     let l:current_index = index(l:pane_ids, b:slime_config["target_pane"]) 
     let l:prev_index = (l:current_index - 1 + len(l:pane_ids)) % len(l:pane_ids)
     call vimteractive#backend#tmux#connect(vimteractive#backend#tmux#get_repl_sessions()[l:prev_index])

@@ -8,24 +8,8 @@ function! vimteractive#backend#vimterminal#repl_start(...) abort
         return
     endif
 
-    " Determine the type of terminal to start
-    let l:repl_type = call("vimteractive#determine_repl_type", a:000)
-
-    " Retrieve starting command
-    let l:repl_command = g:vimteractive_commands[l:repl_type]
-
-    " Assign repl, logfile & session names
-    let l:tempname = tempname()
-    let l:rand = fnamemodify(fnamemodify(l:tempname, ':h'), ':t')
-    let l:num  = fnamemodify(l:tempname, ':t')
-    let l:repl_name = '/tmp/' . l:rand . '-' . l:num . '-' . l:repl_type
-    let l:logfile_name = l:repl_name . '.log'
-    let l:session_name = strftime("%Y-%m-%d") . '-' . l:rand . '-' . l:num
-
-    " Define the repl command
-    let l:repl_command = substitute(l:repl_command, '<LOGFILE>', l:logfile_name, '')
-    let l:repl_command = substitute(l:repl_command, '<SESSION>', l:session_name, '')
-    let l:repl_command = l:repl_command . ' ' . join(a:000[1:], ' ')
+    " Get common REPL information
+    let l:repl_info = call('vimteractive#common#prepare_repl_info', a:000)
 
     " Pass any environment variables necessary for logging
     let $CHAT_CACHE_PATH="/" " sgpt logfiles
@@ -36,24 +20,27 @@ function! vimteractive#backend#vimterminal#repl_start(...) abort
     " Set slime target for this backend
     let g:slime_target = 'vimterminal'
 
-    " Open terminal in a new split
-    " Default to bottom split with 15 lines height
-    botright 15split
+    " Open terminal in a new split (configurable)
+    let l:split_cmd = 'botright 15split'  " default
+    if exists('g:vimteractive_vimterminal_config') && has_key(g:vimteractive_vimterminal_config, 'split_command')
+        let l:split_cmd = g:vimteractive_vimterminal_config.split_command
+    endif
+    execute l:split_cmd
 
     " Start the terminal with the REPL command
     let l:term_options = {}
     if exists('g:vimteractive_vimterminal_config')
         let l:term_options = g:vimteractive_vimterminal_config
     endif
-    let l:term_options['term_name'] = l:repl_name
-    let l:bufnr = term_start(l:repl_command, l:term_options)
+    let l:term_options['term_name'] = l:repl_info.repl_name
+    let l:bufnr = term_start(l:repl_info.full_command, l:term_options)
 
     " Set the buffer name for identification
-    execute 'file ' . l:repl_name
+    execute 'file ' . l:repl_info.repl_name
 
     " Store buffer info for connection
-    let b:vimteractive_repl_type = l:repl_type
-    let b:vimteractive_logfile = l:logfile_name
+    let b:vimteractive_repl_type = l:repl_info.repl_type
+    let b:vimteractive_logfile = l:repl_info.logfile_name
 
     " Return to original window
     call win_gotoid(l:winid)

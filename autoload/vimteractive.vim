@@ -5,9 +5,6 @@ function! s:dispatch(func, args) abort
     " Get backend from buffer variable, fallback to global
     let l:backend = get(b:, 'vimteractive_backend', g:vimteractive_backend)
     
-    " Set slime target based on backend
-    let g:slime_target = l:backend == 'tmux' ? 'tmux' : 'vimterminal'
-    
     let l:func_name = 'vimteractive#backend#' . l:backend . '#' . a:func
     if !exists('*' . l:func_name)
         echoerr printf("Vimteractive: Function %s not implemented for backend '%s'", a:func, l:backend)

@@ -1,5 +1,27 @@
 " Common functions shared by all backends
 
+" Prepare REPL information for starting a new session
+function! vimteractive#common#prepare_repl_info(...) abort
+    let l:repl_type = call("vimteractive#determine_repl_type", a:000)
+    let l:repl_command = g:vimteractive_commands[l:repl_type]
+
+    let l:tempname = tempname()
+    let l:rand = fnamemodify(fnamemodify(l:tempname, ':h'), ':t')
+    let l:num  = fnamemodify(l:tempname, ':t')
+    
+    let l:info = {}
+    let l:info.repl_type = l:repl_type
+    let l:info.repl_name = printf('/tmp/%s-%s-%s', l:rand, l:num, l:repl_type)
+    let l:info.logfile_name = l:info.repl_name . '.log'
+    let l:info.session_name = printf('%s-%s-%s', strftime("%Y-%m-%d"), l:rand, l:num)
+    
+    let l:command = substitute(l:repl_command, '<LOGFILE>', l:info.logfile_name, '')
+    let l:command = substitute(l:command, '<SESSION>', l:info.session_name, '')
+    let l:info.full_command = l:command . ' ' . join(a:000[1:], ' ')
+    
+    return l:info
+endfunction
+
 " Extract markdown code blocks from AI responses
 function! vimteractive#common#extract_markdown_code_blocks(input) abort
     let result = ""
