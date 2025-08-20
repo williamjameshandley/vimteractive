@@ -19,8 +19,8 @@ autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__ or
 `Copilot <https://github.com/features/copilot>`__.
 
-**Note: The vimteractive3 branch is a complete rewrite using tmux and vim-slime
-instead of vim's native terminal.**
+**Note: The vimteractive3 branch now supports both tmux (external terminals) and 
+vim's native terminal as backends. Choose based on your needs and dependencies.**
 
 The activating commands are:
 
@@ -56,14 +56,19 @@ interpreter. You can set it like this:
 Installation
 ------------
 
-**Dependencies:**
+**Core Dependencies (both backends):**
 
 - Vim 8 or greater
-- `tmux <https://github.com/tmux/tmux>`__ (required for terminal multiplexing)
-- `vim-slime <https://github.com/jpalardy/vim-slime>`__ (required for sending text to tmux)
+- `vim-slime <https://github.com/jpalardy/vim-slime>`__ (required for sending text)
+
+**Additional Dependencies for tmux backend:**
+
+- `tmux <https://github.com/tmux/tmux>`__ (for terminal multiplexing)
 - `xterm` or another terminal emulator (configurable via ``g:vimteractive_terminal``)
 - `xdotool <https://github.com/jordansissel/xdotool>`__ (for window focus management)
 - `perl` and `col` (for zsh output processing)
+
+**Vimterminal backend requires no additional dependencies!**
 
 Installation should be relatively painless via
 `the usual routes <https://vimawesome.com/plugin/vimteractive>`_ such as
@@ -241,7 +246,13 @@ These options can be put in your ``.vimrc``, or run manually as desired:
 
 .. code:: vim
 
-    let g:vimteractive_terminal = 'xterm -e'     " Terminal emulator to use
+    " Choose backend: 'tmux' (default) or 'vimterminal'
+    let g:vimteractive_backend = 'vimterminal'  " Use vim's native terminal
+    
+    " Backend-specific options
+    let g:vimteractive_terminal = 'xterm -e'     " Terminal for tmux backend only
+    
+    " General options
     let g:vimteractive_default_repl = 'gpt'      " Default REPL (default: 'gpt')
     let g:vimteractive_extract_markdown_code_blocks = 1  " Extract code from markdown responses
     let g:vimteractive_zsh_prompt = '^\$'       " Regex for zsh prompt detection

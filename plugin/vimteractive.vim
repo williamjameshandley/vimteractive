@@ -14,6 +14,12 @@ if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }
 endif
 
+" Backend selection: 'tmux' or 'vimterminal'
+if !exists('g:vimteractive_backend')
+    " Default to tmux for backward compatibility
+    let g:vimteractive_backend = 'tmux'
+endif
+
 if !exists('g:vimteractive_terminal')
     let g:vimteractive_terminal = 'xterm -e'
 endif
@@ -34,7 +40,7 @@ if !exists('g:vimteractive_default_repl')
     let g:vimteractive_default_repl = 'gpt'
 endif
 
-let g:slime_target = 'tmux'
+" Slime configuration will be set dynamically based on backend
 let g:slime_no_mappings=1
 
 let g:vimteractive_commands.ipython = "ipython --matplotlib --no-autoindent --logfile='-o <LOGFILE>'"

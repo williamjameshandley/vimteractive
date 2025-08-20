@@ -6,23 +6,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Vimteractive is a Vim plugin that provides a simple interface to send commands from text files to interactive programs (REPLs) via tmux. It's a complete rewrite on the vimteractive3 branch that uses tmux and vim-slime instead of vim's native terminal. Supports Python/IPython, Julia, R, bash/zsh, Maple, Mathematica, Clojure, APL, and AI assistants (sgpt, gpt-command-line, aichat).
 
-## Architecture (vimteractive3 branch)
+## Architecture (vimteractive3 branch with dual backend support)
 
-The plugin consists of three main components:
+The plugin uses a dispatcher architecture to support both vim's native terminal and tmux backends:
 
 1. **plugin/vimteractive.vim** - Main plugin initialization:
-   - Defines global configuration variables
+   - Defines global configuration variables including `g:vimteractive_backend`
    - Sets up REPL command mappings (`:Ipython`, `:Iaichat`, etc.)
    - Configures key mappings (Ctrl-S send, Ctrl-Y retrieve)
-   - Integrates with vim-slime (sets `g:slime_target = 'tmux'`)
-   - Default REPL is now 'gpt' instead of autodetect
+   - Default backend is 'tmux' for backward compatibility
+   - Default REPL is 'gpt'
 
-2. **autoload/vimteractive.vim** - Core implementation:
-   - Creates tmux sessions with unique names (pattern: `/tmp/RAND-NUM-REPL`)
-   - Manages tmux pane connections via vim-slime
-   - Implements REPL-specific response retrieval functions
-   - Handles markdown code block extraction from AI responses
-   - Opens external terminal windows (xterm) attached to tmux sessions
+2. **autoload/vimteractive.vim** - Dispatcher layer:
+   - Routes all function calls to appropriate backend
+   - Dynamically sets `g:slime_target` based on chosen backend
+   - Provides unified interface regardless of backend
+
+3. **autoload/vimteractive/backend/** - Backend implementations:
+   - **tmux.vim**: External terminal via tmux (original implementation)
+   - **vimterminal.vim**: Vim's native terminal (no external dependencies)
+
+4. **autoload/vimteractive/common.vim** - Shared functionality:
+   - Log-file based response retrieval (works for both backends)
+   - Markdown code block extraction
 
 
 ## Key Implementation Details
@@ -46,19 +52,26 @@ The plugin consists of three main components:
 
 ## Dependencies
 
-- Vim 8+ (though native terminal features not used in this branch)
-- tmux (core multiplexing backend)
-- vim-slime (handles text sending to tmux panes)
-- xterm (or configurable terminal emulator)
+### Common (both backends)
+- Vim 8+ (required for terminal support)
+- vim-slime (handles text sending)
+- Individual REPLs must be installed separately
+
+### Tmux backend only
+- tmux (terminal multiplexing)
+- xterm or another terminal emulator
 - xdotool (window focus management)
 - perl, col (for zsh output processing)
-- Individual REPLs must be installed separately
+
+### Vimterminal backend only
+- No external dependencies (uses vim's built-in terminal)
 
 ## Configuration Variables
 
 ```vim
 " Core configurations
-g:vimteractive_terminal           " Terminal command (default: 'xterm -e')
+g:vimteractive_backend             " Backend: 'tmux' or 'vimterminal' (default: 'tmux')
+g:vimteractive_terminal           " Terminal command for tmux backend (default: 'xterm -e')
 g:vimteractive_default_repl       " Default REPL (default: 'gpt')
 g:vimteractive_extract_markdown_code_blocks  " Extract code from markdown (default: 1)
 

@@ -1,14 +1,22 @@
-" vimteractive implementation
+" vimteractive implementation - dispatcher for backend implementations
 
-" Reopen a terminal buffer in a split window if necessary
-function! vimteractive#show_term() abort
-    let l:pane_ids = vimteractive#get_pane_ids()
-    let l:pane_name_index = index(l:pane_ids, b:slime_config["target_pane"])
-    if l:pane_name_index < 0
-        call vimteractive#repl_start()
+" Helper function to dispatch calls to the correct backend
+function! s:dispatch(func, args) abort
+    " Get backend from buffer variable, fallback to global
+    let l:backend = get(b:, 'vimteractive_backend', g:vimteractive_backend)
+    
+    " Set slime target based on backend
+    let g:slime_target = l:backend == 'tmux' ? 'tmux' : 'vimterminal'
+    
+    let l:func_name = 'vimteractive#backend#' . l:backend . '#' . a:func
+    if !exists('*' . l:func_name)
+        echoerr printf("Vimteractive: Function %s not implemented for backend '%s'", a:func, l:backend)
+        return
     endif
+    return call(l:func_name, a:args)
 endfunction
 
+" Helper function to determine REPL type
 function! vimteractive#determine_repl_type(...) abort
     if a:0 == 0
         if has_key(g:vimteractive_commands, &filetype)
@@ -23,244 +31,44 @@ function! vimteractive#determine_repl_type(...) abort
     return l:repl_type
 endfunction
 
+" Public interface functions that dispatch to backends
 
 " Start a vimteractive terminal
 function! vimteractive#repl_start(...) abort
-    " Determine the type of terminal to start
-    let l:repl_type = call("vimteractive#determine_repl_type", a:000)
-
-    " Retrieve starting command
-    let l:repl_command = g:vimteractive_commands[l:repl_type]
-
-
-    " Assign repl, logfile & session names
-    let l:tempname = tempname()
-    let l:rand = fnamemodify(fnamemodify(l:tempname, ':h'), ':t')
-    let l:num  = fnamemodify(l:tempname, ':t')
-    let l:repl_name = '/tmp/' . l:rand . '-' . l:num . '-' . l:repl_type
-    let l:logfile_name = l:repl_name . '.log'
-    let l:session_name = strftime("%Y-%m-%d") . '-' . l:rand . '-' . l:num
-
-    " Define the repl command
-    let l:repl_command = substitute(l:repl_command, '<LOGFILE>', l:logfile_name, '')
-    let l:repl_command = substitute(l:repl_command, '<SESSION>', l:session_name, '')
-    let l:repl_command = l:repl_command . ' ' . join(a:000[1:], ' ')
-    
-    " Define the tmux command
-    let l:tmux_command = "tmux new-session -dP -F '#{pane_id}:#{session_name}:' -n " . l:repl_name
-
-    " Now join them all together
-    let l:xrepl_command = printf('%s "%s; read"', l:tmux_command, l:repl_command)
-
-    " Pass any environment variables necessary for logging
-    let $CHAT_CACHE_PATH="/" " sgpt logfiles
-
-    " Get vim window id before starting the terminal
-    let l:window_id_before = system("xdotool getactivewindow")
-
-    " Start tmux
-    let l:output = split(system(l:xrepl_command), ":")
-
-    " Start terminal
-    let l:xterm_command = printf('%s tmux attach -t %s & echo $!', g:vimteractive_terminal, l:output[1])
-    let l:xterm_pid = system(l:xterm_command)
-    let l:xterm_pid = substitute(l:xterm_pid, '\n', '', '')
-
-    " Connect to terminal
-    call vimteractive#connect(l:repl_name)
-
-    " Move focus back to vim
-    call system("xdotool windowactivate " . l:window_id_before)
-endfunction
-
-function! vimteractive#get_panes() abort
-    if !exists('b:slime_config')
-        let b:slime_config = {"socket_name": "default", "target_pane": ""}
-    endif
-    let l:tmux_panes = split(slime#targets#tmux#pane_names('', '', ''), "\n")
-    let l:regex = '-\(' . join(keys(g:vimteractive_commands), '\|') . '\)\>'
-    return filter(l:tmux_panes, 'match(v:val, l:regex) != -1')
-endfunction
-
-function! vimteractive#get_pane_names(...) abort
-    return map(vimteractive#get_panes(), 'split(v:val, " ")[2]')
-endfunction
-
-function! vimteractive#get_pane_ids(...) abort
-    return map(vimteractive#get_panes(), 'split(v:val, " ")[0]')
-endfunction
-
-function! vimteractive#get_pane_activity(...) abort
-    return filter(vimteractive#get_panes(), 'match(v:val, "(active)") != -1')
-endfunction
-
-function! vimteractive#pane_name() abort
-    let l:pane_id = b:slime_config["target_pane"]
-    let l:pane_name_index = index(vimteractive#get_pane_ids(), l:pane_id)
-    return vimteractive#get_pane_names()[l:pane_name_index]
-endfunction
-
-function! vimteractive#repl_type() abort
-    for l:repl_type in keys(g:vimteractive_commands)
-        if matchstr(vimteractive#pane_name(), '-' . l:repl_type) != ''
-            return l:repl_type
-        endif
-    endfor
-    echoerr "Could not determine terminal type from pane name"
-    return 1
-endfunction
-
-function! vimteractive#logfile_name() abort
-    return vimteractive#pane_name() . '.log'
-endfunction
-
-function! vimteractive#extract_markdown_code_blocks(input)
-    let result = ""
-    let in_code_block = 0
-    let lines = split(a:input, '\n')
-    for line in lines
-        if in_code_block == 0 && line =~ '^\s*```.*$'
-            let in_code_block = 1
-        elseif in_code_block == 1 && line =~ '^\s*```.*$'
-            let in_code_block = 0
-        elseif in_code_block == 1
-            let result .= line . "\n"
-        endif
-    endfor
-    if result == ""
-        let result = a:input
-    endif
-    return result
+    return s:dispatch('repl_start', a:000)
 endfunction
 
 " Connect to vimteractive terminal
 function! vimteractive#connect(...) abort
-    let l:pane_names = vimteractive#get_pane_names()
-    if a:0 == 0 && len(l:pane_names) == 1
-        let l:pane_name = l:pane_names[0]
-        let l:pane_index = 0
-    else
-        let l:pane_name = a:1
-        let l:pane_index = index(l:pane_names, l:pane_name)
-    endif
-    let l:pane_id = vimteractive#get_pane_ids()[l:pane_index]
-    let b:slime_config["target_pane"] = l:pane_id
-    let l:repl_type = vimteractive#repl_type()
-    if index(g:vimteractive_bracketed_paste, l:repl_type) != -1
-        let b:slime_bracketed_paste = 1
-    else
-        let b:slime_bracketed_paste = 0
-    endif
-    echo "Connected to " . l:pane_name
+    return s:dispatch('connect', a:000)
 endfunction
 
+" Show terminal if necessary
+function! vimteractive#show_term() abort
+    return s:dispatch('show_term', [])
+endfunction
+
+" Get response from terminal
 function! vimteractive#get_response() abort
-    let l:repl_type = vimteractive#repl_type()
-    let l:response = g:vimteractive_get_response[l:repl_type]()
-    if g:vimteractive_extract_markdown_code_blocks
-        let l:response = vimteractive#extract_markdown_code_blocks(l:response)
-    endif
-    return l:response
+    return s:dispatch('get_response', [])
 endfunction
 
-" Get the last response from the terminal for sgpt
-function! vimteractive#get_response_sgpt() abort
-    let l:logfile_name =  vimteractive#logfile_name() 
-    let l:json_content = join(readfile(l:logfile_name), "\n")
-    let l:json_data = json_decode(l:json_content)
-    if len(l:json_data) > 0
-        let l:last_response = l:json_data[-1]['content']
-        return l:last_response
-    endif
+" Get list of REPL sessions for completion
+function! vimteractive#get_pane_names(...) abort
+    return s:dispatch('get_repl_sessions', a:000)
 endfunction
 
-" Get the last response from the terminal for gpt-command-line
-function! vimteractive#get_response_gpt() abort
-    let l:logfile_name = vimteractive#logfile_name()
-    let l:log_data = readfile(l:logfile_name)
-    let l:log_data_str = join(l:log_data, "\n")
-    let l:last_session_index = strridx(l:log_data_str, 'gptcli-session - INFO - assistant: ')
-    let l:end_text = strpart(l:log_data_str, l:last_session_index+35)
-    let l:price_index = match(l:end_text, 'gptcli-price')
-    let l:last_price_index = strridx(l:end_text, "\n", l:price_index-1)
-    return strpart(l:end_text, 0, l:last_price_index)
-endfunction
-
-" Get the last response from the aichat terminal and remove any prompt lines.
-function! vimteractive#get_response_aichat() abort
-    " Get the pane prompt
-    let l:repl_name = vimteractive#pane_name()
-    let l:prompt = fnamemodify(l:repl_name, ':t')
-    let l:prompt = substitute(l:prompt, '-' . vimteractive#repl_type(), '', '')
-
-    " Capture the full tmux pane log.
-    let l:tmux_command = printf('tmux capture-pane -J -p -t %s -S -', b:slime_config["target_pane"])
-    let l:log_data = system(l:tmux_command)
-
-    " Split the log data by newlines.
-    let lines = split(l:log_data, '\n')
-
-    let i = len(lines)- 1
-    while i > 0 && match(lines[i], l:prompt) == -1
-        let i -= 1
-    endwhile
-    let j = i - 1
-    while j > 0 && match(lines[j], l:prompt) == -1
-        let j -= 1
-    endwhile
-    return join(lines[j+1:i-1], "\n")
-
-endfunction
-
-" get the last response from the terminal for ipython
-function! vimteractive#get_response_ipython() abort
-    let l:logfile_name = vimteractive#logfile_name()
-    let lines = readfile(l:logfile_name)
-    let block = []
-    for i in range(len(lines) - 1, 0, -1)
-        if match(lines[i], '^#\[Out\]#') == 0
-            let line = substitute(lines[i], '^#\[Out\]# ', '', '')
-            call add(block, line)
-        else
-            break
-        endif
-    endfor
-    let block = reverse(block)
-    return join(block, "\n")
-endfunction
-
-" Get the last response from the terminal for zsh
-function! vimteractive#get_response_zsh() abort
-    let l:logfile_name = vimteractive#logfile_name()
-    let l:log_data = system("cat " . l:logfile_name . " | perl -pe '" . 's/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g' . "' | col -b ")
-    let lines = split(l:log_data, '\n')
-    let i = len(lines) - 1
-    while i > 0 && match(lines[i], g:vimteractive_zsh_prompt) != 0
-        let i -= 1
-    endwhile
-    let j = i - 1
-    while j > 0 && match(lines[j], g:vimteractive_zsh_prompt) != 0
-        let j -= 1
-    endwhile
-    return join(lines[j+1:i-g:vimteractive_zsh_prompt_multiline], "\n")
-endfunction
-
-
-" Cycle connection forward through terminal buffers
+" Cycle connection forward through terminals
 function! vimteractive#next_term() abort
-    let l:pane_ids = vimteractive#get_pane_ids()
-    let l:current_index = index(l:pane_ids, b:slime_config["target_pane"]) 
-    let l:next_index = (l:current_index + 1) % len(l:pane_ids)
-    call vimteractive#connect(vimteractive#get_pane_names()[l:next_index])
+    return s:dispatch('next_term', [])
 endfunction
 
-" Cycle connection backward through terminal buffers
+" Cycle connection backward through terminals
 function! vimteractive#prev_term() abort
-    let l:pane_ids = vimteractive#get_pane_ids()
-    let l:current_index = index(l:pane_ids, b:slime_config["target_pane"]) 
-    let l:prev_index = (l:current_index - 1 + len(l:pane_ids)) % len(l:pane_ids)
-    call vimteractive#connect(vimteractive#get_pane_names()[l:prev_index])
+    return s:dispatch('prev_term', [])
 endfunction
+
+" Send functions that use vim-slime
 
 function! vimteractive#send_lines(count) abort
     call vimteractive#show_term()
@@ -275,4 +83,61 @@ endfunction
 function! vimteractive#send_range(startline, endline) abort
     call vimteractive#show_term()
     call slime#send_range(a:startline, a:endline)
+endfunction
+
+" Response retrieval functions that map to common implementations
+function! vimteractive#get_response_ipython() abort
+    return vimteractive#common#get_response_ipython(s:dispatch('logfile_name', []))
+endfunction
+
+function! vimteractive#get_response_sgpt() abort
+    return vimteractive#common#get_response_sgpt(s:dispatch('logfile_name', []))
+endfunction
+
+function! vimteractive#get_response_gpt() abort
+    return vimteractive#common#get_response_gpt(s:dispatch('logfile_name', []))
+endfunction
+
+function! vimteractive#get_response_zsh() abort
+    return vimteractive#common#get_response_zsh(s:dispatch('logfile_name', []))
+endfunction
+
+function! vimteractive#get_response_aichat() abort
+    " This one is backend-specific
+    return s:dispatch('get_response_aichat', [])
+endfunction
+
+" Backward compatibility functions
+function! vimteractive#get_panes(...) abort
+    " Only works with tmux backend
+    if get(b:, 'vimteractive_backend', g:vimteractive_backend) == 'tmux'
+        return vimteractive#backend#tmux#get_panes()
+    else
+        return []
+    endif
+endfunction
+
+function! vimteractive#get_pane_ids(...) abort
+    " Only works with tmux backend
+    if get(b:, 'vimteractive_backend', g:vimteractive_backend) == 'tmux'
+        return vimteractive#backend#tmux#get_pane_ids()
+    else
+        return []
+    endif
+endfunction
+
+function! vimteractive#pane_name() abort
+    return s:dispatch('pane_name', [])
+endfunction
+
+function! vimteractive#repl_type() abort
+    return s:dispatch('repl_type', [])
+endfunction
+
+function! vimteractive#logfile_name() abort
+    return s:dispatch('logfile_name', [])
+endfunction
+
+function! vimteractive#extract_markdown_code_blocks(input) abort
+    return vimteractive#common#extract_markdown_code_blocks(a:input)
 endfunction
