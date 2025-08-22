@@ -9,68 +9,71 @@
 " Plugin variables
 " ================
 
-" Automatically start default terminal on first ^S
-if !has_key(g:, 'vimteractive_autostart')
-	let g:vimteractive_autostart = 1
-endif
-
-" Start in a horizontal terminal by default
-if !has_key(g:, 'vimteractive_vertical')
-    let g:vimteractive_vertical = 0
-endif
-
-" Switch to normal mode when entering the buffer by default
-if !has_key(g:, 'vimteractive_switch_mode')
-    let g:vimteractive_switch_mode = 1
-endif
-
 " Variables for running the various sessions
 if !has_key(g:, 'vimteractive_commands')
 	let g:vimteractive_commands = { }
 endif
-if !has_key(g:, 'vimteractive_brackets')
-	let g:vimteractive_brackets = { }
+
+" Backend selection: 'tmux' or 'vimterminal'
+if !exists('g:vimteractive_backend')
+    " Default to tmux for backward compatibility
+    let g:vimteractive_backend = 'tmux'
 endif
 
-let g:open_bracketed_paste = "[200~"
-let g:close_bracketed_paste = "[201~"
+if !exists('g:vimteractive_terminal')
+    let g:vimteractive_terminal = 'xterm -e'
+endif
 
+if !exists('g:vimteractive_bracketed_paste')
+    let g:vimteractive_bracketed_paste = []
+endif
 
-let g:vimteractive_commands.ipython = 'ipython --matplotlib --no-autoindent --logfile="-o <LOGFILE>"'
-let g:vimteractive_commands.python = 'python'
-let g:vimteractive_brackets.python = ['','']
-let g:vimteractive_commands.bash = 'bash'
-let g:vimteractive_commands.zsh = 'zsh'
-let g:vimteractive_commands.julia = 'julia'
-let g:vimteractive_commands.maple = 'maple -c "interface(errorcursor=false);"'
-let g:vimteractive_commands.clojure = 'clojure'
-let g:vimteractive_brackets.clojure = ['','']
-let g:vimteractive_commands.apl = 'apl'
-let g:vimteractive_brackets.apl = ['','']
-let g:vimteractive_commands.R = 'R'
-let g:vimteractive_commands.mathematica = 'math'
-let g:vimteractive_brackets.mathematica = ['','']
-let g:vimteractive_commands.sgpt = 'sgpt --repl <LOGFILE>'
-let g:vimteractive_brackets.sgpt = ["\"\"\"\<Enter>" . g:open_bracketed_paste, g:close_bracketed_paste . "\<Enter>\"\"\""]
-let g:vimteractive_commands.gpt = 'gpt --log_file <LOGFILE>'
-let g:vimteractive_brackets.gpt = ["\\\<Enter>" . g:open_bracketed_paste, g:close_bracketed_paste . "\<Esc>\<Enter>"]
+if !exists('g:vimteractive_get_response')
+    let g:vimteractive_get_response = {}
+endif
+
+if !exists('g:vimteractive_extract_markdown_code_blocks')
+    let g:vimteractive_extract_markdown_code_blocks = 1
+endif
+
+if !exists('g:vimteractive_default_repl')
+    let g:vimteractive_default_repl = ''  " No default - uses filetype detection
+endif
+
+" Slime configuration will be set dynamically based on backend
+let g:slime_no_mappings=1
+
+let g:vimteractive_commands.ipython = ['ipython', '--matplotlib', '--no-autoindent', '--logfile=-o <LOGFILE>']
+let g:vimteractive_commands.python = ['python']
+let g:vimteractive_commands.bash = ['bash']
+let g:vimteractive_commands.zsh = ['zsh', '-c', 'script -qf <LOGFILE>']
+let g:vimteractive_commands.julia = ['julia']
+let g:vimteractive_commands.maple = ['maple', '-c', 'interface(errorcursor=false);']
+let g:vimteractive_commands.clojure = ['clojure']
+let g:vimteractive_commands.apl = ['apl']
+let g:vimteractive_commands.R = ['R']
+let g:vimteractive_commands.mathematica = ['math']
+let g:vimteractive_commands.sgpt = ['sgpt', '--repl', '<LOGFILE>']
+let g:vimteractive_commands.gpt = ['gpt', '--log_file', '<LOGFILE>']
+let g:vimteractive_commands.aichat = ['aichat', '--session', '<SESSION>']
+
+let g:vimteractive_bracketed_paste += ['ipython', 'bash', 'zsh', 'julia', 'maple', 'R', 'gpt', 'aichat']
 
 " Override default shells for different filetypes
-if !has_key(g:, 'vimteractive_default_shells')
-	let g:vimteractive_default_shells = { }
+if !has_key(g:, 'vimteractive_default_repls')
+	let g:vimteractive_default_repls = { 'python': 'ipython' }
 endif
 
-" If present, wait this amount of time in ms when starting term on ^S
-if !has_key(g:, 'vimteractive_slow_prompt')
-	let g:vimteractive_slow_prompt = { }
-endif
-let g:vimteractive_slow_prompt.clojure = 200
+for repl in ['ipython', 'sgpt', 'gpt', 'zsh', 'aichat']
+    let g:vimteractive_get_response[repl] = function('vimteractive#get_response_' . repl) 
+endfor
 
-let g:vimteractive_get_response = {
-            \ 'ipython': function('vimteractive#get_response_ipython'),
-            \ 'sgpt': function('vimteractive#get_response_sgpt'),
-            \ 'gpt': function('vimteractive#get_response_gpt')
-            \}
+if !exists('g:vimteractive_zsh_prompt_multiline')
+    let g:vimteractive_zsh_prompt_multiline = 1
+endif
+if !exists('g:vimteractive_zsh_prompt')
+    let g:vimteractive_zsh_prompt = '^\$'
+endif
 
 " Plugin commands
 " ===============
@@ -79,12 +82,12 @@ if !has_key(g:, 'vimteractive_loaded')
 	let g:vimteractive_loaded = 1
 
 	" Building :I* commands (like :Ipython, :Iipython and so)
-	for term_type in keys(g:vimteractive_commands)
-		execute 'command! -nargs=? I' . term_type . " :call vimteractive#term_start('" . term_type . "', <f-args>)"
+	for repl_type in keys(g:vimteractive_commands)
+		execute 'command! -nargs=? I' . repl_type . " :call vimteractive#repl_start('" . repl_type . "', <f-args>)"
 	endfor
 
-	command! Iterm :call vimteractive#term_start('-auto-')
-	command! -nargs=? -complete=customlist,vimteractive#buffer_list Iconn
+	command! Iterm :call vimteractive#repl_start()
+	command! -nargs=? -complete=customlist,vimteractive#get_pane_names Iconn
 		\ :call vimteractive#connect(<f-args>)
 endif
 
@@ -92,24 +95,28 @@ endif
 " Plugin key mappings
 " ===================
 
-" Control-S in normal mode to send current line
-noremap  <silent> <C-s>      :call vimteractive#sendlines(getline('.'))<CR>
-
-" Control-S in insert mode to send current line
-inoremap <silent> <C-s> <Esc>:call vimteractive#sendlines(getline('.'))<CR>a
+" Control-S in normal or insert mode to send current line
+nnoremap <silent> <C-s> :<c-u>call vimteractive#send_lines(v:count1)<cr>
+inoremap <silent> <C-s> <C-o>:let save_cursor = getpos('.')<CR><Esc>:<c-u>call vimteractive#send_lines(v:count1)<cr>:<c-u>call setpos('.', save_cursor)<CR>i
 
 " Control-S in visual mode to send multiple lines
-vnoremap <silent> <C-s> m`""y:call vimteractive#sendlines(substitute(getreg('"'), "\n*$", "", ""))<CR>``
+vnoremap <silent> <C-s> :<c-u>call vimteractive#send_op(visualmode(), 1)<cr>`>
 
-" Alt-S in normal mode to send all lines up to this point
-noremap <silent> <A-s> :call vimteractive#sendlines(join(getline(1,'.'), "\n"))<CR>
+" Alt-s in normal mode to send all lines up to this point 
+nnoremap <silent> <A-s> :<c-u>call vimteractive#send_range(1,'.')<cr>
+" Alt-shift-s in normal mode to send all lines from this point onwards
+" nnoremap <silent> <A-S> :<c-u>call vimteractive#send_range(1,'.')<cr>
 
 " Control-Y in normal mode to get last response
-noremap  <silent> <C-y>      :put =vimteractive#get_response()<CR>
-
-" Control-Y in insert mode to get last response
-inoremap <silent> <C-y> <Esc>:put =vimteractive#get_response()<CR>a
+noremap  <silent> <C-y> :put =vimteractive#get_response()<CR>
+inoremap <silent> <C-y> <C-o>:let save_cursor = getpos('.')<CR><Esc>:put =vimteractive#get_response()<CR>:<c-u>call setpos('.', save_cursor)<CR>i
+vnoremap <silent> <C-y> d:put! =vimteractive#get_response()<CR>
 
 " cycle through terminal buffers in the style of unimpaired
-nnoremap ]v :call vimteractive#next_term()<CR>
-nnoremap [v :call vimteractive#prev_term()<CR>
+nnoremap <silent> ]v :call vimteractive#next_term()<CR>
+nnoremap <silent> [v :call vimteractive#prev_term()<CR>
+
+" Toggle g:vimteractive_extract_markdown_code_blocks with yok, [ok, ]ok
+nnoremap <silent> yok :let g:vimteractive_extract_markdown_code_blocks = (exists("g:vimteractive_extract_markdown_code_blocks") && g:vimteractive_extract_markdown_code_blocks == 1 ? 0 : 1)<CR>
+nnoremap <silent> [ok :let g:vimteractive_extract_markdown_code_blocks = 0<CR>
+nnoremap <silent> ]ok :let g:vimteractive_extract_markdown_code_blocks = 1<CR>

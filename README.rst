@@ -3,7 +3,7 @@ Vimteractive
 ============
 :vimteractive: send commands from text files to interactive programs via vim
 :Author: Will Handley
-:Version: 2.7.1
+:Version: 3.0.0 (vimteractive3 branch)
 :Homepage: https://github.com/williamjameshandley/vimteractive
 :Documentation: ``:help vimteractive``
 
@@ -19,6 +19,20 @@ autocompletion, leaving that to other, more developed tools such as
 `YouCompleteMe <https://github.com/Valloric/YouCompleteMe>`__ or
 `Copilot <https://github.com/features/copilot>`__.
 
+**New in vimteractive3: Dual backend support!**
+
+- **tmux backend** (default): Opens REPLs in external terminal windows via tmux
+  
+  - Pros: Terminal persists after vim exits, better for long-running sessions
+  - Cons: Requires tmux, xterm, and xdotool
+  
+- **vimterminal backend**: Uses vim's built-in ``:terminal`` feature
+  
+  - Pros: No external dependencies, integrated vim experience
+  - Cons: Terminal closes with vim
+
+Set your backend with ``let g:vimteractive_backend = 'vimterminal'`` or ``'tmux'``
+
 The activating commands are:
 
 - `ipython <https://ipython.readthedocs.io>`__ ``:Iipython``
@@ -33,33 +47,83 @@ The activating commands are:
 - `R <https://www.r-project.org/>`__ ``:IR``
 - `sgpt <https://github.com/TheR1D/shell_gpt>`__ ``:Isgpt``
 - `gpt-command-line <https://github.com/kharvd/gpt-cli>`__ ``:Igpt``
+- `aichat <https://github.com/sigoden/aichat>`__ ``:Iaichat``
 - autodetect based on filetype ``:Iterm``
 
 Commands may be sent from a text file to the chosen REPL using ``CTRL-S``.
 If there is no REPL, ``CTRL-S`` will automatically open one for you using
 ``:Iterm``.
 
-For some terminals, the output of the last command may be retrieved with
-``CTRL-Y``.
+For supported REPLs (IPython, sgpt, gpt-command-line, aichat, zsh), the output 
+of the last command may be retrieved with ``CTRL-Y``.
 
 Note: it's highly recommended to use IPython as your default Python
 interpreter. You can set it like this:
 
 .. code:: vim
 
-	let g:vimteractive_default_shells = { 'python': 'ipython' }
+	let g:vimteractive_default_repls = { 'python': 'ipython' }
+
+Migration from Vimteractive v2
+-------------------------------
+
+**Important changes in v3:**
+
+1. **Default backend is tmux** (external terminals), not vim's native terminal
+2. **New dependency**: vim-slime is now required
+3. **Commands changed**: ``:Ipython`` now starts IPython (not ``:Iipython2`` or ``:Iipython3``)
+
+**To get the v2 experience (vim's native terminal):**
+
+Add this to your ``.vimrc``:
+
+.. code:: vim
+
+	" Use vim's built-in terminal instead of tmux
+	let g:vimteractive_backend = 'vimterminal'
+	
+	" Optional: Configure terminal split behavior
+	let g:vimteractive_vimterminal_config = {
+	    \ 'vertical': 1,     " Use vertical split
+	    \ 'term_rows': 20    " Set terminal height
+	    \ }
+
+**To use the new tmux backend (recommended for long sessions):**
+
+Install the dependencies: tmux, xterm (or another terminal), and xdotool.
+No configuration needed - tmux is the default.
 
 Installation
 ------------
 
-Since this package leverages the native vim interactive terminal, vimteractive
-is only compatible with vim 8 or greater.
+**Core Dependencies (both backends):**
+
+- Vim 8 or greater
+- `vim-slime <https://github.com/jpalardy/vim-slime>`__ (required for sending text)
+
+**Additional Dependencies for tmux backend:**
+
+- `tmux <https://github.com/tmux/tmux>`__ (for terminal multiplexing)
+- `xterm` or another terminal emulator (configurable via ``g:vimteractive_terminal``)
+- `xdotool <https://github.com/jordansissel/xdotool>`__ (for window focus management)
+- `perl` and `col` (for zsh output processing)
+
+**Vimterminal backend requires no additional dependencies!**
 
 Installation should be relatively painless via
 `the usual routes <https://vimawesome.com/plugin/vimteractive>`_ such as
 `Vundle <https://github.com/VundleVim/Vundle.vim>`__,
 `Pathogen <https://github.com/tpope/vim-pathogen>`__ or the vim 8 native
 package manager (``:help packages``).
+
+**Important:** You must also install vim-slime as it's a required dependency:
+
+.. code:: vim
+
+    " Example for Vundle
+    Plugin 'jpalardy/vim-slime'
+    Plugin 'williamjameshandley/vimteractive'
+
 If you're masochistic enough to use
 `Arch <https://wiki.archlinux.org/index.php/Arch_Linux>`__/`Manjaro <https://manjaro.org/>`__,
 you can install vimteractive via the
@@ -121,26 +185,22 @@ Create a python file ``test.py`` with the following content:
    ax.set_xlabel('$x$')
    ax.set_ylabel('$y$')
 
-Now start an ipython interpreter in vim with ``:Iipython``. You should see a
-preview window open above with your ipython prompt. Position your cursor over
+Now start an ipython interpreter with ``:Iipython``. An external terminal 
+window will open running IPython in a tmux session. Position your cursor over
 the first line of ``test.py``, and press ``CTRL-S``. You should see this line
-now appear in the first prompt of the preview window. Do the same with the
-second and fourth lines. At the fourth line, you should see a figure appear
-once it's constructed with ``plt.subplots()``. Continue by sending lines to the
+now appear in the IPython terminal. Do the same with the second and fourth 
+lines. At the fourth line, you should see a figure appear once it's 
+constructed with ``plt.subplots()``. Continue by sending lines to the
 interpreter. You can send multiple lines by doing a visual selection and
 pressing ``CTRL-S``.
 
-If you switch windows with ``CTRL-W+k``, you will see the terminal buffer
-switch to a more usual looking normal-mode buffer, from which you can perform
-traditional normal mode commands. However, if you try to insert, you will enter
-the REPL, and be able to enter commands interactively into the prompt as if
-you had run it in the command line.  You can save this buffer if you wish to a
-new file if it contains valuable output
+The REPL runs in an external terminal window attached to a tmux session, 
+allowing you to interact with it directly if needed
 
 You may want to send lines to one REPL from two buffers. To achieve that,
-run ``:Iconn <buffer_name>`` where ``<buffer_name>`` is a name of buffer
-containing REPL. If there is only one REPL, you can use just
-``:Iconn``.
+run ``:Iconn <pane_name>`` where ``<pane_name>`` is the name of the tmux pane
+containing the REPL (tab completion available). If there is only one REPL, 
+you can use just ``:Iconn``.
 
 Supported REPLs
 ~~~~~~~~~~~~~~~
@@ -177,8 +237,9 @@ In Visual mode, ``CTRL-S`` sends the current selection to the REPL.
 Retrieving command outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-CTRL-Y retrieves the output of the last command sent to the REPL. This only
-implemented in a subset of terminas (``:Iipython``, ``:Isgpt`` and ``:Igpt``)
+CTRL-Y retrieves the output of the last command sent to the REPL. This is
+implemented for the following REPLs: ``:Iipython``, ``:Isgpt``, ``:Igpt``, 
+``:Iaichat``, and ``:Izsh``
 
 In ``Normal-mode``, CTRL-Y retrieves the output of the last command sent to the
 REPL and places it in the current buffer.
@@ -187,12 +248,16 @@ In ``Insert-mode``, CTRL-Y retrieves the output of the last command sent to the
 REPL and places it in the current buffer, and then returns to insert mode
 after the output.
 
+In ``Visual-mode``, CTRL-Y deletes the selection and replaces it with the
+output of the last command.
+
 Connecting to an existing REPL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``:Iconn [{buffer]`` connects current buffer to REPL in ``{buffer}``. You can
-connect any number of buffers to one REPL. ``{buffer}`` can be omitted if there
-is only one REPL.
+``:Iconn [{pane_name}]`` connects current buffer to REPL in tmux pane 
+``{pane_name}``. You can connect any number of buffers to one REPL. 
+``{pane_name}`` can be omitted if there is only one REPL. Tab completion
+is available to show all available pane names.
 
 ``]v`` and ``[v`` can be used to cycle between connected buffers in the style of 
 `unimpaired <https://github.com/tpope/vim-unimpaired>`__.
@@ -204,13 +269,15 @@ Bracketed paste
 ~~~~~~~~~~~~~~~
 
 If you see strange symbols like ``^[[200~`` when sending lines to your new
-interpreter, you may be on an older system which does not have bracketed paste
-enabled, or have other shell misbehaviour issues. You can change the default
-setting with
+interpreter, you may need to disable bracketed paste for that REPL. The plugin
+automatically enables bracketed paste for REPLs in the 
+``g:vimteractive_bracketed_paste`` list. To disable it for a specific REPL,
+remove it from the list:
 
 .. code:: vim
 
-	let g:vimteractive_bracketed_paste_default = 0
+	" Remove 'python' from bracketed paste list
+	let g:vimteractive_bracketed_paste = filter(g:vimteractive_bracketed_paste, 'v:val != "python"')
 
 
 Options
@@ -219,8 +286,17 @@ These options can be put in your ``.vimrc``, or run manually as desired:
 
 .. code:: vim
 
-    let g:vimteractive_vertical = 1        " Vertically split REPLs
-    let g:vimteractive_autostart = 0       " Don't start REPLs by default
+    " Choose backend: 'tmux' (default) or 'vimterminal'
+    let g:vimteractive_backend = 'vimterminal'  " Use vim's native terminal
+    
+    " Backend-specific options
+    let g:vimteractive_terminal = 'xterm -e'     " Terminal for tmux backend only
+    
+    " General options
+    let g:vimteractive_default_repl = ''         " Default REPL (empty = filetype detection)
+    let g:vimteractive_extract_markdown_code_blocks = 1  " Extract code from markdown responses
+    let g:vimteractive_zsh_prompt = '^\$'       " Regex for zsh prompt detection
+    let g:vimteractive_zsh_prompt_multiline = 1  " Lines to skip for multiline prompts
 
 Extending functionality
 -----------------------
@@ -238,32 +314,22 @@ in your ``.vimrc``:
     " Mapping from Vimterpreter command to shell command
     " This would give you :Iasyncpython command
     let g:vimteractive_commands = {
-        \ 'asyncpython': 'python3 -m asyncio'
+        \ 'asyncpython': ['python3', '-m', 'asyncio']
         \ }
 
-    " If you see strange symbols like ^[[200~ when sending lines
-    " to your new interpreter, disable bracketed paste for it.
-    " You can also try it when your shell is misbehaving some way.
-    " It's needed for any standard Python REPL including
-    " python3 -m asyncio
-    let g:vimteractive_bracketed_paste = {
-        \ 'asyncpython': 0
-        \ }
+    " The g:vimteractive_bracketed_paste variable is a list of REPLs
+    " that support bracketed paste mode. Add or remove REPLs as needed:
+    let g:vimteractive_bracketed_paste += ['asyncpython']
 
     " If you want to set interpreter as default (used by :Iterm),
     " map filetype to it. If not set, :Iterm will use interpreter
     " named same with filetype.
-    let g:vimteractive_default_shells = {
+    let g:vimteractive_default_repls = {
         \ 'python': 'asyncpython'
         \ }
 
-    " If your interpreter startup time is big, you may want to
-    " wait before sending commands. Set time in milliseconds in
-    " this dict to do it. This is not needed for python3, but
-    " can be useful for other REPLs like Clojure.
-    let g:vimteractive_slow_prompt = {
-        \ 'asyncpython': 200
-        \ }
+    " Note: The g:vimteractive_slow_prompt feature mentioned in some
+    " documentation is not currently implemented in this branch.
 
 
 Similar projects
