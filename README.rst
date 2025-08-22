@@ -293,7 +293,7 @@ These options can be put in your ``.vimrc``, or run manually as desired:
     let g:vimteractive_terminal = 'xterm -e'     " Terminal for tmux backend only
     
     " General options
-    let g:vimteractive_default_repl = 'gpt'      " Default REPL (default: 'gpt')
+    let g:vimteractive_default_repl = ''         " Default REPL (empty = filetype detection)
     let g:vimteractive_extract_markdown_code_blocks = 1  " Extract code from markdown responses
     let g:vimteractive_zsh_prompt = '^\$'       " Regex for zsh prompt detection
     let g:vimteractive_zsh_prompt_multiline = 1  " Lines to skip for multiline prompts
