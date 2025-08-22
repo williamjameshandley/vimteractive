@@ -314,7 +314,7 @@ in your ``.vimrc``:
     " Mapping from Vimterpreter command to shell command
     " This would give you :Iasyncpython command
     let g:vimteractive_commands = {
-        \ 'asyncpython': 'python3 -m asyncio'
+        \ 'asyncpython': ['python3', '-m', 'asyncio']
         \ }
 
     " The g:vimteractive_bracketed_paste variable is a list of REPLs

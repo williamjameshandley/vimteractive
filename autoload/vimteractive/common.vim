@@ -87,7 +87,7 @@ endfunction
 
 " Get the last response from the terminal for zsh
 function! vimteractive#common#get_response_zsh(logfile_name) abort
-    let l:log_data = system("cat " . a:logfile_name . " | perl -pe '" . 's/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g' . "' | col -b ")
+    let l:log_data = system("cat " . shellescape(a:logfile_name) . " | perl -pe '" . 's/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g' . "' | col -b ")
     let lines = split(l:log_data, '\n')
     let i = len(lines) - 1
     while i > 0 && match(lines[i], g:vimteractive_zsh_prompt) != 0

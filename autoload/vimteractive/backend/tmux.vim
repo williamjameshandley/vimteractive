@@ -2,6 +2,12 @@
 
 " Start a vimteractive terminal using tmux
 function! vimteractive#backend#tmux#repl_start(...) abort
+    " Check for required dependencies
+    if !executable('tmux')
+        echoerr "vimteractive: tmux is not installed or not in PATH"
+        return
+    endif
+    
     " Get common REPL information
     let l:repl_info = call('vimteractive#common#prepare_repl_info', a:000)
     
@@ -15,8 +21,11 @@ function! vimteractive#backend#tmux#repl_start(...) abort
     " Pass any environment variables necessary for logging
     let $CHAT_CACHE_PATH="/" " sgpt logfiles
 
-    " Get vim window id before starting the terminal
-    let l:window_id_before = system("xdotool getactivewindow")
+    " Get vim window id before starting the terminal (if xdotool available)
+    let l:window_id_before = ''
+    if executable('xdotool')
+        let l:window_id_before = system("xdotool getactivewindow")
+    endif
 
     " Start tmux
     let l:output = split(system(l:xrepl_command), ":")
@@ -26,14 +35,16 @@ function! vimteractive#backend#tmux#repl_start(...) abort
     let l:xterm_pid = system(l:xterm_command)
     let l:xterm_pid = substitute(l:xterm_pid, '\n', '', '')
 
-    " Set slime target for this backend
-    let g:slime_target = 'tmux'
+    " Set slime target for this buffer only
+    let b:slime_target = 'tmux'
 
     " Connect to terminal
     call vimteractive#backend#tmux#connect(l:repl_info.repl_name)
 
-    " Move focus back to vim
-    call system("xdotool windowactivate " . l:window_id_before)
+    " Move focus back to vim (if xdotool available)
+    if l:window_id_before != ''
+        call system("xdotool windowactivate " . l:window_id_before)
+    endif
 endfunction
 
 " Get list of tmux panes

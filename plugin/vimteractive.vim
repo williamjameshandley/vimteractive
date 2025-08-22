@@ -37,7 +37,7 @@ if !exists('g:vimteractive_extract_markdown_code_blocks')
 endif
 
 if !exists('g:vimteractive_default_repl')
-    let g:vimteractive_default_repl = 'gpt'
+    let g:vimteractive_default_repl = ''  " No default - uses filetype detection
 endif
 
 " Slime configuration will be set dynamically based on backend

@@ -17,8 +17,8 @@ function! vimteractive#backend#vimterminal#repl_start(...) abort
     " Save current window to return to it
     let l:winid = win_getid()
 
-    " Set slime target for this backend
-    let g:slime_target = 'vimterminal'
+    " Set slime target for this buffer only
+    let b:slime_target = 'vimterminal'
 
     " Start the terminal with the REPL command
     let l:term_options = {}
@@ -141,7 +141,6 @@ function! vimteractive#backend#vimterminal#connect(...) abort
     " Set up slime configuration
     let b:slime_config = {'bufnr': l:bufnr}
     let b:slime_target = 'vimterminal'
-    let g:slime_target = 'vimterminal'
     let b:vimteractive_backend = 'vimterminal'
     
     " Determine REPL type and set bracketed paste
